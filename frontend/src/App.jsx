@@ -20,7 +20,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/games" element={<Games />} />
         <Route path="/research" element={<Research />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} /> {/* Fallback route */}
       </Routes>
       <ThemeToggle />
     </Router>
