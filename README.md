@@ -101,27 +101,18 @@ Ensure you have [Node.js](https://nodejs.org/) (version 16 or later) and `npm` i
 
 ## **Deployment**
 
-This project is configured for easy, one-command deployment to **GitHub Pages**.
+This project is built for production and can be deployed to any static site hosting service (e.g., Vercel, Netlify, AWS S3, GitHub Pages).
 
-1.  **Commit Your Changes:** Ensure all your latest changes are committed to your GitHub repository.
+1.  **Build the Project:** From the `frontend` directory, run the build command.
     ```sh
-    git add .
-    git commit -m "Final updates before deployment"
-    git push
+    npm run build
     ```
-2.  **Run the Deploy Script:** From the `frontend` directory, run the deploy command.
+    This will create a production-ready `dist` folder.
+
+2.  **Deploy:** Upload the contents of the `dist` folder to your hosting provider of choice. For GitHub Pages, you can use the built-in deploy script:
     ```sh
     npm run deploy
     ```
-    This script will automatically build your application for production and push the contents of the `dist` folder to a special `gh-pages` branch on your repository.
-
-3.  **Configure GitHub Pages:**
-    * Go to your repository on the GitHub website.
-    * Navigate to **Settings** > **Pages**.
-    * Under "Build and deployment," set the **Source** to **"Deploy from a branch"**.
-    * Set the **Branch** to **`gh-pages`** and the folder to **`/ (root)`**. Click **Save**.
-
-Your site will be live at the URL specified in your repository settings within a few minutes.
 
 ---
 
@@ -140,5 +131,5 @@ This frontend dashboard was designed and developed by:
 **Dheeraj Papani**
 
 * **Email:** [dheerajpapani@gmail.com](mailto:dheerajpapani@gmail.com)
-* **LinkedIn:** `your-linkedin-url`
-* **GitHub:** `your-github-url`
+* **LinkedIn:** [linkedin.com/in/dheeraj-papani-507693274](https://www.linkedin.com/in/dheeraj-papani-507693274/)
+* **GitHub:** [github.com/dheerajpapani](https://github.com/dheerajpapani/)
