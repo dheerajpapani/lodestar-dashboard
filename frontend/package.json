@@ -2,16 +2,16 @@
   "name": "lodestar-dashboard",
   "private": true,
   "version": "1.0.0",
+  "homepage": "https://dheerajpapani.github.io/lodestar-dashboard",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
-  "homepage": "https://dheerajpapani.github.io/lodestar-dashboard",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
