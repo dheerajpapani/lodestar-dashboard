@@ -10,7 +10,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "npm run build && git push origin `git subtree split --prefix frontend/dist main`:gh-pages --force"
+    "deploy": "npm run build && cd .. && git subtree split --prefix frontend/dist -b gh-pages-temp && git push origin gh-pages-temp:gh-pages --force && git branch -D gh-pages-temp && cd frontend"
   },
   "overrides": {
     "d3-color": "^3.1.0",

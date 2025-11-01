@@ -7,6 +7,7 @@ export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), ''); // loads .env, .env.local, etc. from ./frontend
   return defineConfig({
     plugins: [react()],
+    base: '/lodestar-dashboard/',
     envPrefix: 'VITE_',     // ensure only VITE_* are exposed
     envDir: process.cwd(),  // make absolutely sure we're using ./frontend as env dir
     define: {
