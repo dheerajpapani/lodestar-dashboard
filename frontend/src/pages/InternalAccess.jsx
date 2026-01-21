@@ -5,13 +5,9 @@ const InternalAccess = () => {
     const [showFallback, setShowFallback] = useState(false);
     const internalUrl = "http://172.17.1.141:8080/web/client/login";
 
-    // Safety timeout: If the user waits too long, show the option anyway
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowFallback(true);
-        }, 5000); // Show after 5 seconds of "loading" / waiting
-        return () => clearTimeout(timer);
-    }, []);
+    // Timer removed as per user request to only show on explicit error
+    // Note: Browser security prevents detecting 'Refused to connect' via JS, 
+    // so this link will now primarily show only if the browser fires a standard network error event.
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 'calc(100vh - 80px)' }}> {/* Ensure fill height */}
