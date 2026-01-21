@@ -10,7 +10,6 @@ import SeriousGames from './pages/SeriousGames';
 import Research from './pages/Research';
 import Team from './pages/Team';
 import Admin from './pages/Admin';
-import Admin from './pages/Admin';
 import InternalAccess from './pages/InternalAccess';
 import NotFound from './pages/NotFound';
 
