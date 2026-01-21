@@ -21,6 +21,7 @@ export default function Navbar() {
           <NavLink to="/serious-games" className="nav-links">Serious Games</NavLink>
           <NavLink to="/research" className="nav-links">Research</NavLink>
           <NavLink to="/team" className="nav-links">Team</NavLink>
+          <NavLink to="/internal-access" className="nav-links">Internal Portal</NavLink>
         </nav>
 
         {/* Group 3: Action Item (Right) */}

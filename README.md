@@ -53,6 +53,12 @@ The entire application is built on the philosophy of co-creation, integrating ad
 
 ---
 
+
+## Internal Admin Portal
+
+The website includes an internal access portal accessible via the "Internal Portal" navigation menu. 
+**Note:** This access point requires an active IITG VPN connection as it leads to an internal-only application. This website serves only as a launchpad and does not handle any credentials or database access directly.
+
 ## **Technology Stack**
 
 This dashboard is built with a curated selection of modern frontend technologies:

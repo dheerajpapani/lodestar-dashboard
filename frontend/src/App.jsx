@@ -10,6 +10,8 @@ import SeriousGames from './pages/SeriousGames';
 import Research from './pages/Research';
 import Team from './pages/Team';
 import Admin from './pages/Admin';
+import Admin from './pages/Admin';
+import InternalAccess from './pages/InternalAccess';
 import NotFound from './pages/NotFound';
 
 // Make sure both CSS files are imported in the correct order
@@ -29,7 +31,8 @@ function App() {
           <Route path="/serious-games" element={<SeriousGames />} />
           <Route path="/research" element={<Research />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/admin" element={<Admin />} /> 
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/internal-access" element={<InternalAccess />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
