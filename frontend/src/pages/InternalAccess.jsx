@@ -46,11 +46,38 @@ const InternalAccess = () => {
                     fontSize: '1.1rem',
                     transition: 'background-color 0.2s',
                     marginTop: '1rem',
+                    marginBottom: '2rem',
                     display: 'inline-block'
                 }}
             >
-                Open Internal DB Portal
+                Open Internal DB Portal in New Tab
             </a>
+
+            <div className="iframe-container" style={{
+                width: '100%',
+                height: '800px',
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                backgroundColor: '#f9f9f9',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}>
+                <iframe
+                    src="http://172.17.1.141:8080/web/client/login"
+                    title="Internal DB Portal"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                        border: 'none'
+                    }}
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<p style="padding:1rem">Unable to load internal portal in frame. Please use the button above.</p>';
+                    }}
+                />
+            </div>
         </div>
     );
 };
