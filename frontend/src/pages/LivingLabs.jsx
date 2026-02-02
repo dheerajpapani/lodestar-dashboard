@@ -18,11 +18,11 @@ export default function LivingLabs() {
   return (
     <>
       <ComingSoonBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      
+
       <div className="page-wrapper">
         <section className="hero-section-about">
           <div className="container">
-            <motion.h1 
+            <motion.h1
               className="hero-title-about"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -30,7 +30,7 @@ export default function LivingLabs() {
             >
               Living Labs & Citizen Science
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="hero-subtitle-about"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -42,9 +42,9 @@ export default function LivingLabs() {
         </section>
 
         <section className="page-section">
-          <div className="container">
+          <div className="container" style={{ paddingBottom: '50px' }}>
             <h2 className="section-title">What is a Living Lab?</h2>
-            <motion.div 
+            <motion.div
               className="text-block"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -61,8 +61,8 @@ export default function LivingLabs() {
             <h2 className="section-title">Our Methods for Co-Creation</h2>
             <div className="methods-grid">
               {methods.map((method, index) => (
-                <motion.div 
-                  key={method.title} 
+                <motion.div
+                  key={method.title}
                   className="method-card"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -83,42 +83,45 @@ export default function LivingLabs() {
             <h2 className="section-title cta-title">Become a Citizen Scientist</h2>
             <p className="cta-subtitle">You can play a direct role in making your community safer. Here’s how:</p>
             <div className="participation-grid">
-                <motion.div 
-                  className="participation-card"
-                  onClick={() => setIsModalOpen(true)}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                    <FaCamera className="participation-icon" />
-                    <h4>Contribute Real-time Data</h4>
-                    <p>Use our upcoming mobile tools to share vital on-the-ground information like water levels.</p>
-                </motion.div>
-                <motion.div 
-                  className="participation-card"
-                  onClick={() => setIsModalOpen(true)}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                    <FaUserPlus className="participation-icon" />
-                    <h4>Join a Workshop</h4>
-                    <p>Participate in our local Living Labs to share your experiences and test new tools.</p>
-                </motion.div>
-                <motion.div 
-                  className="participation-card"
-                  onClick={() => setIsModalOpen(true)}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                    <FaCommentDots className="participation-icon" />
-                    <h4>Share Local Knowledge</h4>
-                    <p>Your knowledge of past events is invaluable for building more accurate models.</p>
-                </motion.div>
+              <motion.div
+                className="participation-card"
+                onClick={() => setIsModalOpen(true)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2, delay: 0 } }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <FaCamera className="participation-icon" />
+                <h4>Contribute Real-time Data</h4>
+                <p>Use our upcoming mobile tools to share vital on-the-ground information like water levels.</p>
+              </motion.div>
+              <motion.div
+                className="participation-card"
+                onClick={() => setIsModalOpen(true)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2, delay: 0 } }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <FaUserPlus className="participation-icon" />
+                <h4>Join a Workshop</h4>
+                <p>Participate in our local Living Labs to share your experiences and test new tools.</p>
+              </motion.div>
+              <motion.div
+                className="participation-card"
+                onClick={() => setIsModalOpen(true)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2, delay: 0 } }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <FaCommentDots className="participation-icon" />
+                <h4>Share Local Knowledge</h4>
+                <p>Your knowledge of past events is invaluable for building more accurate models.</p>
+              </motion.div>
             </div>
           </div>
         </section>

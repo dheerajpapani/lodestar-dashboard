@@ -1,6 +1,7 @@
 // src/components/Footer.jsx
 import { FaGlobe } from 'react-icons/fa';
 import '../App.css';
+import CreatorEasterEgg from './CreatorEasterEgg';
 
 export default function Footer() {
   return (
@@ -30,9 +31,11 @@ export default function Footer() {
       <div className="footer-bottom-bar">
         <p>© 2025 LODESTAR Project Consortium | Funded by DST (India) & NWO (Netherlands)</p>
 
-        {/* Updated credits text and removed social links */}
+
         <div className="footer-credits">
-          <span>Dashboard by IIT Tirupati</span>
+          <CreatorEasterEgg>
+            <span>Dashboard by IIT Tirupati</span>
+          </CreatorEasterEgg>
         </div>
       </div>
     </footer>

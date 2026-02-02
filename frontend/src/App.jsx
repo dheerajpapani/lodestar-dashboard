@@ -12,6 +12,7 @@ import Team from './pages/Team';
 import Admin from './pages/Admin';
 import InternalAccess from './pages/InternalAccess';
 import NotFound from './pages/NotFound';
+import ScrollToTop from './components/ScrollToTop';
 
 // Make sure both CSS files are imported in the correct order
 import './index.css';
@@ -20,6 +21,7 @@ import './App.css';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

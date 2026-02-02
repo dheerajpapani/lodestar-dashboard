@@ -49,7 +49,7 @@ export default function SeriousGames() {
       </section>
 
       <section className="page-section">
-        <div className="container">
+        <div className="container-wide">
           <h2 className="section-title">Play These Real-World Disaster Risk Games</h2>
           <motion.div
             className="games-portfolio"

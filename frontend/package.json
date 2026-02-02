@@ -27,6 +27,7 @@
     "@mui/material": "^5.15.20",
     "@tmcw/togeojson": "^7.1.2",
     "axios": "^1.7.2",
+    "canvas-confetti": "^1.9.4",
     "d3-geo": "^3.1.1",
     "framer-motion": "^11.2.10",
     "i18next": "^23.11.5",

@@ -23,11 +23,11 @@ export default function Research() {
   return (
     <>
       <ComingSoonBox isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      
+
       <div>
         <section className="hero-section-about">
           <div className="container">
-            <motion.h1 
+            <motion.h1
               className="hero-title-about"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ export default function Research() {
             >
               Research & Knowledge Hub
             </motion.h1>
-            <motion.p 
+            <motion.p
               className="hero-subtitle-about"
               initial={{ opacity: 0, y: -30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export default function Research() {
         <section className="page-section">
           <div className="container">
             <h2 className="section-title">Project Deliverables & Tools</h2>
-            <motion.div 
+            <motion.div
               className="research-grid"
               initial="hidden"
               whileInView="visible"
@@ -57,27 +57,27 @@ export default function Research() {
               transition={{ staggerChildren: 0.15 }}
             >
               {projectDeliverables.map(item => (
-                <motion.div 
-                  key={item.title} 
+                <motion.div
+                  key={item.title}
                   className="research-card"
                   variants={{ hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0 } }}
                 >
                   <div className="research-card-icon">{item.icon}</div>
                   <div className="research-card-content">
-                      <h3>{item.title}</h3>
-                      <p>{item.summary}</p>
-                      <span className="research-card-source">Source: {item.source}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.summary}</p>
+                    <span className="research-card-source">Source: {item.source}</span>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
-        
+
         <section className="page-section">
           <div className="container">
             <h2 className="section-title">Key Publications from the Consortium</h2>
-            <motion.div 
+            <motion.div
               className="research-grid"
               initial="hidden"
               whileInView="visible"
@@ -85,8 +85,8 @@ export default function Research() {
               transition={{ staggerChildren: 0.15 }}
             >
               {keyPublications.map(item => (
-                <motion.div 
-                  key={item.title} 
+                <motion.div
+                  key={item.title}
                   className="research-card"
                   variants={{ hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0 } }}
                 >
@@ -101,7 +101,7 @@ export default function Research() {
             </motion.div>
           </div>
         </section>
-        
+
         <section className="page-section">
           <div className="container">
             <h2 className="section-title">Data, Models & Open Science</h2>

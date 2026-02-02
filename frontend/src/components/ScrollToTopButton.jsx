@@ -2,13 +2,14 @@
 // src/components/ScrollToTopButton.jsx
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { FaArrowUp } from 'react-icons/fa';
 import '../App.css';
 
 export default function ScrollToTopButton() {
   const [isVisible, setIsVisible] = useState(false);
 
-  const toggleVisibility = () => {
-    if (window.scrollY > window.innerHeight) {
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
@@ -23,10 +24,8 @@ export default function ScrollToTopButton() {
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility);
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -35,12 +34,13 @@ export default function ScrollToTopButton() {
         <motion.button
           onClick={scrollToTop}
           className="scroll-to-top-btn"
-          aria-label="Scroll to top"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <span className="scroll-to-top-arrow"></span>
+          <FaArrowUp />
         </motion.button>
       )}
     </AnimatePresence>
