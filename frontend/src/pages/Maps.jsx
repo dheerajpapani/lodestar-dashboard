@@ -113,6 +113,7 @@ export default function Maps() {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
+  const defaultMarkersRef = useRef([]);
   const popupRef = useRef(null);
   const cachedSensors = useRef(null);
 
@@ -134,6 +135,88 @@ export default function Maps() {
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     mapRef.current = map;
+
+    // Add default markers
+    Object.entries(studySites).forEach(([name, site]) => {
+      // Create a custom container for the pin and label
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+      container.style.cursor = 'pointer';
+
+      // The label (Site Name)
+      const label = document.createElement('div');
+      label.textContent = name;
+      label.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+      label.style.color = '#0b2244';
+      label.style.padding = '6px 12px';
+      label.style.borderRadius = '16px';
+      label.style.fontSize = '15px';
+      label.style.fontWeight = '800';
+      label.style.marginBottom = '4px';
+      label.style.boxShadow = '0 4px 8px rgba(0,0,0,0.3)';
+      label.style.whiteSpace = 'nowrap';
+      label.style.border = '2px solid #cbd5e1';
+
+      // The Pin icon (using an SVG)
+      const pin = document.createElement('div');
+      pin.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="36" height="36" fill="#E63946" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.5));">
+          <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+          <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+        </svg>
+      `;
+
+      container.appendChild(label);
+      container.appendChild(pin);
+
+      const marker = new maplibregl.Marker({ element: container, anchor: 'bottom' })
+        .setLngLat(site.center)
+        .addTo(map);
+
+      // Declutter overlapping European sites at low zoom
+      if (name === 'Dordrecht' || name === 'Tilburg & Breda') {
+        const updatePosition = () => {
+          const z = map.getZoom();
+          if (z < 6) {
+            // Spread them slightly apart on the macro map so they are both legible
+            if (name === 'Dordrecht') {
+              marker.setLngLat([site.center[0] - 0.5, site.center[1] + 0.3]);
+            }
+            if (name === 'Tilburg & Breda') {
+              marker.setLngLat([site.center[0] + 0.5, site.center[1] - 0.3]);
+            }
+          } else {
+            // Snap to exact locations seamlessly when zooming in
+            marker.setLngLat(site.center);
+          }
+        };
+        map.on('zoom', updatePosition);
+        // Initialize position on load
+        updatePosition();
+      }
+
+      // Hover effect: Pop the pin slightly
+      container.addEventListener('mouseenter', () => {
+        pin.style.transform = 'translateY(-4px)';
+        label.style.transform = 'translateY(-4px)';
+        pin.style.transition = 'transform 0.2s';
+        label.style.transition = 'transform 0.2s';
+      });
+      container.addEventListener('mouseleave', () => {
+        pin.style.transform = 'translateY(0)';
+        label.style.transform = 'translateY(0)';
+      });
+
+      // Click to select site (handles both mouse and touch on modern browsers)
+      container.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSiteSelect(name);
+      });
+
+      defaultMarkersRef.current.push(marker);
+    });
   }, []);
 
   // Base style switching
@@ -154,11 +237,23 @@ export default function Maps() {
         map.addSource(activeOverlay, { type: 'raster', tiles: [weatherLayers[activeOverlay]], tileSize: 256 });
         map.addLayer({ id: activeOverlay, type: 'raster', source: activeOverlay, paint: { 'raster-opacity': 0.6 } });
       }
+
+      // Re-trigger site boundaries if a site is currently active
+      // MapLibre removes non-base layers on setStyle
+      if (activeSite) {
+        // Use a timeout to ensure the style is fully parsed before adding sources
+        setTimeout(() => {
+          // Need to read fresh state, but since this is in an effect, we rely on the component re-rendering
+          // when activeSite changes. However, activeSite inside this closure might be stale if we don't put it in dependency array.
+          // Let's use a ref or just call it directly since we will add activeSite to deps.
+          handleSiteSelect(activeSite, true);
+        }, 50);
+      }
     };
     map.on('style.load', handler);
     handler();
     return () => map.off('style.load', handler);
-  }, [activeOverlay, mapStyle]);
+  }, [activeOverlay, mapStyle, activeSite]);
 
   // ==== Sensors (Improved marker styling) ====
   const loadSensors = async () => {
@@ -166,7 +261,14 @@ export default function Maps() {
       const res = await fetch(KML_URL);
       const text = await res.text();
       const xml = new DOMParser().parseFromString(text, 'text/xml');
-      cachedSensors.current = kmlToGeoJSON(xml);
+      const geojson = kmlToGeoJSON(xml);
+
+      // Inject "firstName" by parsing the full name of each sensor
+      geojson.features.forEach(f => {
+        const fullName = f.properties.Name || f.properties.name || 'Sensor';
+        f.properties.firstName = fullName.split(' ')[0];
+      });
+      cachedSensors.current = geojson;
     }
     const gj = cachedSensors.current;
     const map = mapRef.current;
@@ -197,6 +299,24 @@ export default function Maps() {
           'circle-color': '#00e5ff',
           'circle-opacity': 0.15,
         },
+      });
+
+      // Show sensor first name just above the pin
+      map.addLayer({
+        id: 'guw-sensors-label',
+        type: 'symbol',
+        source: 'guw-sensors',
+        layout: {
+          'text-field': ['get', 'firstName'],
+          'text-size': 12,
+          'text-offset': [0, -1.5],
+          'text-anchor': 'bottom'
+        },
+        paint: {
+          'text-color': '#ffffff',
+          'text-halo-color': '#000000',
+          'text-halo-width': 1.5
+        }
       });
     }
 
@@ -232,6 +352,7 @@ export default function Maps() {
     const map = mapRef.current;
     if (!map) return;
     if (popupRef.current) popupRef.current.remove();
+    if (map.getLayer('guw-sensors-label')) map.removeLayer('guw-sensors-label');
     if (map.getLayer('guw-sensors-glow')) map.removeLayer('guw-sensors-glow');
     if (map.getLayer('guw-sensors')) map.removeLayer('guw-sensors');
     if (map.getSource('guw-sensors')) map.removeSource('guw-sensors');
@@ -248,7 +369,7 @@ export default function Maps() {
   };
 
   // ==== Site selection (with translucent bounding box) ====
-  const handleSiteSelect = async (siteName) => {
+  const handleSiteSelect = async (siteName, isRefresh = false) => {
     const map = mapRef.current;
     if (!map) return;
 
@@ -257,6 +378,13 @@ export default function Maps() {
       setPanelOpen(false);
       if (markerRef.current) markerRef.current.remove();
       removeSensors();
+      if (map.getLayer('site-boundary-label-layer')) map.removeLayer('site-boundary-label-layer');
+      if (map.getLayer('site-boundary-layer')) map.removeLayer('site-boundary-layer');
+      if (map.getSource('site-boundary')) map.removeSource('site-boundary');
+      if (map.getSource('site-boundary-label')) map.removeSource('site-boundary-label');
+
+      // Restore default markers
+      defaultMarkersRef.current.forEach(m => m.addTo(map));
       map.flyTo({ center: [78.96, 20.59], zoom: 4 });
       return;
     }
@@ -265,27 +393,75 @@ export default function Maps() {
     setActiveSite(siteName);
     setPanelOpen(true);
     setActiveTab('alerts');
-    map.flyTo({ center: site.center, zoom: site.zoom, essential: true });
 
-    if (markerRef.current) markerRef.current.remove();
-    markerRef.current = new maplibregl.Marker({ color: "#E63946" }).setLngLat(site.center).addTo(map);
+    if (!isRefresh) {
+      // Hide default markers when zooming in
+      defaultMarkersRef.current.forEach(m => m.remove());
+
+      // Use fitBounds to ensure the entire site boundary is visible, accounting for the left side panel
+      const isMobile = window.innerWidth <= 768;
+      map.fitBounds(site.bounds, {
+        padding: isMobile
+          ? { top: 50, bottom: 50, left: 50, right: 50 }
+          : { top: 100, bottom: 50, left: 450, right: 50 },
+        duration: 1000
+      });
+    }
+
+    if (markerRef.current) {
+      markerRef.current.remove();
+      markerRef.current = null;
+    }
 
     const [sw, ne] = site.bounds;
     const boundary = {
       type: 'Feature',
       geometry: { type: 'Polygon', coordinates: [[[sw[0], sw[1]], [ne[0], sw[1]], [ne[0], ne[1]], [sw[0], ne[1]], [sw[0], sw[1]]]] }
     };
-    if (map.getSource('site-boundary')) {
-      map.getSource('site-boundary').setData(boundary);
-    } else {
-      map.addSource('site-boundary', { type: 'geojson', data: boundary });
-      map.addLayer({
-        id: 'site-boundary-layer',
-        type: 'fill',
-        source: 'site-boundary',
-        paint: { 'fill-color': '#1D3557', 'fill-opacity': 0.25 }
-      });
-    }
+    // Calculate position for the top-left corner above the line
+    const leftLng = sw[0];
+    const topLat = ne[1]; // Set exactly on the northern edge of the box
+
+    const boundaryLabelPoint = {
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [leftLng, topLat] },
+      properties: { title: siteName }
+    };
+
+    console.log(`Setting bounds for ${siteName}. isRefresh=${isRefresh}`);
+    // Always remove existing layers and sources first to ensure a clean update
+    if (map.getLayer('site-boundary-label-layer')) map.removeLayer('site-boundary-label-layer');
+    if (map.getLayer('site-boundary-layer')) map.removeLayer('site-boundary-layer');
+    if (map.getSource('site-boundary')) map.removeSource('site-boundary');
+    if (map.getSource('site-boundary-label')) map.removeSource('site-boundary-label');
+
+    console.log('Adding fresh site-boundary source and layer');
+    map.addSource('site-boundary', { type: 'geojson', data: boundary });
+    map.addLayer({
+      id: 'site-boundary-layer',
+      type: 'fill',
+      source: 'site-boundary',
+      paint: { 'fill-color': '#1D3557', 'fill-opacity': 0.25 }
+    });
+
+    console.log('Adding fresh site-boundary-label source and layer with title:', siteName);
+    map.addSource('site-boundary-label', { type: 'geojson', data: boundaryLabelPoint });
+    map.addLayer({
+      id: 'site-boundary-label-layer',
+      type: 'symbol',
+      source: 'site-boundary-label',
+      layout: {
+        'text-field': ['get', 'title'],
+        'text-size': 26,
+        'text-anchor': 'bottom-left',
+        'text-offset': [0.2, 0] // Slightly pushing right so it isn't literally touching the left edge, and exactly 0 on the Y axis
+      },
+      paint: {
+        'text-color': '#1D3557',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 3
+      }
+    });
 
     if (siteName !== 'Guwahati') {
       removeSensors();
