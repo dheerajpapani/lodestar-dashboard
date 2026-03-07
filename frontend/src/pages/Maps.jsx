@@ -391,16 +391,16 @@ export default function Maps() {
     setLulcData(null);
     setLulcCollapsed(false);
     try {
-      // Bhuvan's curl_lulc250k.php reads $_GET — send params as query string
-      // Year format is fiscal year e.g. 2018_19 (latest available)
+      // Build the direct Bhuvan URL, then route through corsproxy.io
+      // so it works in both dev AND on GitHub Pages (no backend needed)
       const params = new URLSearchParams({
         polygon: wkt,
         year: '2018_19',
         option: 'json',
         token: BHUVAN_KEY,
       });
-
-      const res = await fetch(`/bhuvan-api/lulc250k/curl_lulc250k.php?${params.toString()}`, {
+      const bhuvanUrl = `https://bhuvan-app1.nrsc.gov.in/api/lulc250k/curl_lulc250k.php?${params.toString()}`;
+      const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(bhuvanUrl)}`, {
         method: 'GET',
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
