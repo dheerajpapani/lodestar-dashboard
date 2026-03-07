@@ -92,6 +92,8 @@ const siteData = {
 // ==== ENV & Tiles ====
 const MT_KEY = import.meta.env.VITE_MAPTILER_KEY ?? '';
 const OWM_KEY = import.meta.env.VITE_OPENWEATHERMAP_KEY ?? '';
+const hasOWM = !!OWM_KEY;
+const PUBLIC_FALLBACK = 'https://demotiles.maplibre.org/style.json';
 // India sites eligible for LULC stats from Bhuvan
 const INDIA_SITES = ['Bengaluru', 'Guwahati', 'Anantapur'];
 
