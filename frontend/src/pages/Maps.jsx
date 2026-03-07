@@ -405,13 +405,12 @@ export default function Maps() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const text = await res.text();
-      // Bhuvan wraps the JSON in an HTML prefix — extract the JSON array starting at '['
-      const jsonStart = text.indexOf('[');
-      const jsonEnd = text.lastIndexOf(']');
-      if (jsonStart === -1 || jsonEnd === -1) throw new Error(`No JSON found — got: ${text.slice(0, 80)}`);
-      const jsonText = text.slice(jsonStart, jsonEnd + 1);
+      // Strip all HTML tags (Bhuvan wraps JSON in <!DOCTYPE HTML>...) then find the JSON array
+      const stripped = text.replace(/<[^>]*>/g, '').trim();
+      const jsonStart = stripped.indexOf('[');
+      if (jsonStart === -1) throw new Error(`No JSON array — got: ${stripped.slice(0, 80)}`);
       let parsed;
-      try { parsed = JSON.parse(jsonText); } catch { throw new Error(`JSON parse failed: ${jsonText.slice(0, 80)}`); }
+      try { parsed = JSON.parse(stripped.slice(jsonStart)); } catch { throw new Error(`JSON parse failed: ${stripped.slice(jsonStart, jsonStart + 80)}`); }
       // API returns: [{"Year":"2018_19", "LULC Description":"Built-up", "Area in Sq. Km":"1.90"}, ...]
       const rows = Array.isArray(parsed) ? parsed : (parsed.data ?? parsed.result ?? null);
       if (!rows || rows.length === 0) throw new Error('No data rows');
