@@ -1,3 +1,14 @@
 node_modules/
 dist/
 .env
+backend/
+test_*.js
+bhuvan_raw*
+bhuvan_parsed*
+guwahati.html
+src/data/lulcData.json
+frontend/bhuvan_raw*
+frontend/bhuvan_parsed*
+frontend/test_*.js
+frontend/prefetch_lulc.js
+frontend/guwahati.html

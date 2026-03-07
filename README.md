@@ -1,141 +1,255 @@
 <div align="center">
-  <br />
-  <h1>🌐 LODESTAR Frontend Dashboard</h1>
-  <p>
-    A dynamic, responsive frontend prototype for the <b>LODESTAR (Low-cost Disaster & Emergency Services for Communities At Risk)</b> project.
+  <img src="frontend/public/icons/icon-192x192.png" alt="LODESTAR Logo" width="100" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="frontend/public/IITP.png" alt="IIT Tirupati Logo" width="100" />
+  
+  # 🌐 LODESTAR Frontend Dashboard
+  
+  **Low-cost Disaster & Emergency Services for Communities At Risk**
+
+  <p align="center">
+    <a href="https://dheerajpapani.github.io/lodestar-dashboard/"><strong>Explore the Live Dashboard »</strong></a>
   </p>
-  <a href="https://dheerajpapani.github.io/lodestar-dashboard/"><strong>View Live Demo »</strong></a>
-  <br />
-  <br />
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+    <img src="https://img.shields.io/badge/Mapbox-000000?style=for-the-badge&logo=mapbox&logoColor=ffffff" alt="Mapbox (MapLibre)" />
+    <img src="https://img.shields.io/badge/Deployment-GitHub_Pages-181717?style=for-the-badge&logo=github&logoColor=white" alt="Deployment" />
+  </p>
 </div>
 
+---
+
+## 📖 About The Project
+
+LODESTAR is a collaborative India-Netherlands research initiative designed to co-create a **low-cost, multi-hazard early warning system (MH-EWS)** for floods and droughts. This repository contains the source code for the project's primary visual interface: a modern, highly responsive frontend dashboard.
+
+The dashboard's core mission is to bridge the critical **"know-do gap"** in disaster management. It achieves this by transforming complex scientific meteorological data, real-time alerts, and hydrological models into a clear, actionable format. 
+
+> 💡 **Philosophy of Co-creation**: The entire application integrates advanced technology (AI/ML workflows, remote sensing) with a bottom-up, community-focused approach through "Living Labs" and "Citizen Science".
+
+---
+
+## ✨ Core Features
+
+| Feature | Description |
+| --- | --- |
+| 🗺️ **Interactive Geo-Dashboard** | A central 3D map engine built with **MapLibre GL** for visualizing international study sites, complete with interactive weather radar overlays. |
+| 📊 **LULC Analytics Engine** | Instantly visualize 2018-19 Land Use / Land Cover (LULC 250K) statistics for critical Indian sites, providing immediate ecological context. |
+| 🔔 **Dynamic Alert Center** | An interactive interface for viewing real-time, multi-hazard early warnings. Each alert features clear severity indicators and actionable community recommendations. |
+| 🌗 **Persistent Theming** | A polished light/dark mode ecosystem featuring a custom celestial animation that remembers user hardware preferences automatically. |
+| 📱 **Liquid Layout Design** | True responsiveness. The dashboard dynamically reflows and scales to provide a flawless experience on 4k monitors, tablets, and mobile devices alike. |
+| ⚡ **Lightning Fast** | Powered by Vite, React, and offline-first JSON architecture. No loading spinners, no API limits — just instant data access. |
+
+---
+
+## 🏗️ System Architecture
+
+The LODESTAR dashboard follows a client-side architecture that fetches both live mapping data and pre-processed analytical datasets.
+
+```mermaid
+graph TD
+    UI[Frontend Dashboard<br>React + Vite] --> Map[MapLibre GL Base Map]
+    UI --> Data[Data Visualization<br>Recharts]
+    
+    Map -.->|Vector Tiles| MT[MapTiler API]
+    Map -.->|Radar Overlays| OWM[OpenWeatherMap]
+    
+    Data --> Local[Static LULC Data<br>2018-19 Analytics]
+    Data --> Alerts[Dynamic Alert Models<br>Mock/Real-time APIs]
+
+    classDef core fill:#20232A,stroke:#61DAFB,stroke-width:2px,color:#fff;
+    classDef api fill:#B73BFE,stroke:#333,stroke-width:2px,color:#fff;
+    classDef data fill:#000000,stroke:#fff,stroke-width:1px,color:#fff;
+    
+    class UI core;
+    class MT,OWM api;
+    class Local,Alerts data;
+```
+
+---
+
+## 🚦 Core User Journey
+
+```mermaid
+sequenceDiagram
+    actor Stakeholder as Community / Admin
+    participant App as LODESTAR App
+    participant Map as Geo-Dashboard
+    participant Alerts as Alert Center
+
+    Stakeholder->>App: Accesses Platform
+    App-->>Stakeholder: Presents Project Overview & Mission
+    Stakeholder->>Map: Navigates to Map View
+    Map->>Map: Loads Topographic Data & Weather Radar
+    Stakeholder->>Map: Selects Study Area (e.g., Guwahati)
+    Map-->>Stakeholder: Displays Site Bounds & LULC Analytics
+    Stakeholder->>Alerts: Checks Recent Warnings
+    Alerts-->>Stakeholder: Shows Priority Alerts & Actionable Steps
+```
+
+---
+
+## 🛠️ Technology Stack
+
+This dashboard is engineered with a curated selection of modern, high-performance web technologies:
+
+- **Core:** [React v18](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+- **Routing:** [React Router v7](https://reactrouter.com/) (Client-Side Traversal)
+- **Geospatial:** [MapLibre GL JS](https://maplibre.org/)
+- **Visualization:** [Recharts](https://recharts.org/) (Data & Graphs)
+- **Animation:** [Framer Motion](https://www.framer.com/motion/) (Physics-based UI feedback)
+- **Styling:** Modular CSS Variables + Tailwind Utility alignment
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to get a local development copy up and running seamlessly.
+
+### Prerequisites
+* Node.js (v18 or later recommended)
+* NPM or Yarn
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/dheerajpapani/lodestar-dashboard.git
+   ```
+
+2. **Navigate into the frontend workspace:**
+   ```bash
+   cd lodestar-dashboard/frontend
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+4. **Environment Variables:**
+   Create a `.env` file in the `frontend` directory with your required provider keys:
+   ```env
+   VITE_OPENWEATHERMAP_KEY=your_openweathermap_api_key
+   VITE_MAPTILER_KEY=your_maptiler_api_key
+   ```
+   *(Note: Core dashboard features, including LULC statistics, are designed to work entirely offline and do not require external API keys to function during evaluation.)*
+
+5. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   *Dashboard will be locally available at `http://localhost:5173`*
+
+---
+
+## 🚢 Deployment Architecture
+
+This project is configured for zero-downtime static deployment to **GitHub Pages**. 
+
+To deploy a new version to production:
+```bash
+# From the /frontend directory:
+npm run deploy
+```
+*This command safely executes `vite build` to optimize assets, chunk the application, and seamlessly pushes the `dist` artifacts to the `gh-pages` branch.*
+
+---
+
+## 🔒 Internal Portal
+
+The web application includes an **Internal Portal** navigation route designed for administrative access to LODESTAR's backend data modeling services.
+
 <details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#core-features">Core Features</a></li>
-    <li><a href="#technology-stack">Technology Stack</a></li>
-    <li><a href="#dashboard-preview">Dashboard Preview</a></li>
-    <li><a href="#getting-started">Getting Started</a></li>
-    <li><a href="#deployment">Deployment</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-    <li><a href="#contact--credits">Contact & Credits</a></li>
-  </ol>
+<summary><strong>View Access Requirements</strong></summary>
+
+> ⚠️ **Access Restriction:** The internal portal is restricted to authorized researchers and requires an active, authenticated **IITG VPN** connection. Attempting to traverse to the portal without the VPN will result in a connection timeout. The frontend application strictly acts as a launchpad and does not broker or store internal database credentials.
+
 </details>
 
 ---
 
-## **About The Project**
+## 🗂️ Repository Structure
 
-LODESTAR is a collaborative India-Netherlands research initiative designed to co-create a low-cost, multi-hazard early warning system (MH-EWS) for floods and droughts. This repository contains the source code for the project's primary user interface: a modern, responsive frontend dashboard.
+A quick overview of the directory architecture:
 
-The dashboard's core mission is to serve as a proof-of-concept for bridging the critical "know-do gap" in disaster management. It achieves this by presenting complex scientific data—such as real-time alerts, forecasts, and hydrological models—in a clear, accessible, and actionable format. It is designed to be a central hub for all project stakeholders, from citizens and community leaders to disaster management professionals and policy actors.
-
-The entire application is built on the philosophy of co-creation, integrating advanced technology (AI/ML, remote sensing) with a bottom-up, community-focused approach through "Living Labs" and "Citizen Science".
-
----
-
-## **Core Features**
-
-✨ **Modern & Liquid Layout:** A fully responsive design that dynamically adjusts to all screen sizes, from mobile phones to large desktops, ensuring a seamless user experience.
-
-🗺️ **Interactive Geo-Dashboard:** A central map page built with **MapLibre GL** for visualizing the project's international study sites, complete with interactive weather overlays and a detailed side panel for site-specific data.
-
-🔔 **Dynamic Alert Center:** An interactive and filterable interface for viewing real-time, multi-hazard early warnings. Each alert is presented with clear severity indicators and actionable recommendations.
-
-🔬 **Rich Content Pages:** Detailed, animated pages for every core aspect of the project—from the in-depth "About" page with its editorial-style layout to the comprehensive "Team" showcase.
-
-🎨 **User-Selectable Theming:** A polished, persistent light/dark mode theme toggle, featuring a custom sun-and-moon animation, which remembers the user's preference across sessions.
-
-🚀 **Fast & Performant:** Built with **Vite** and **React**, ensuring a lightning-fast development experience and a highly optimized production build.
-
- MOTION **Elegant Animations:** Subtle and professional animations using **Framer Motion** are integrated throughout the application to enhance the user experience and guide the user's focus.
+```text
+lodestar-dashboard/
+├── backend/                 # Under Development (API & Services)
+├── frontend/                # React Dashboard Application
+│   ├── public/              # Static assets (favicons, logos)
+│   ├── src/                 
+│   │   ├── components/      # Reusable React components (Navbar, AlertCards, etc.)
+│   │   ├── data/            # Static JSON datasets (LULC baseline data)
+│   │   ├── pages/           # Core page views (Home, Maps, About, Alerts)
+│   │   ├── App.jsx          # Main application router
+│   │   └── App.css          # Global CSS variables and styling
+│   ├── index.html           # HTML entry point
+│   ├── vite.config.js       # Vite build configuration
+│   └── package.json         # Dependencies and deployment scripts
+└── README.md
+```
 
 ---
 
+## ❓ Troubleshooting & FAQs
 
-## Internal Admin Portal
+<details>
+<summary><strong>Map tiles are rendering as blank/grey boxes</strong></summary>
 
-The website includes an internal access portal accessible via the "Internal Portal" navigation menu. 
-**Note:** This access point requires an active IITG VPN connection as it leads to an internal-only application. This website serves only as a launchpad and does not handle any credentials or database access directly.
+Ensure your `VITE_MAPTILER_KEY` in the `.env` file is correct, valid, and hasn't exceeded its free tier limits for the month. The application will attempt to fallback to public MapLibre tiles, but certain detailed layers require the MapTiler key.
+</details>
 
-## **Technology Stack**
+<details>
+<summary><strong>Build is failing due to "chunk size" warnings</strong></summary>
 
-This dashboard is built with a curated selection of modern frontend technologies:
+Warnings like `Some chunks are larger than 500 kB` are purely informational from Vite regarding optimization. They **do not** break the build or the deployment. The Github Pages deploy will still succeed.
+</details>
 
-| Technology | Purpose |
-| :--- | :--- |
-| **React** | Core UI Library |
-| **Vite** | Build Tool & Dev Server |
-| **React Router** | Client-Side Routing |
-| **MapLibre GL** | Interactive Mapping |
-| **Recharts** | Data Visualization & Charts |
-| **Framer Motion**| Page & Component Animations |
-| **CSS Variables** | Theming & Styling |
+<details>
+<summary><strong>Cannot access the "Internal Portal"</strong></summary>
 
----
-
-## **Getting Started**
-
-To get a local copy up and running, please follow these steps.
-
-### **Prerequisites**
-
-Ensure you have [Node.js](https://nodejs.org/) (version 16 or later) and `npm` installed on your machine.
-
-### **Installation & Setup**
-
-1.  **Clone the repository:**
-    ```sh
-    git clone [https://github.com/dheerajpapani/lodestar-dashboard.git](https://github.com/dheerajpapani/lodestar-dashboard.git)
-    ```
-2.  **Navigate into the frontend project directory:**
-    ```sh
-    cd lodestar-dashboard/frontend
-    ```
-3.  **Install all necessary NPM packages:**
-    ```sh
-    npm install
-    ```
-4.  **Run the local development server:**
-    ```sh
-    npm run dev
-    ```
-    Your application will now be running and accessible at `http://localhost:5173/` (or the next available port).
+As noted above, the internal portal route strictly requires an active IITG VPN connection. If you are a guest or evaluator, this is expected behavior.
+</details>
 
 ---
 
-## **Deployment**
+## 🤝 Contributing
 
-This project is built for production and can be deployed to any static site hosting service (e.g., Vercel, Netlify, AWS S3, GitHub Pages).
+We welcome feedback, issue reports, and pull requests from partners and researchers.
 
-1.  **Build the Project:** From the `frontend` directory, run the build command.
-    ```sh
-    npm run build
-    ```
-    This will create a production-ready `dist` folder.
-
-2.  **Deploy:** Upload the contents of the `dist` folder to your hosting provider of choice. For GitHub Pages, you can use the built-in deploy script:
-    ```sh
-    npm run deploy
-    ```
+1. **Fork the Project**
+2. **Create a Feature Branch** (`git checkout -b feature/AmazingFeature`)
+3. **Commit your Changes** (`git commit -m 'Add some AmazingFeature'`)
+4. **Push to the Branch** (`git push origin feature/AmazingFeature`)
+5. **Open a Pull Request**
 
 ---
 
-## **Acknowledgments**
+## ❤️ Acknowledgments
 
-This project is a visualization of the LODESTAR initiative, which is proudly funded by:
-* **Department of Science and Technology (DST), Government of India**
-* **Dutch Research Council (NWO), The Netherlands**
+This platform was developed under **IIT Tirupati Work Stream 4 (WS-4)** as part of the visual culmination of the LODESTAR initiative. It is proudly funded and supported by:
+
+* 🇮🇳 **Department of Science and Technology (DST)**, Government of India
+* 🇳🇱 **Dutch Research Council (NWO)**, The Netherlands
 
 ---
 
-## **Contact & Credits**
+## 👤 Architecture & Development
 
-This frontend dashboard was designed and developed by:
+Designed, engineered, and maintained under **IIT Tirupati WS-4** by:
 
-**Dheeraj Papani**
+**Dheeraj Papani** <br>
+*Architect & Lead Developer*
 
-* **Email:** [dheerajpapani@gmail.com](mailto:dheerajpapani@gmail.com)
-* **LinkedIn:** [linkedin.com/in/dheeraj-papani-507693274](https://www.linkedin.com/in/dheeraj-papani-507693274/)
-* **GitHub:** [github.com/dheerajpapani](https://github.com/dheerajpapani/)
+<a href="https://github.com/dheerajpapani">
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Profile"/>
+</a>
+<a href="https://www.linkedin.com/in/dheeraj-papani-507693274/">
+  <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Profile"/>
+</a>
+<a href="mailto:dheerajpapani@gmail.com">
+  <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Contact Email"/>
+</a>

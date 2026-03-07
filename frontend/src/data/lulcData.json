@@ -1,0 +1,156 @@
+{
+  "Bengaluru": [
+    {
+      "class": "Rabi Crop",
+      "area_km2": 5.07
+    },
+    {
+      "class": "Plantation",
+      "area_km2": 155.65
+    },
+    {
+      "class": "Waterbodies max",
+      "area_km2": 43.68
+    },
+    {
+      "class": "Evergreen Forest",
+      "area_km2": 0.61
+    },
+    {
+      "class": "Double/Triple Crop",
+      "area_km2": 41.52
+    },
+    {
+      "class": "Wasteland",
+      "area_km2": 19.7
+    },
+    {
+      "class": "Degraded/Scrub Forest",
+      "area_km2": 8.36
+    },
+    {
+      "class": "Deciduous Forest",
+      "area_km2": 56.66
+    },
+    {
+      "class": "Waterbodies min",
+      "area_km2": 3.42
+    },
+    {
+      "class": "Built-up",
+      "area_km2": 561.2
+    },
+    {
+      "class": "Kharif Crop",
+      "area_km2": 58.72
+    },
+    {
+      "class": "Current Fallow",
+      "area_km2": 31
+    }
+  ],
+  "Guwahati": [
+    {
+      "class": "Rabi Crop",
+      "area_km2": 29.28
+    },
+    {
+      "class": "Plantation",
+      "area_km2": 227.02
+    },
+    {
+      "class": "Waterbodies max",
+      "area_km2": 132.41
+    },
+    {
+      "class": "Evergreen Forest",
+      "area_km2": 162.34
+    },
+    {
+      "class": "Grassland",
+      "area_km2": 5.87
+    },
+    {
+      "class": "Double/Triple Crop",
+      "area_km2": 55.16
+    },
+    {
+      "class": "Wasteland",
+      "area_km2": 23.65
+    },
+    {
+      "class": "Degraded/Scrub Forest",
+      "area_km2": 31.79
+    },
+    {
+      "class": "Deciduous Forest",
+      "area_km2": 206.67
+    },
+    {
+      "class": "Waterbodies min",
+      "area_km2": 63.05
+    },
+    {
+      "class": "Built-up",
+      "area_km2": 132.91
+    },
+    {
+      "class": "Kharif Crop",
+      "area_km2": 94.72
+    },
+    {
+      "class": "Current Fallow",
+      "area_km2": 30.27
+    },
+    {
+      "class": "Shifting Cultivation",
+      "area_km2": 0.17
+    }
+  ],
+  "Anantapur": [
+    {
+      "class": "Rabi Crop",
+      "area_km2": 120.22
+    },
+    {
+      "class": "Plantation",
+      "area_km2": 20.1
+    },
+    {
+      "class": "Waterbodies max",
+      "area_km2": 84.01
+    },
+    {
+      "class": "Double/Triple Crop",
+      "area_km2": 121.58
+    },
+    {
+      "class": "Wasteland",
+      "area_km2": 329.62
+    },
+    {
+      "class": "Degraded/Scrub Forest",
+      "area_km2": 17.58
+    },
+    {
+      "class": "Deciduous Forest",
+      "area_km2": 13.46
+    },
+    {
+      "class": "Waterbodies min",
+      "area_km2": 2.75
+    },
+    {
+      "class": "Built-up",
+      "area_km2": 56.79
+    },
+    {
+      "class": "Kharif Crop",
+      "area_km2": 92.41
+    },
+    {
+      "class": "Current Fallow",
+      "area_km2": 734.12
+    }
+  ]
+}
