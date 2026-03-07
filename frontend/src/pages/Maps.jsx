@@ -92,8 +92,13 @@ const siteData = {
 // ==== ENV & Tiles ====
 const MT_KEY = import.meta.env.VITE_MAPTILER_KEY ?? '';
 const OWM_KEY = import.meta.env.VITE_OPENWEATHERMAP_KEY ?? '';
+const BHUVAN_KEY = import.meta.env.VITE_BHUVAN_LULC_KEY ?? '';
 const hasOWM = !!OWM_KEY;
+const hasBhuvan = !!BHUVAN_KEY;
 const PUBLIC_FALLBACK = 'https://demotiles.maplibre.org/style.json';
+
+// India sites eligible for LULC stats from Bhuvan
+const INDIA_SITES = ['Bengaluru', 'Guwahati', 'Anantapur'];
 
 const baseStyles = {
   Streets: MT_KEY ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${MT_KEY}` : PUBLIC_FALLBACK,
@@ -123,6 +128,9 @@ export default function Maps() {
   const [mapStyle, setMapStyle] = useState(baseStyles.Streets);
   const [activeOverlay, setActiveOverlay] = useState(null);
   const [sensorsOn, setSensorsOn] = useState(false);
+  const [lulcData, setLulcData] = useState(null);
+  const [lulcLoading, setLulcLoading] = useState(false);
+  const [lulcCollapsed, setLulcCollapsed] = useState(false);
 
   // Init Map
   useEffect(() => {
@@ -368,6 +376,54 @@ export default function Maps() {
     }
   };
 
+  // ==== LULC Stats from Bhuvan Portal ====
+  const fetchLulcStats = async (siteName) => {
+    if (!hasBhuvan || !INDIA_SITES.includes(siteName)) {
+      setLulcData(null);
+      return;
+    }
+    const site = studySites[siteName];
+    const [[minLng, minLat], [maxLng, maxLat]] = site.bounds;
+    // WKT polygon from site bounding box
+    const wkt = `POLYGON ((${minLng} ${minLat}, ${maxLng} ${minLat}, ${maxLng} ${maxLat}, ${minLng} ${maxLat}, ${minLng} ${minLat}))`;
+
+    setLulcLoading(true);
+    setLulcData(null);
+    setLulcCollapsed(false);
+    try {
+      // Bhuvan's curl_lulc250k.php reads $_GET — send params as query string
+      // Year format is fiscal year e.g. 2018_19 (latest available)
+      const params = new URLSearchParams({
+        polygon: wkt,
+        year: '2018_19',
+        option: 'json',
+        token: BHUVAN_KEY,
+      });
+
+      const res = await fetch(`/bhuvan-api/lulc250k/curl_lulc250k.php?${params.toString()}`, {
+        method: 'GET',
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      // Bhuvan wraps the JSON in an HTML prefix — extract the JSON array starting at '['
+      const jsonStart = text.indexOf('[');
+      const jsonEnd = text.lastIndexOf(']');
+      if (jsonStart === -1 || jsonEnd === -1) throw new Error(`No JSON found — got: ${text.slice(0, 80)}`);
+      const jsonText = text.slice(jsonStart, jsonEnd + 1);
+      let parsed;
+      try { parsed = JSON.parse(jsonText); } catch { throw new Error(`JSON parse failed: ${jsonText.slice(0, 80)}`); }
+      // API returns: [{"Year":"2018_19", "LULC Description":"Built-up", "Area in Sq. Km":"1.90"}, ...]
+      const rows = Array.isArray(parsed) ? parsed : (parsed.data ?? parsed.result ?? null);
+      if (!rows || rows.length === 0) throw new Error('No data rows');
+      setLulcData({ site: siteName, year: '2018-19', rows });
+    } catch (err) {
+      console.warn('[LULC] Bhuvan API unavailable or returned no data:', err.message);
+      setLulcData(null);
+    } finally {
+      setLulcLoading(false);
+    }
+  };
+
   // ==== Site selection (with translucent bounding box) ====
   const handleSiteSelect = async (siteName, isRefresh = false) => {
     const map = mapRef.current;
@@ -376,6 +432,8 @@ export default function Maps() {
     if (!siteName) {
       setActiveSite(null);
       setPanelOpen(false);
+      setLulcData(null);
+      setLulcCollapsed(false);
       if (markerRef.current) markerRef.current.remove();
       removeSensors();
       if (map.getLayer('site-boundary-label-layer')) map.removeLayer('site-boundary-label-layer');
@@ -469,6 +527,9 @@ export default function Maps() {
     } else if (sensorsOn) {
       await loadSensors();
     }
+
+    // Fetch LULC stats for India sites (skip on style refresh)
+    if (!isRefresh) fetchLulcStats(siteName);
   };
 
   const currentSiteData = activeSite ? siteData[activeSite] : null;
@@ -488,6 +549,59 @@ export default function Maps() {
       <div ref={mapContainer} className="map-container-full" />
 
       <div className="map-controls-bottom-right">
+
+        {/* === LULC Stats Section — only shown when data or loading === */}
+        {hasBhuvan && activeSite && INDIA_SITES.includes(activeSite) && (lulcLoading || lulcData) && (
+          <>
+            <h4>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style={{ marginRight: 5, verticalAlign: 'middle' }}><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h10v2H3zm0 4h10v2H3zm12 0h6v6h-6z" /></svg>
+              LULC Statistics
+            </h4>
+            <div className="control-group">
+              {lulcLoading && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, opacity: 0.75, padding: '4px 0' }}>
+                  <span className="lulc-spinner" />Loading LULC data…
+                </div>
+              )}
+              {!lulcLoading && lulcData && (
+                <div className="lulc-inline">
+                  {/* Clickable header row — toggles table open/closed */}
+                  <div
+                    className="lulc-inline-meta"
+                    onClick={() => setLulcCollapsed(c => !c)}
+                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                    title={lulcCollapsed ? 'Expand LULC data' : 'Collapse LULC data'}
+                  >
+                    <span className="lulc-badge">LULC 250K</span>
+                    <span style={{ fontSize: 11, opacity: 0.6, marginLeft: 4 }}>2018-19 &bull; Bhuvan ISRO</span>
+                    <span style={{ marginLeft: 'auto', fontSize: 13, opacity: 0.55, fontWeight: 600, letterSpacing: 0 }}>
+                      {lulcCollapsed ? '^' : 'v'}
+                    </span>
+                  </div>
+                  {!lulcCollapsed && (
+                    <table className="lulc-table">
+                      <thead>
+                        <tr><th>Land Cover Class</th><th>Area (km²)</th></tr>
+                      </thead>
+                      <tbody>
+                        {lulcData.rows.slice(0, 8).map((row, i) => {
+                          const cls = row['LULC Description'] ?? row.lulc_class ?? row.class ?? row.name ?? `Class ${i + 1}`;
+                          const area = row['Area in Sq. Km'] ?? row.area ?? row.area_km2 ?? '—';
+                          return (
+                            <tr key={i}>
+                              <td>{typeof cls === 'string' ? cls.trim() : cls}</td>
+                              <td>{typeof area === 'number' ? area.toFixed(2) : area}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
         <h4><FaLayerGroup /> Map Layers</h4>
         <div className="control-group">
           {Object.keys(baseStyles).map((n) => (
