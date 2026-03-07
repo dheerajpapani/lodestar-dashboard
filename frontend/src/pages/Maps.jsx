@@ -376,12 +376,23 @@ export default function Maps() {
     }
   };
 
+  // Session-level cache to prevent duplicate Bhuvan API calls for the same site
+  const lulcCache = {};
+
   // ==== LULC Stats from Bhuvan Portal ====
   const fetchLulcStats = async (siteName) => {
     if (!hasBhuvan || !INDIA_SITES.includes(siteName)) {
       setLulcData(null);
       return;
     }
+
+    // Return from session cache if already fetched
+    if (lulcCache[siteName]) {
+      setLulcData(lulcCache[siteName]);
+      setLulcCollapsed(false);
+      return;
+    }
+
     const site = studySites[siteName];
     const [[minLng, minLat], [maxLng, maxLat]] = site.bounds;
     // WKT polygon from site bounding box
@@ -412,7 +423,10 @@ export default function Maps() {
       // API returns: [{"Year":"2018_19", "LULC Description":"Built-up", "Area in Sq. Km":"1.90"}, ...]
       const rows = Array.isArray(parsed) ? parsed : (parsed.data ?? parsed.result ?? null);
       if (!rows || rows.length === 0) throw new Error('No data rows');
-      setLulcData({ site: siteName, year: '2018-19', rows });
+
+      const newData = { site: siteName, year: '2018-19', rows };
+      lulcCache[siteName] = newData; // Save to session cache
+      setLulcData(newData);
     } catch (err) {
       console.warn('[LULC] Bhuvan API unavailable or returned no data:', err.message);
       setLulcData(null);
