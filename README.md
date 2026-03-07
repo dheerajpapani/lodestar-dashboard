@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/public/icons/icon-192x192.png" alt="LODESTAR Logo" width="100" />
+  <img src="frontend/public/favicon.svg" alt="LODESTAR Logo" width="100" />
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="frontend/public/IITP.png" alt="IIT Tirupati Logo" width="100" />
   
