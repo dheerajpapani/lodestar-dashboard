@@ -92,13 +92,16 @@ const siteData = {
 // ==== ENV & Tiles ====
 const MT_KEY = import.meta.env.VITE_MAPTILER_KEY ?? '';
 const OWM_KEY = import.meta.env.VITE_OPENWEATHERMAP_KEY ?? '';
-const BHUVAN_KEY = import.meta.env.VITE_BHUVAN_LULC_KEY ?? '';
+const BHUVAN_KEY = import.meta.env.VITE_BHUVAN_LULC_KEY; // Removed ?? ''
 const hasOWM = !!OWM_KEY;
-const hasBhuvan = !!BHUVAN_KEY;
+const hasBhuvan = Boolean(BHUVAN_KEY && BHUVAN_KEY.length > 10); // Updated logic
 const PUBLIC_FALLBACK = 'https://demotiles.maplibre.org/style.json';
 
 // India sites eligible for LULC stats from Bhuvan
 const INDIA_SITES = ['Bengaluru', 'Guwahati', 'Anantapur'];
+
+// Session-level cache to prevent duplicate Bhuvan API calls across renders/site switches
+const lulcCache = {};
 
 const baseStyles = {
   Streets: MT_KEY ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${MT_KEY}` : PUBLIC_FALLBACK,
@@ -377,8 +380,7 @@ export default function Maps() {
   };
 
   // Session-level cache to prevent duplicate Bhuvan API calls for the same site
-  const lulcCache = {};
-
+  // ... (keep let lulcCache = {} outside component, remove it from here)
   // ==== LULC Stats from Bhuvan Portal ====
   const fetchLulcStats = async (siteName) => {
     if (!hasBhuvan || !INDIA_SITES.includes(siteName)) {
