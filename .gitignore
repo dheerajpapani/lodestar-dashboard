@@ -1,7 +1,8 @@
 node_modules/
 dist/
 .env
-backend/
+backend/*
+!backend/.gitkeep
 test_*.js
 bhuvan_raw*
 bhuvan_parsed*
