@@ -2,7 +2,7 @@ FROM node:18-bullseye-slim
 
 # Install OpenFortiVPN, psmisc, and dos2unix
 RUN apt-get update && \
-    apt-get install -y openfortivpn psmisc bash dos2unix && \
+    apt-get install -y openfortivpn psmisc bash dos2unix iproute2 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
