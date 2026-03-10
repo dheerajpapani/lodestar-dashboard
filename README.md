@@ -41,6 +41,8 @@ The dashboard's core mission is to bridge the critical **"know-do gap"** in disa
 | 🌗 **Persistent Theming** | A polished light/dark mode ecosystem featuring a custom celestial animation that remembers user hardware preferences automatically. |
 | 📱 **Liquid Layout Design** | True responsiveness. The dashboard dynamically reflows and scales to provide a flawless experience on 4k monitors, tablets, and mobile devices alike. |
 | ⚡ **Lightning Fast** | Powered by Vite, React, and offline-first JSON architecture. No loading spinners, no API limits — just instant data access. |
+| 🌉 **SFTP Bridge Service** | Custom Express.js backend acting as a secure, real-time proxy to internal SFTPGo servers without exposing credentials. |
+| 📂 **Internal File Explorer** | A native, React-driven portal with automatic sorting, Grid/List view toggles, and live connection health monitoring. |
 
 ---
 
@@ -165,7 +167,12 @@ The web application includes an **Internal Portal** navigation route designed fo
 <details>
 <summary><strong>View Access Requirements</strong></summary>
 
-> ⚠️ **Access Restriction:** The internal portal is restricted to authorized researchers and requires an active, authenticated **IITG VPN** connection. Attempting to traverse to the portal without the VPN will result in a connection timeout. The frontend application strictly acts as a launchpad and does not broker or store internal database credentials.
+> ⚠️ **Access Restriction:** The internal portal is restricted to authorized researchers and requires an active, authenticated **VPN** connection. 
+>
+> **Major Implementations:**
+> - **Secure Proxy**: An Express backend brokers all SFTP requests to protect internal IPs.
+> - **UX Polish**: Includes a "Ghost Popup" for real-time connection status (Yellow/Green/Red) and VPN login assistance.
+> - **Dynamic Sorting**: Intelligent file explorer logic that prioritizes directories and alphabetical organization.
 
 </details>
 
