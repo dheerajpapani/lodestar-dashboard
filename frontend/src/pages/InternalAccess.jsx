@@ -44,21 +44,28 @@ const InternalAccess = () => {
         let isMounted = true;
         const checkConnection = async (isRetry = false) => {
             try {
+                // When the server is OFF, ngrok returns an error page that lacks CORS headers.
+                // This results in a "CORS error" in the console, which is actually a valid signal
+                // that the server is sleeping.
                 const response = await fetch(HEALTH_CHECK_URL, {
                     headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
+
                 if (response.ok) {
                     if (isMounted) {
                         setConnectionStatus('connected');
                         setShowStatus(true);
-                        // Hide successful connection message after 3 seconds
                         setTimeout(() => { if (isMounted) setShowStatus(false); }, 3000);
                     }
                 } else {
                     if (isMounted) setConnectionStatus('failed');
                 }
             } catch (err) {
-                if (isMounted) setConnectionStatus('failed');
+                // If the fetch fails (likely CORS error because server is down), set to failed
+                if (isMounted) {
+                    setConnectionStatus('failed');
+                    // We don't console.error here to keep the logs clean from expected downtime errors
+                }
             }
         };
 

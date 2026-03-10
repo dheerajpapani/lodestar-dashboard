@@ -15,6 +15,8 @@ export default ({ mode }) => {
       'import.meta.env.VITE_MAPTILER_KEY': JSON.stringify(env.VITE_MAPTILER_KEY || ''),
       'import.meta.env.VITE_OPENWEATHERMAP_KEY': JSON.stringify(env.VITE_OPENWEATHERMAP_KEY || ''),
       'import.meta.env.VITE_BHUVAN_LULC_KEY': JSON.stringify(env.VITE_BHUVAN_LULC_KEY || ''),
+      'import.meta.env.VITE_LODESTAR_BACKEND_URL': JSON.stringify(env.VITE_LODESTAR_BACKEND_URL || ''),
+      'import.meta.env.VITE_WAKE_LAMBDA_URL': JSON.stringify(env.VITE_WAKE_LAMBDA_URL || ''),
     },
     server: {
       proxy: {

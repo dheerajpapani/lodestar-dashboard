@@ -41,33 +41,28 @@ The dashboard's core mission is to bridge the critical **"know-do gap"** in disa
 | 🌗 **Persistent Theming** | A polished light/dark mode ecosystem featuring a custom celestial animation that remembers user hardware preferences automatically. |
 | 📱 **Liquid Layout Design** | True responsiveness. The dashboard dynamically reflows and scales to provide a flawless experience on 4k monitors, tablets, and mobile devices alike. |
 | ⚡ **Lightning Fast** | Powered by Vite, React, and offline-first JSON architecture. No loading spinners, no API limits — just instant data access. |
-| 🌉 **SFTP Bridge Service** | Custom Express.js backend acting as a secure, real-time proxy to internal SFTPGo servers without exposing credentials. |
-| 📂 **Internal File Explorer** | A native, React-driven portal with automatic sorting, Grid/List view toggles, and live connection health monitoring. |
+| 🌉 **AWS Cloud Bridge** | High-performance Express.js proxy hosted on **AWS EC2 (t3.micro)** with automated VPN tunneling and secure Ngrok exposure. |
+| 💤 **Cost-Optimized Auto-Start** | One-click "Wake Server" automation via **AWS Lambda** and a 60-minute idle auto-shutdown logic for maximum cost efficiency. |
 
 ---
 
 ## 🏗️ System Architecture
 
-The LODESTAR dashboard follows a client-side architecture that fetches both live mapping data and pre-processed analytical datasets.
+The LODESTAR dashboard follows a hybrid-cloud architecture, utilizing **AWS EC2** for secure backend bridging and **AWS Lambda** for on-demand server orchestration, ensuring cost-efficient access to live scientific data.
 
 ```mermaid
 graph TD
     UI[Frontend Dashboard<br>React + Vite] --> Map[MapLibre GL Base Map]
     UI --> Data[Data Visualization<br>Recharts]
+    UI --> AWS[AWS Lambda<br>Wake-on-Demand]
     
+    AWS -.-> EC2[AWS EC2 Backend<br>SFTP Bridge]
+    EC2 --> SFTP[(Internal SFTP Server<br>via IITG VPN)]
+
     Map -.->|Vector Tiles| MT[MapTiler API]
     Map -.->|Radar Overlays| OWM[OpenWeatherMap]
     
     Data --> Local[Static LULC Data<br>2018-19 Analytics]
-    Data --> Alerts[Dynamic Alert Models<br>Mock/Real-time APIs]
-
-    classDef core fill:#20232A,stroke:#61DAFB,stroke-width:2px,color:#fff;
-    classDef api fill:#B73BFE,stroke:#333,stroke-width:2px,color:#fff;
-    classDef data fill:#000000,stroke:#fff,stroke-width:1px,color:#fff;
-    
-    class UI core;
-    class MT,OWM api;
-    class Local,Alerts data;
 ```
 
 ---
@@ -136,8 +131,10 @@ Follow these instructions to get a local development copy up and running seamles
    ```env
    VITE_OPENWEATHERMAP_KEY=your_openweathermap_api_key
    VITE_MAPTILER_KEY=your_maptiler_api_key
+   VITE_LODESTAR_BACKEND_URL=your_aws_ngrok_url
+   VITE_WAKE_LAMBDA_URL=your_aws_lambda_uri
    ```
-   *(Note: Core dashboard features, including LULC statistics, are designed to work entirely offline and do not require external API keys to function during evaluation.)*
+   *(Note: The `VITE_LODESTAR_BACKEND_URL` and `VITE_WAKE_LAMBDA_URL` are required for administrative access to the Internal Portal and cloud server management.)*
 
 5. **Start the development server:**
    ```bash
@@ -158,6 +155,13 @@ npm run deploy
 ```
 *This command safely executes `vite build` to optimize assets, chunk the application, and seamlessly pushes the `dist` artifacts to the `gh-pages` branch.*
 
+## For Researchers
+A strictly organized environment to ensure focus remains on the data, not the dev-ops.
+
+1.  **Deployment Hierarchy**: Automated builds push the optimized `dist` bundle to the `gh-pages` branch via `npm run deploy`.
+2.  **Environment Security**: All sensitive keys (MapTiler, OpenWeather, AWS URI) are managed through Vite's secret injection, preventing accidental exposure.
+3.  **Bridge Maintenance**: The backend folder contains a **Dockerfile** and **start.sh** for instant deployment to any Ubuntu cloud instance.
+
 ---
 
 ## 🔒 Internal Portal
@@ -165,14 +169,15 @@ npm run deploy
 The web application includes an **Internal Portal** navigation route designed for administrative access to LODESTAR's backend data modeling services.
 
 <details>
-<summary><strong>View Access Requirements</strong></summary>
+<summary><strong>View Access Requirements & Cloud Architecture</strong></summary>
 
-> ⚠️ **Access Restriction:** The internal portal is restricted to authorized researchers and requires an active, authenticated **VPN** connection. 
+> ⚠️ **Access Restriction:** The internal portal is restricted to authorized researchers and requires an active, authenticated **VPN** connection brokered via our AWS gateway. 
 >
-> **Major Implementations:**
-> - **Secure Proxy**: An Express backend brokers all SFTP requests to protect internal IPs.
-> - **UX Polish**: Includes a "Ghost Popup" for real-time connection status (Yellow/Green/Red) and VPN login assistance.
-> - **Dynamic Sorting**: Intelligent file explorer logic that prioritizes directories and alphabetical organization.
+> **Cloud Infrastructure:**
+> - **On-Demand Backend**: Hosted on an AWS EC2 `t3.micro` instance running Ubuntu 24.04.
+> - **Cost Optimization**: The instance automatically shuts down after 60 minutes of inactivity.
+> - **One-Click Wake**: A dedicated AWS Lambda trigger allows users to wake the server directly from the dashboard UI.
+> - **Secure Tunneling**: Automated Ngrok persistence ensures the bridge is ready immediately upon boot.
 
 </details>
 
@@ -184,9 +189,11 @@ A quick overview of the directory architecture:
 
 ```text
 lodestar-dashboard/
-├── backend/                 # (API & Services)
-│   ├── server.js            # Node.js SFTP Bridge Proxy
-│   └── package.json         # Backend dependencies & start scripts
+├── backend/                 # (AWS-Optimized Bridge)
+│   ├── server.js            # Node.js SFTP Proxy Service
+│   ├── Dockerfile           # Backend containerization blueprint
+│   ├── start.sh             # Automated VPN & Service boot script
+│   └── package.json         # Bridge dependencies
 ├── frontend/                # React Dashboard Application
 │   ├── public/              # Static assets (favicons, logos)
 │   ├── src/                 
@@ -196,8 +203,8 @@ lodestar-dashboard/
 │   │   ├── App.jsx          # Main application router
 │   │   └── App.css          # Global CSS variables and styling
 │   ├── index.html           # HTML entry point
-│   ├── vite.config.js       # Vite build configuration
-│   └── package.json         # Dependencies and deployment scripts
+│   ├── vite.config.js       # Vite build configuration (Safe Secrets)
+│   └── package.json         # Deployment & build scripts
 └── README.md
 ```
 
