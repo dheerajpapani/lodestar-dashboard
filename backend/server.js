@@ -84,13 +84,19 @@ app.get('/api/files', async (req, res) => {
         });
     } catch (err) {
         console.error('SFTP List Error:', err);
-        if (err.level === 'client-authentication') {
-            res.status(401).json({ error: 'VPN connected but credentials wrong' });
-        } else if (
+        // Explicitly check for authentication failures
+        if (err.level === 'client-authentication' || (err.message && err.message.includes('Authentication failure'))) {
+            return res.status(401).json({
+                error: 'SFTP Authentication Failed',
+                details: 'The username or password for the Consortium WebUI/SFTP server is incorrect.'
+            });
+        }
+
+        if (
             (err.code && ['ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND', 'ENETUNREACH', 'EHOSTUNREACH'].includes(err.code)) ||
             (err.message && /timeout|timed out|time out|handshake|unreachable/i.test(err.message))
         ) {
-            res.status(503).json({ error: 'VPN not connected' });
+            res.status(503).json({ error: 'VPN or Server unreachable' });
         } else {
             res.status(500).json({ error: 'Failed to connect/list files from SFTP server', details: err.message });
         }
@@ -131,13 +137,16 @@ app.get('/api/files/download', async (req, res) => {
     } catch (err) {
         console.error('SFTP Download Error:', err);
         if (!res.headersSent) {
-            if (err.level === 'client-authentication') {
-                res.status(401).json({ error: 'VPN connected but credentials wrong' });
+            if (err.level === 'client-authentication' || (err.message && err.message.includes('Authentication failure'))) {
+                res.status(401).json({
+                    error: 'SFTP Authentication Failed',
+                    details: 'The username or password for the Consortium WebUI/SFTP server is incorrect.'
+                });
             } else if (
                 (err.code && ['ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND', 'ENETUNREACH', 'EHOSTUNREACH'].includes(err.code)) ||
                 (err.message && /timeout|timed out|time out|handshake|unreachable/i.test(err.message))
             ) {
-                res.status(503).json({ error: 'VPN not connected' });
+                res.status(503).json({ error: 'VPN or Server unreachable' });
             } else {
                 res.status(500).json({ error: 'Failed to download file from SFTP server', details: err.message });
             }
