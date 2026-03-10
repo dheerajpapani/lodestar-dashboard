@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 
 const InternalAccess = () => {
@@ -9,10 +9,34 @@ const InternalAccess = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+    const [loginAttempts, setLoginAttempts] = useState(0);
 
-    // Dynamic backend URL (assumes running locally alongside proxy for now)
-    // Dynamic backend URL - updated during deployment
-    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'http://localhost:3000/api/files';
+    // Connection Status State (Ghost Popup)
+    const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'failed'
+    const [showStatus, setShowStatus] = useState(true);
+
+    // Final Production URL
+    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://lodestar-dashboard.onrender.com/api/files';
+    const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
+
+    // Connection Health Check on Mount
+    useEffect(() => {
+        const checkConnection = async () => {
+            try {
+                const response = await fetch(HEALTH_CHECK_URL);
+                if (response.ok) {
+                    setConnectionStatus('connected');
+                    // Hide successful connection message after 3 seconds
+                    setTimeout(() => setShowStatus(false), 3000);
+                } else {
+                    setConnectionStatus('failed');
+                }
+            } catch (err) {
+                setConnectionStatus('failed');
+            }
+        };
+        checkConnection();
+    }, [HEALTH_CHECK_URL]);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -21,6 +45,7 @@ const InternalAccess = () => {
 
     // Helper to sort files: Directories first, then alphabetical
     const sortFiles = (fileList) => {
+        if (!fileList || !Array.isArray(fileList)) return [];
         return [...fileList].sort((a, b) => {
             if (a.type === 'd' && b.type !== 'd') return -1;
             if (a.type !== 'd' && b.type === 'd') return 1;
@@ -46,6 +71,7 @@ const InternalAccess = () => {
             const data = await response.json().catch(() => null);
 
             if (!response.ok) {
+                setLoginAttempts(prev => prev + 1);
                 let errMsg = (data && data.error) ? data.error : 'Invalid credentials or unable to connect to SFTP server.';
                 if (data && data.details) errMsg += ` (${data.details})`;
                 throw new Error(errMsg);
@@ -53,6 +79,7 @@ const InternalAccess = () => {
 
             setFiles(sortFiles(data));
             setIsAuthenticated(true);
+            setLoginAttempts(0);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -95,10 +122,52 @@ const InternalAccess = () => {
         setIsAuthenticated(false);
         setCredentials({ username: '', password: '' });
         setFiles([]);
+        setLoginAttempts(0);
     };
 
     return (
-        <div className="page-section" style={{ minHeight: 'calc(100vh - 80px)', padding: '2rem' }}>
+        <div className="page-section" style={{ minHeight: 'calc(100vh - 80px)', padding: '2rem', position: 'relative' }}>
+
+            {/* Ghost Popup - Connection Status */}
+            {showStatus && (
+                <div style={{
+                    position: 'fixed',
+                    top: '90px',
+                    right: '20px',
+                    padding: '0.75rem 1.25rem',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    zIndex: 1000,
+                    transition: 'all 0.3s ease',
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    background: connectionStatus === 'connecting' ? '#facc15' :
+                        connectionStatus === 'connected' ? '#22c55e' : '#ef4444',
+                    color: connectionStatus === 'connecting' ? '#854d0e' : 'white'
+                }}>
+                    <div style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: 'currentColor',
+                        animation: connectionStatus === 'connecting' ? 'pulse 1.5s infinite' : 'none'
+                    }}></div>
+                    {connectionStatus === 'connecting' ? 'Connecting to backend...' :
+                        connectionStatus === 'connected' ? 'Backend Connected' : 'Backend not connected'}
+                </div>
+            )}
+
+            <style>{`
+                @keyframes pulse {
+                    0% { opacity: 0.5; transform: scale(0.9); }
+                    50% { opacity: 1; transform: scale(1.1); }
+                    100% { opacity: 0.5; transform: scale(0.9); }
+                }
+            `}</style>
+
             <div className="container">
                 <h2 className="section-title">Internal Server Access</h2>
 
@@ -143,6 +212,16 @@ const InternalAccess = () => {
                                 {loading ? 'Connecting...' : 'Connect to Server'}
                             </button>
                         </form>
+
+                        {/* Login Help Link */}
+                        {loginAttempts >= 3 && (
+                            <div style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                Facing issue while logging in? <br />
+                                <a href="http://172.17.1.141:8080/web/client/login" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'underline' }}>
+                                    Try direct login (Requires VPN)
+                                </a>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div>
