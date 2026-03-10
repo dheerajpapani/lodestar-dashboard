@@ -35,7 +35,7 @@ const InternalAccess = () => {
     const [showStatus, setShowStatus] = useState(true);
 
     // Final Production URL
-    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://lodestar-dashboard.onrender.com/api/files';
+    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://halley-unbarbered-miesha.ngrok-free.dev/api/files';
     const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
 
     // Connection Health Check on Mount
