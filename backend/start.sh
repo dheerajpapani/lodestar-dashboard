@@ -36,8 +36,12 @@ for i in {1..20}; do
   sleep 1
 done
 
-# Docker's default bridge uses 172.17.0.0/16, which collides with IITG!
-# We MUST add a more specific (/32) route so the kernel prefers ppp0 over eth0
+# What the documentation says:
+# "IITG VPN IP segment: 172.18.0.0 | Subnet: 255.255.224.0"
+# That subnet translates to /19 in CIDR notation.
+ip route add 172.18.0.0/19 dev ppp0 || echo "172.18 subnet route failed"
+
+# We MUST add a more specific (/32) route so the kernel prefers ppp0 over eth0 for the SFTP server
 ip route add 172.17.1.141/32 dev ppp0 || echo "Route already exists or failed"
 
 # Start the Node.js application
