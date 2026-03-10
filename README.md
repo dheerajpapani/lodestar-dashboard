@@ -184,7 +184,8 @@ A quick overview of the directory architecture:
 
 ```text
 lodestar-dashboard/
-├── backend/                 # Under Development (API & Services)
+├── backend/                 
+│   └── server.js            # Server for (API & Services) Internal Portal
 ├── frontend/                # React Dashboard Application
 │   ├── public/              # Static assets (favicons, logos)
 │   ├── src/                 
