@@ -83,23 +83,31 @@ const InternalAccess = () => {
                 method: 'GET',
                 headers: {
                     'x-sftp-username': credentials.username,
-                    'x-sftp-password': credentials.password
+                    'x-sftp-password': credentials.password,
+                    'ngrok-skip-browser-warning': 'true' // Bypass the Ngrok splash page
                 }
             });
 
-            const data = await response.json().catch(() => null);
+            // Read the text first to handle potential HTML error pages from Ngrok
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error('Failed to parse backend response as JSON:', text);
+                throw new Error('Backend returned an invalid response (likely an Ngrok or Proxy error). Check the console.');
+            }
 
             if (!response.ok) {
                 setLoginAttempts(prev => prev + 1);
                 let errMsg = (data && data.error) ? data.error : 'Invalid credentials or unable to connect to SFTP server.';
                 if (data && data.details) errMsg += ` (${data.details})`;
-
-                // Add a very specific hint if they are hitting the Render backend and getting VPN issues
-                if (response.status === 503 && !isLocal) {
-                    errMsg += ' — Note: The Render.com cloud backend cannot access your local FortiClient VPN. Please run this portal locally (npm run dev & npm start).';
-                }
-
                 throw new Error(errMsg);
+            }
+
+            // Strictly check if we actually got the data structure we expect
+            if (!data || (!data.files && !Array.isArray(data))) {
+                throw new Error('Authentication appeared to succeed but no valid file data was returned. Check the console.');
             }
 
             // Handle diagnostic info if present

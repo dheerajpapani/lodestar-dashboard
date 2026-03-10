@@ -29,6 +29,7 @@ const getCredentials = (req) => {
 const sftpDirectory = process.env.SFTP_DIRECTORY || '/';
 
 app.get('/api/files', async (req, res) => {
+    console.log(`[${new Date().toISOString()}] Incoming request: GET /api/files`);
     const sftpConfig = getCredentials(req);
 
     if (!sftpConfig.username || !sftpConfig.password) {
