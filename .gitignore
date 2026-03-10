@@ -3,6 +3,9 @@ dist/
 .env
 backend/*
 !backend/.gitkeep
+!backend/server.js
+!backend/package.json
+!backend/package-lock.json
 test_*.js
 bhuvan_raw*
 bhuvan_parsed*
