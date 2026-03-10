@@ -34,9 +34,16 @@ const InternalAccess = () => {
     const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'failed'
     const [showStatus, setShowStatus] = useState(true);
 
-    // Final Production URL
-    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://lodestar-dashboard.onrender.com/api/files';
-    const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
+    // Dynamic Backend URL Resolution
+    // Render cannot access the 172.17.x.x VPN IP. For local development, we must force the local backend.
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // Final Production URL vs Local URL
+    const API_BASE_URL = isLocal
+        ? 'http://localhost:3000/api/files'
+        : (window.LODESTAR_BACKEND_URL || 'https://lodestar-dashboard.onrender.com/api/files');
+
+    const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '');
 
     // Connection Health Check on Mount
     useEffect(() => {
@@ -93,6 +100,12 @@ const InternalAccess = () => {
                 setLoginAttempts(prev => prev + 1);
                 let errMsg = (data && data.error) ? data.error : 'Invalid credentials or unable to connect to SFTP server.';
                 if (data && data.details) errMsg += ` (${data.details})`;
+
+                // Add a very specific hint if they are hitting the Render backend and getting VPN issues
+                if (response.status === 503 && !isLocal) {
+                    errMsg += ' — Note: The Render.com cloud backend cannot access your local FortiClient VPN. Please run this portal locally (npm run dev & npm start).';
+                }
+
                 throw new Error(errMsg);
             }
 
@@ -120,7 +133,11 @@ const InternalAccess = () => {
 
             if (!response.ok) {
                 const data = await response.json().catch(() => null);
-                throw new Error(data?.error || 'Failed to download file.');
+                let errMsg = data?.error || 'Failed to download file.';
+                if (response.status === 503 && !isLocal) {
+                    errMsg += ' — Note: The Render.com cloud backend cannot access your local FortiClient VPN. Please run this portal locally (npm run dev & npm start).';
+                }
+                throw new Error(errMsg);
             }
 
             const blob = await response.blob();
