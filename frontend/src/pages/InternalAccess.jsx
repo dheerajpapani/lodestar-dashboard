@@ -105,7 +105,6 @@ const InternalAccess = () => {
         } catch (err) {
             console.error('Wake Error:', err);
             setConnectionStatus('failed');
-            alert('Could not reach the Wake Server. Please ensure the Lambda function is operational.');
         }
     };
 
