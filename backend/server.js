@@ -52,22 +52,36 @@ app.get('/api/files', async (req, res) => {
         let fileList = await sftp.list(sftpDirectory);
         console.log(`Result: Found ${fileList.length} items in ${sftpDirectory}.`);
 
+        let diagnosticInfo = {
+            cwd,
+            requestedDir: sftpDirectory,
+            foundCount: fileList.length,
+            rootListing: []
+        };
+
         // If the target is empty, do a diagnostic check of other common roots
         if (fileList.length === 0) {
             console.log(`\nDiagnostic: ${sftpDirectory} was empty. Checking root / ...`);
             try {
                 const rootList = await sftp.list('/');
-                console.log(`Root / contains ${rootList.length} items: ${rootList.map(f => f.name).join(', ')}`);
+                diagnosticInfo.rootListing = rootList.map(f => `${f.type === 'd' ? '[DIR]' : '[FILE]'} ${f.name}`);
+                console.log(`Root / contains ${rootList.length} items.`);
 
                 // If the root has items, you might want to switch to it temporarily
                 if (rootList.length > 0) {
                     fileList = rootList;
                 }
             } catch (e) {
+                diagnosticInfo.rootError = e.message;
                 console.log(`Diagnostic Root / failed: ${e.message}`);
             }
         }
-        res.json(fileList);
+
+        // Wrap the response so the frontend can still use it but we get info too
+        res.json({
+            files: fileList,
+            diag: diagnosticInfo
+        });
     } catch (err) {
         console.error('SFTP List Error:', err);
         if (err.level === 'client-authentication') {

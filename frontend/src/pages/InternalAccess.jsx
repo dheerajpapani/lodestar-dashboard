@@ -102,7 +102,20 @@ const InternalAccess = () => {
                 throw new Error(errMsg);
             }
 
-            setFiles(sortFiles(data));
+            // Handle diagnostic info if present
+            if (data && data.diag) {
+                console.group('--- SFTP Backend Diagnostic ---');
+                console.log('Remote CWD:', data.diag.cwd);
+                console.log('Requested Path:', data.diag.requestedDir);
+                if (data.diag.rootListing?.length > 0) {
+                    console.log('Available in Root /:', data.diag.rootListing);
+                }
+                console.groupEnd();
+            }
+
+            // Extract files (handle both the old flat array and new wrapped object)
+            const fileList = Array.isArray(data) ? data : (data?.files || []);
+            setFiles(sortFiles(fileList));
             setIsAuthenticated(true);
             setLoginAttempts(0);
         } catch (err) {
