@@ -35,16 +35,18 @@ const InternalAccess = () => {
     const [showStatus, setShowStatus] = useState(true);
 
     // Final Production URL
-    const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://halley-unbarbered-miesha.ngrok-free.dev/api/files';
+    const API_BASE_URL = import.meta.env.VITE_LODESTAR_BACKEND_URL || 'https://halley-unbarbered-miesha.ngrok-free.dev/api/files';
     const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
-    const WAKE_LAMBDA_URL = window.WAKE_LAMBDA_URL || ''; // Replace with actual Lambda URL
+    const WAKE_LAMBDA_URL = import.meta.env.VITE_WAKE_LAMBDA_URL || '';
 
     // Connection Health Check on Mount
     useEffect(() => {
         let isMounted = true;
         const checkConnection = async (isRetry = false) => {
             try {
-                const response = await fetch(HEALTH_CHECK_URL);
+                const response = await fetch(HEALTH_CHECK_URL, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' }
+                });
                 if (response.ok) {
                     if (isMounted) {
                         setConnectionStatus('connected');
