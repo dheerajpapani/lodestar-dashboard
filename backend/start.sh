@@ -31,7 +31,7 @@ echo "Waiting 10 seconds for VPN connection to establish..."
 sleep 10
 
 # Manually route ONLY the IITG internal IPs through the VPN, leaving the rest of the AWS internet connection alone
-ip route add 172.17.1.0/24 dev ppp0 || echo "Route already exists or failed"
+ip route add 172.17.0.0/16 dev ppp0 || echo "Route already exists or failed"
 
 # Start the Node.js application
 echo "Starting Node.js backend..."
