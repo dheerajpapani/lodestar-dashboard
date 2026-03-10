@@ -3,6 +3,8 @@ dist/
 .env
 backend/*
 !backend/.gitkeep
+!backend/Dockerfile
+!backend/start.sh
 !backend/server.js
 !backend/package.json
 !backend/package-lock.json
