@@ -26,12 +26,19 @@ fi
 # Run openfortivpn in the background
 openfortivpn -c /etc/openfortivpn/config &
 
-# Give the VPN a few seconds to establish the ppp0 connection
-echo "Waiting 10 seconds for VPN connection to establish..."
-sleep 10
+# Wait for the ppp0 interface to be fully up and assigned an IP
+echo "Waiting for VPN connection to establish..."
+for i in {1..20}; do
+  if ip addr show ppp0 2>/dev/null | grep -q "inet "; then
+    echo "VPN is UP and got an IP address!"
+    break
+  fi
+  sleep 1
+done
 
-# Manually route ONLY the IITG internal IPs through the VPN, leaving the rest of the AWS internet connection alone
-ip route add 172.17.0.0/16 dev ppp0 || echo "Route already exists or failed"
+# Docker's default bridge uses 172.17.0.0/16, which collides with IITG!
+# We MUST add a more specific (/32) route so the kernel prefers ppp0 over eth0
+ip route add 172.17.1.141/32 dev ppp0 || echo "Route already exists or failed"
 
 # Start the Node.js application
 echo "Starting Node.js backend..."
