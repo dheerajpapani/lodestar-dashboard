@@ -147,10 +147,7 @@ const InternalAccess = () => {
 
             if (!response.ok) {
                 const data = await response.json().catch(() => null);
-                let errMsg = data?.error || 'Failed to download file.';
-                if (response.status === 503 && !isLocal) {
-                    errMsg += ' — Note: The Render.com cloud backend cannot access your local FortiClient VPN. Please run this portal locally (npm run dev & npm start).';
-                }
+                const errMsg = data?.error || 'Failed to download file.';
                 throw new Error(errMsg);
             }
 
@@ -205,8 +202,8 @@ const InternalAccess = () => {
                         background: 'currentColor',
                         animation: connectionStatus === 'connecting' ? 'pulse 1.5s infinite' : 'none'
                     }}></div>
-                    {connectionStatus === 'connecting' ? 'Connecting to backend...' :
-                        connectionStatus === 'connected' ? 'Backend Connected' : 'Backend not connected'}
+                    {connectionStatus === 'connecting' ? 'Checking backend...' :
+                        connectionStatus === 'connected' ? 'Backend working' : 'Backend not working'}
                 </div>
             )}
 

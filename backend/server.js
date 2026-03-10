@@ -86,10 +86,10 @@ app.get('/api/files', async (req, res) => {
     } catch (err) {
         console.error('SFTP List Error:', err);
         // Explicitly check for authentication failures
-        if (err.level === 'client-authentication' || (err.message && err.message.includes('Authentication failure'))) {
+        if (err.level === 'client-authentication' || (err.message && (err.message.includes('Authentication failure') || err.message.includes('getConnection')))) {
             return res.status(401).json({
-                error: 'SFTP Authentication Failed',
-                details: 'The username or password for the Consortium WebUI/SFTP server is incorrect.'
+                error: 'Invalid SFTP Credentials',
+                details: 'Please check your username and password.'
             });
         }
 
@@ -138,10 +138,10 @@ app.get('/api/files/download', async (req, res) => {
     } catch (err) {
         console.error('SFTP Download Error:', err);
         if (!res.headersSent) {
-            if (err.level === 'client-authentication' || (err.message && err.message.includes('Authentication failure'))) {
+            if (err.level === 'client-authentication' || (err.message && (err.message.includes('Authentication failure') || err.message.includes('getConnection')))) {
                 res.status(401).json({
-                    error: 'SFTP Authentication Failed',
-                    details: 'The username or password for the Consortium WebUI/SFTP server is incorrect.'
+                    error: 'Invalid SFTP Credentials',
+                    details: 'Please check your username and password.'
                 });
             } else if (
                 (err.code && ['ETIMEDOUT', 'ECONNREFUSED', 'ENOTFOUND', 'ENETUNREACH', 'EHOSTUNREACH'].includes(err.code)) ||
