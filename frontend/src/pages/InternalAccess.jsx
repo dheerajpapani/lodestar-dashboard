@@ -37,25 +37,68 @@ const InternalAccess = () => {
     // Final Production URL
     const API_BASE_URL = window.LODESTAR_BACKEND_URL || 'https://halley-unbarbered-miesha.ngrok-free.dev/api/files';
     const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
+    const WAKE_LAMBDA_URL = window.WAKE_LAMBDA_URL || ''; // Replace with actual Lambda URL
 
     // Connection Health Check on Mount
     useEffect(() => {
-        const checkConnection = async () => {
+        let isMounted = true;
+        const checkConnection = async (isRetry = false) => {
             try {
                 const response = await fetch(HEALTH_CHECK_URL);
                 if (response.ok) {
-                    setConnectionStatus('connected');
-                    // Hide successful connection message after 3 seconds
-                    setTimeout(() => setShowStatus(false), 3000);
+                    if (isMounted) {
+                        setConnectionStatus('connected');
+                        setShowStatus(true);
+                        // Hide successful connection message after 3 seconds
+                        setTimeout(() => { if (isMounted) setShowStatus(false); }, 3000);
+                    }
                 } else {
-                    setConnectionStatus('failed');
+                    if (isMounted) setConnectionStatus('failed');
                 }
             } catch (err) {
-                setConnectionStatus('failed');
+                if (isMounted) setConnectionStatus('failed');
             }
         };
+
         checkConnection();
-    }, [HEALTH_CHECK_URL]);
+
+        // If it fails initially, we might be starting up, so poll occasionally
+        const pollInterval = setInterval(() => {
+            if (connectionStatus === 'failed' || connectionStatus === 'waking') {
+                checkConnection(true);
+            }
+        }, 10000);
+
+        return () => {
+            isMounted = false;
+            clearInterval(pollInterval);
+        };
+    }, [HEALTH_CHECK_URL, connectionStatus]);
+
+    // Handle Wake Server request
+    const handleWake = async () => {
+        if (!WAKE_LAMBDA_URL) {
+            alert('AWS Lambda Wake URL is not configured. Please add window.WAKE_LAMBDA_URL.');
+            return;
+        }
+
+        setConnectionStatus('waking');
+        setShowStatus(true);
+
+        try {
+            const response = await fetch(WAKE_LAMBDA_URL, { method: 'POST' });
+            if (response.ok) {
+                console.log('Wake signal sent successfully');
+                // The polling in useEffect will eventually catch the server coming up
+            } else {
+                throw new Error('Failed to send wake signal');
+            }
+        } catch (err) {
+            console.error('Wake Error:', err);
+            setConnectionStatus('failed');
+            alert('Could not reach the Wake Server. Please ensure the Lambda function is operational.');
+        }
+    };
 
     // Handle input changes
     const handleChange = (e) => {
@@ -189,21 +232,48 @@ const InternalAccess = () => {
                     fontWeight: '600',
                     fontSize: '0.9rem',
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    background: connectionStatus === 'connecting' ? '#facc15' :
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '8px',
+                    background: (connectionStatus === 'connecting' || connectionStatus === 'waking') ? '#facc15' :
                         connectionStatus === 'connected' ? '#22c55e' : '#ef4444',
-                    color: connectionStatus === 'connecting' ? '#854d0e' : 'white'
+                    color: (connectionStatus === 'connecting' || connectionStatus === 'waking') ? '#854d0e' : 'white'
                 }}>
-                    <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: 'currentColor',
-                        animation: connectionStatus === 'connecting' ? 'pulse 1.5s infinite' : 'none'
-                    }}></div>
-                    {connectionStatus === 'connecting' ? 'Checking backend...' :
-                        connectionStatus === 'connected' ? 'Backend working' : 'Backend not working'}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '50%',
+                            background: 'currentColor',
+                            animation: (connectionStatus === 'connecting' || connectionStatus === 'waking') ? 'pulse 1.5s infinite' : 'none'
+                        }}></div>
+                        <span>
+                            {connectionStatus === 'connecting' ? 'Checking backend...' :
+                                connectionStatus === 'waking' ? 'Waking up AWS server... (~60s)' :
+                                    connectionStatus === 'connected' ? 'Backend working' : 'Backend not working'}
+                        </span>
+                    </div>
+
+                    {connectionStatus === 'failed' && (
+                        <button
+                            onClick={handleWake}
+                            style={{
+                                background: 'rgba(255,255,255,0.2)',
+                                border: '1px solid rgba(255,255,255,0.4)',
+                                color: 'white',
+                                padding: '4px 12px',
+                                borderRadius: '4px',
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                                marginTop: '4px',
+                                fontWeight: 'bold'
+                            }}
+                            onMouseOver={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
+                            onMouseOut={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
+                        >
+                            Wake Server
+                        </button>
+                    )}
                 </div>
             )}
 
