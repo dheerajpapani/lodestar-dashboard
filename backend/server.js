@@ -43,7 +43,30 @@ app.get('/api/files', async (req, res) => {
             retries: 2,          // Attempt a couple of retries
             retry_delay: 1000
         });
-        const fileList = await sftp.list(sftpDirectory);
+        const cwd = await sftp.cwd();
+        console.log(`\n--- SFTP LOGIN SUCCESS ---`);
+        console.log(`Current Working Directory (CWD): ${cwd}`);
+        console.log(`Target Directory requested: ${sftpDirectory}`);
+
+        // Attempt to list the target directory
+        let fileList = await sftp.list(sftpDirectory);
+        console.log(`Result: Found ${fileList.length} items in ${sftpDirectory}.`);
+
+        // If the target is empty, do a diagnostic check of other common roots
+        if (fileList.length === 0) {
+            console.log(`\nDiagnostic: ${sftpDirectory} was empty. Checking root / ...`);
+            try {
+                const rootList = await sftp.list('/');
+                console.log(`Root / contains ${rootList.length} items: ${rootList.map(f => f.name).join(', ')}`);
+
+                // If the root has items, you might want to switch to it temporarily
+                if (rootList.length > 0) {
+                    fileList = rootList;
+                }
+            } catch (e) {
+                console.log(`Diagnostic Root / failed: ${e.message}`);
+            }
+        }
         res.json(fileList);
     } catch (err) {
         console.error('SFTP List Error:', err);
