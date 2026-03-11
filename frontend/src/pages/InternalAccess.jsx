@@ -383,7 +383,7 @@ const InternalAccess = () => {
                                 alignItems: 'center'
                             }}>
                                 <LockIcon size={14} color="var(--primary)" />
-                                <span><strong>Note:</strong> This portal is intended for authorized internal personnel only. You must be connected to the <strong>FortiClient VPN</strong> to access modeling data and internal SFTP services.</span>
+                                <span><strong>Note:</strong> This portal is intended for authorized internal personnel only. Access to modeling data and internal SFTP services is restricted to consortium members.</span>
                             </div>
 
                             {error && <div className="login-error" style={{ marginBottom: '1rem' }}>{error}</div>}
