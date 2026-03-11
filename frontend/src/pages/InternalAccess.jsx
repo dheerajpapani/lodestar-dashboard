@@ -33,7 +33,8 @@ const InternalAccess = () => {
     // Connection Status State (Ghost Popup)
     const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'failed', 'waking'
     const [showStatus, setShowStatus] = useState(true);
-    const [wakeInProgress, setWakeInProgress] = useState(false); // Prevents duplicate wake signals
+    const [wakeInProgress, setWakeInProgress] = useState(false); // Prevents duplicate wake signals (UI)
+    const wakeInProgressRef = React.useRef(false);             // Ref for reliable closure reads
     const wakeTimeoutRef = React.useRef(null);
 
     // Final Production URL
@@ -55,17 +56,19 @@ const InternalAccess = () => {
 
                 if (response.ok) {
                     if (isMounted) {
+                        wakeInProgressRef.current = false; // Clear wake lock on successful connect
+                        setWakeInProgress(false);
                         setConnectionStatus('connected');
                         setShowStatus(true);
                         setTimeout(() => { if (isMounted) setShowStatus(false); }, 3000);
                     }
                 } else {
-                    // Only reset to failed if no wake is in progress
-                    if (isMounted && !wakeInProgress) setConnectionStatus('failed');
+                    // Use ref (not state) to avoid stale closure — ref always has current value
+                    if (isMounted && !wakeInProgressRef.current) setConnectionStatus('failed');
                 }
             } catch (err) {
-                // If the fetch fails (CORS error = server is down/sleeping), only set failed if not waking
-                if (isMounted && !wakeInProgress) {
+                // CORS error = server sleeping. Only set failed if not waking.
+                if (isMounted && !wakeInProgressRef.current) {
                     setConnectionStatus('failed');
                 }
             }
@@ -93,10 +96,12 @@ const InternalAccess = () => {
         setConnectionStatus('waking');
         setShowStatus(true);
         setWakeInProgress(true);
+        wakeInProgressRef.current = true; // Sync ref immediately for closure reads
 
         // Auto-release lock after 90 seconds (EC2 cold start max)
         if (wakeTimeoutRef.current) clearTimeout(wakeTimeoutRef.current);
         wakeTimeoutRef.current = setTimeout(() => {
+            wakeInProgressRef.current = false;
             setWakeInProgress(false);
         }, 90000);
 
