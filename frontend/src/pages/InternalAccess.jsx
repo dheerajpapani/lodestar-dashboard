@@ -42,52 +42,46 @@ const InternalAccess = () => {
     const HEALTH_CHECK_URL = API_BASE_URL.replace('/api/files', '/');
     const WAKE_LAMBDA_URL = import.meta.env.VITE_WAKE_LAMBDA_URL || '';
 
-    // Connection Health Check on Mount
+    // Connection Health Check — single persistent interval, refs only inside closure
     useEffect(() => {
         let isMounted = true;
-        const checkConnection = async (isRetry = false) => {
+
+        const checkConnection = async () => {
             try {
-                // When the server is OFF, ngrok returns an error page that lacks CORS headers.
-                // This results in a "CORS error" in the console, which is actually a valid signal
-                // that the server is sleeping.
                 const response = await fetch(HEALTH_CHECK_URL, {
                     headers: { 'ngrok-skip-browser-warning': 'true' }
                 });
 
                 if (response.ok) {
                     if (isMounted) {
-                        wakeInProgressRef.current = false; // Clear wake lock on successful connect
+                        wakeInProgressRef.current = false;
                         setWakeInProgress(false);
                         setConnectionStatus('connected');
                         setShowStatus(true);
                         setTimeout(() => { if (isMounted) setShowStatus(false); }, 3000);
                     }
                 } else {
-                    // Use ref (not state) to avoid stale closure — ref always has current value
+                    // Use ref — always current, no stale closure risk
                     if (isMounted && !wakeInProgressRef.current) setConnectionStatus('failed');
                 }
             } catch (err) {
-                // CORS error = server sleeping. Only set failed if not waking.
+                // CORS error = server sleeping / waking. Guard via ref.
                 if (isMounted && !wakeInProgressRef.current) {
                     setConnectionStatus('failed');
                 }
             }
         };
 
-        checkConnection();
+        checkConnection(); // immediate first check
 
-        // If it fails initially, we might be starting up, so poll occasionally
-        const pollInterval = setInterval(() => {
-            if (connectionStatus === 'failed' || connectionStatus === 'waking') {
-                checkConnection(true);
-            }
-        }, 10000);
+        // Poll every 10s unconditionally — ref guards against false 'failed' during wake
+        const pollInterval = setInterval(checkConnection, 10000);
 
         return () => {
             isMounted = false;
             clearInterval(pollInterval);
         };
-    }, [HEALTH_CHECK_URL, connectionStatus]);
+    }, [HEALTH_CHECK_URL]); // ← NO connectionStatus dep: effect runs once, never recreated
 
     // Handle Wake Server request
     const handleWake = async () => {
