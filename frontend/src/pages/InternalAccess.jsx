@@ -83,35 +83,28 @@ const InternalAccess = () => {
         };
     }, [HEALTH_CHECK_URL]); // ← NO connectionStatus dep: effect runs once, never recreated
 
-    // Handle Wake Server request
-    const handleWake = async () => {
-        if (!WAKE_LAMBDA_URL || wakeInProgress) return;
+    // Handle Wake Server request — fire and forget, yellow locks immediately
+    const handleWake = () => {
+        if (wakeInProgressRef.current) return; // Already waking, ignore
 
+        // Lock to yellow INSTANTLY — no waiting for any network response
+        wakeInProgressRef.current = true;
+        setWakeInProgress(true);
         setConnectionStatus('waking');
         setShowStatus(true);
-        setWakeInProgress(true);
-        wakeInProgressRef.current = true; // Sync ref immediately for closure reads
 
-        // Auto-release lock after 90 seconds (EC2 cold start max)
+        // Fire Lambda — completely fire-and-forget, ignore success/failure
+        if (WAKE_LAMBDA_URL) {
+            fetch(WAKE_LAMBDA_URL, { method: 'POST' }).catch(() => { });
+        }
+
+        // Auto-release after 90s if server never came up
         if (wakeTimeoutRef.current) clearTimeout(wakeTimeoutRef.current);
         wakeTimeoutRef.current = setTimeout(() => {
             wakeInProgressRef.current = false;
             setWakeInProgress(false);
+            // Next health-check poll will set to 'failed' and show button again
         }, 90000);
-
-        try {
-            const response = await fetch(WAKE_LAMBDA_URL, { method: 'POST' });
-            if (response.ok) {
-                console.log('Wake signal sent successfully');
-                // Status stays 'waking' (yellow). Polling will flip to 'connected' when server is up.
-            } else {
-                throw new Error('Failed to send wake signal');
-            }
-        } catch (err) {
-            // Even on CORS error the Lambda may have succeeded — keep waking state
-            // Only log, do NOT reset to failed during wakeInProgress window
-            console.log('Wake request sent (CORS noise expected while server boots)');
-        }
     };
 
     // Handle input changes
