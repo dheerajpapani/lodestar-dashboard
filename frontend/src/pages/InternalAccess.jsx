@@ -31,8 +31,10 @@ const InternalAccess = () => {
     const [loginAttempts, setLoginAttempts] = useState(0);
 
     // Connection Status State (Ghost Popup)
-    const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'failed'
+    const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'connecting', 'connected', 'failed', 'waking'
     const [showStatus, setShowStatus] = useState(true);
+    const [wakeInProgress, setWakeInProgress] = useState(false); // Prevents duplicate wake signals
+    const wakeTimeoutRef = React.useRef(null);
 
     // Final Production URL
     const API_BASE_URL = import.meta.env.VITE_LODESTAR_BACKEND_URL || 'https://halley-unbarbered-miesha.ngrok-free.dev/api/files';
@@ -58,13 +60,13 @@ const InternalAccess = () => {
                         setTimeout(() => { if (isMounted) setShowStatus(false); }, 3000);
                     }
                 } else {
-                    if (isMounted) setConnectionStatus('failed');
+                    // Only reset to failed if no wake is in progress
+                    if (isMounted && !wakeInProgress) setConnectionStatus('failed');
                 }
             } catch (err) {
-                // If the fetch fails (likely CORS error because server is down), set to failed
-                if (isMounted) {
+                // If the fetch fails (CORS error = server is down/sleeping), only set failed if not waking
+                if (isMounted && !wakeInProgress) {
                     setConnectionStatus('failed');
-                    // We don't console.error here to keep the logs clean from expected downtime errors
                 }
             }
         };
@@ -86,25 +88,30 @@ const InternalAccess = () => {
 
     // Handle Wake Server request
     const handleWake = async () => {
-        if (!WAKE_LAMBDA_URL) {
-            alert('AWS Lambda Wake URL is not configured. Please add window.WAKE_LAMBDA_URL.');
-            return;
-        }
+        if (!WAKE_LAMBDA_URL || wakeInProgress) return;
 
         setConnectionStatus('waking');
         setShowStatus(true);
+        setWakeInProgress(true);
+
+        // Auto-release lock after 90 seconds (EC2 cold start max)
+        if (wakeTimeoutRef.current) clearTimeout(wakeTimeoutRef.current);
+        wakeTimeoutRef.current = setTimeout(() => {
+            setWakeInProgress(false);
+        }, 90000);
 
         try {
             const response = await fetch(WAKE_LAMBDA_URL, { method: 'POST' });
             if (response.ok) {
                 console.log('Wake signal sent successfully');
-                // The polling in useEffect will eventually catch the server coming up
+                // Status stays 'waking' (yellow). Polling will flip to 'connected' when server is up.
             } else {
                 throw new Error('Failed to send wake signal');
             }
         } catch (err) {
-            console.error('Wake Error:', err);
-            setConnectionStatus('failed');
+            // Even on CORS error the Lambda may have succeeded — keep waking state
+            // Only log, do NOT reset to failed during wakeInProgress window
+            console.log('Wake request sent (CORS noise expected while server boots)');
         }
     };
 
@@ -262,7 +269,7 @@ const InternalAccess = () => {
                         </span>
                     </div>
 
-                    {connectionStatus === 'failed' && (
+                    {connectionStatus === 'failed' && !wakeInProgress && (
                         <button
                             onClick={handleWake}
                             style={{
@@ -281,6 +288,11 @@ const InternalAccess = () => {
                         >
                             Wake Server
                         </button>
+                    )}
+                    {wakeInProgress && (
+                        <span style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '4px' }}>
+                            ⏳ Waking up EC2... (~60s)
+                        </span>
                     )}
                 </div>
             )}
