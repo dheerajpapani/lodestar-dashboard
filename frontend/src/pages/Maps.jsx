@@ -844,11 +844,12 @@ export default function Maps() {
           </>
         )}
 
-        {['Dordrecht', 'Geertruidenberg'].includes(activeSite) && (
+        {['Dordrecht'].includes(activeSite) && (
           <>
             <h4>Data Layers</h4>
             <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>            </div>
+              <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>
+            </div>
           </>
         )}
       </div>
