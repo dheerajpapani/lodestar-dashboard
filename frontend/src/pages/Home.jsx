@@ -10,7 +10,7 @@ const studySites = [
   { name: 'Guwahati, India', hazard: 'Compound Pluvial & Fluvial Floods', country: 'India' },
   { name: 'Anantapur, India', hazard: 'Compound Flood & Drought Events', country: 'India' },
   { name: 'Dordrecht, NL', hazard: 'Urban Floods & Evacuation Planning', country: 'Netherlands' },
-  { name: 'Tilburg & Breda, NL', hazard: 'Droughts & Urban Development', country: 'Netherlands' },
+  { name: 'Geertruidenberg, NL', hazard: 'Droughts & Urban Development', country: 'Netherlands' },
 ];
 const keyConcepts = [
   { icon: <FaBroadcastTower />, title: 'Early Warning System', text: 'Developing a multi-hazard EWS for both single and compound events.' },

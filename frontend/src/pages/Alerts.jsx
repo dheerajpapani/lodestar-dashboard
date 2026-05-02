@@ -63,7 +63,7 @@ export default function Alerts() {
                 <label>Filter by Site:</label>
                 <select value={filterSite} onChange={(e) => setFilterSite(e.target.value)}>
                   <option>All</option> <option>Bengaluru</option> <option>Guwahati</option>
-                  <option>Anantapur</option> <option>Dordrecht</option> <option>Tilburg & Breda</option>
+                  <option>Anantapur</option> <option>Dordrecht</option> <option>Geertruidenberg</option>
                 </select>
               </div>
               <div className="filter-group">

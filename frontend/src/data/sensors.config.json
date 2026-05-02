@@ -1,0 +1,38 @@
+[
+  {
+    "uid": "690992AE",
+    "name": "Lalmati",
+    "type": "rain_gauge",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.11214000,
+    "lon": 91.78774300
+  },
+  {
+    "uid": "6839A6B2",
+    "name": "Rukmini Gaon",
+    "type": "level_meter",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.13536000,
+    "lon": 91.79855600
+  },
+  {
+    "uid": "6822FA4C",
+    "name": "Zoo Road",
+    "type": "rain_gauge",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.20171000,
+    "lon": 91.69823100
+  },
+  {
+    "uid": "6822F88D",
+    "name": "Basistha",
+    "type": "rain_gauge",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.09294000,
+    "lon": 91.78139900
+  }
+]

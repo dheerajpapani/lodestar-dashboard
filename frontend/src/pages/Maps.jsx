@@ -1,15 +1,31 @@
 /* eslint-disable no-console */
 // src/pages/Maps.jsx
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-import { FaMapMarkerAlt, FaCloudSunRain, FaTimes, FaLayerGroup } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaCloudSunRain, FaTimes, FaLayerGroup, FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { kml as kmlToGeoJSON } from '@tmcw/togeojson';
 import '../App.css';
+import { fetchWeatherData } from '../services/weatherService';
+import sensorConfig from '../data/sensors.config.json';
+import { testSensor, fetchSensorData } from '../services/sensorApi';
+import NetherlandsVisualsModal from '../components/NetherlandsVisualsModal';
+import NetherlandsTimeSlider from '../components/NetherlandsTimeSlider';
+import { parseGeoTiff } from '../utils/tiffParser';
+
+const formatShortDate = (dateStr) => {
+  if (!dateStr) return '';
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    return `${months[parseInt(parts[1], 10) - 1]} ${parseInt(parts[2], 10)}`;
+  }
+  return dateStr;
+};
 
 // ==== Study Sites ====
 const studySites = {
@@ -17,7 +33,7 @@ const studySites = {
   'Guwahati': { center: [91.7362, 26.1445], zoom: 11, hazard: 'Compound Pluvial & Fluvial Floods', bounds: [[91.5, 26.0], [91.9, 26.3]] },
   'Anantapur': { center: [77.6000, 14.6819], zoom: 9, hazard: 'Compound Flood & Drought', bounds: [[77.3, 14.5], [78.0, 15.0]] },
   'Dordrecht': { center: [4.6667, 51.8167], zoom: 11, hazard: 'Urban Floods & Evacuation Planning', bounds: [[4.5, 51.7], [4.8, 51.9]] },
-  'Tilburg & Breda': { center: [4.8916, 51.5830], zoom: 9, hazard: 'Droughts & Urban Development', bounds: [[4.7, 51.5], [5.2, 51.7]] }
+  'Geertruidenberg': { center: [4.8617, 51.7017], zoom: 9, hazard: 'Droughts & Urban Development', bounds: [[4.7, 51.5], [5.2, 51.7]] }
 };
 
 // ==== Mock data for right panel ====
@@ -74,7 +90,7 @@ const siteData = {
     ],
     citizenReports: [{ id: 1, user: 'Water Board', text: 'All flood gates are operating normally.', time: '2h ago' }]
   },
-  'Tilburg & Breda': {
+  'Geertruidenberg': {
     alerts: [{ id: 1, level: 'Low', text: 'Drought conditions persist. Water conservation measures remain in effect.' }],
     forecast: [
       { day: 'Mon', rainfall: 2, temp: 22, humidity: 60 },
@@ -160,8 +176,13 @@ export default function Maps() {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const defaultMarkersRef = useRef([]);
+  const sensorMarkersRef = useRef([]);
   const popupRef = useRef(null);
   const cachedSensors = useRef(null);
+  // Double-buffer refs for smooth raster crossfade
+  const rasterSlotRef = useRef(0);      // alternates 0 vs 1
+  const rasterFittedRef = useRef(false); // has map been zoomed to imagery yet?
+  const activeSiteRef = useRef(null);    // stable read of activeSite for callbacks
 
   const [activeSite, setActiveSite] = useState(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -172,6 +193,155 @@ export default function Maps() {
   const [lulcData, setLulcData] = useState(null);
   const [lulcLoading, setLulcLoading] = useState(false);
   const [lulcCollapsed, setLulcCollapsed] = useState(false);
+  const [realSensors, setRealSensors] = useState([]);
+  const [selectedSensor, setSelectedSensor] = useState(null);
+  const [sensorDataLoading, setSensorDataLoading] = useState(false);
+  const [sensorData, setSensorData] = useState(null);
+  const [sensorStatusLog, setSensorStatusLog] = useState([]);
+  const [showNlModal, setShowNlModal] = useState(false);
+  const [showNlRasterPanel, setShowNlRasterPanel] = useState(false);
+
+  // Weather States
+  const [weatherData, setWeatherData] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState(null);
+  const [rasterLoading, setRasterLoading] = useState(false);
+
+  // ==== Raster Overlay Logic (double-buffer crossfade) ====
+
+  // Remove both buffer slots cleanly
+  const removeRasterOverlay = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    [0, 1].forEach(i => {
+      if (map.getLayer(`sentinel-raster-layer-${i}`)) map.removeLayer(`sentinel-raster-layer-${i}`);
+      if (map.getSource(`sentinel-raster-source-${i}`)) map.removeSource(`sentinel-raster-source-${i}`);
+    });
+    rasterSlotRef.current = 0;
+    rasterFittedRef.current = false;
+  };
+
+  // Pre-warm the parse cache for all 6 COG frames in the background
+  // so when the user hits play, each frame switches instantly
+  const preloadRasterFrames = useCallback(() => {
+    const FILES = [
+      '2023-06-11_cog.tiff', '2023-06-16_cog.tiff', '2023-06-28_cog.tiff',
+      '2023-06-30_cog.tiff', '2023-07-05_cog.tiff', '2023-07-22_cog.tiff',
+    ];
+    FILES.forEach(f => {
+      parseGeoTiff(`${import.meta.env.BASE_URL}sentinel_cog/${f}`).catch(() => {});
+    });
+  }, []);
+
+  const handleRasterDateChange = useCallback(async (filename, label) => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const doLoad = async () => {
+      setRasterLoading(true);
+      try {
+        const url = `${import.meta.env.BASE_URL}sentinel_cog/${filename}`;
+        const { url: dataUrl, coordinates, bbox } = await parseGeoTiff(url);
+
+        // --- Double-buffer crossfade ---
+        const currentSlot = rasterSlotRef.current;
+        const nextSlot = 1 - currentSlot;
+        const currentLayerId  = `sentinel-raster-layer-${currentSlot}`;
+        const nextLayerId     = `sentinel-raster-layer-${nextSlot}`;
+        const nextSourceId    = `sentinel-raster-source-${nextSlot}`;
+        const currentSourceId = `sentinel-raster-source-${currentSlot}`;
+
+        // Clean up the next slot from any previous cycle
+        if (map.getLayer(nextLayerId))   map.removeLayer(nextLayerId);
+        if (map.getSource(nextSourceId)) map.removeSource(nextSourceId);
+
+        // Add new frame at opacity 0 (invisible, on top of current)
+        map.addSource(nextSourceId, { type: 'image', url: dataUrl, coordinates });
+        map.addLayer({
+          id: nextLayerId,
+          type: 'raster',
+          source: nextSourceId,
+          paint: { 'raster-opacity': 0, 'raster-fade-duration': 0 },
+        });
+
+        // Crossfade: ease next IN and current OUT simultaneously
+        const FADE_MS = 600;
+        const TARGET_OPACITY = 0.85;
+        const startTime = performance.now();
+
+        const animate = (now) => {
+          const t = Math.min((now - startTime) / FADE_MS, 1);
+          // Ease-in-out quad
+          const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+          if (map.getLayer(nextLayerId)) {
+            map.setPaintProperty(nextLayerId, 'raster-opacity', eased * TARGET_OPACITY);
+          }
+          if (map.getLayer(currentLayerId)) {
+            map.setPaintProperty(currentLayerId, 'raster-opacity', (1 - eased) * TARGET_OPACITY);
+          }
+
+          if (t < 1) {
+            requestAnimationFrame(animate);
+          } else {
+            // Fade complete — drop the old layer
+            if (map.getLayer(currentLayerId))   map.removeLayer(currentLayerId);
+            if (map.getSource(currentSourceId)) map.removeSource(currentSourceId);
+          }
+        };
+        requestAnimationFrame(animate);
+
+        // Swap active slot
+        rasterSlotRef.current = nextSlot;
+
+        // Zoom to image on first enable — using the actual bbox from the file
+        // with balanced padding to keep it centered in the visible area.
+        if (!rasterFittedRef.current && bbox && bbox.length === 4) {
+          rasterFittedRef.current = true;
+          const [minLon, minLat, maxLon, maxLat] = bbox;
+          map.fitBounds(
+            [[minLon, minLat], [maxLon, maxLat]],
+            {
+              padding: { top: 250, bottom: 250, left: 630, right: 250 },
+              duration: 900,
+              maxZoom: 14,
+            }
+          );
+        }
+      } catch (err) {
+        console.error('[Raster] Failed to load overlay:', err);
+      } finally {
+        setRasterLoading(false);
+      }
+    };
+
+    if (map.isStyleLoaded()) {
+      await doLoad();
+    } else {
+      map.once('style.load', () => doLoad());
+    }
+  }, []); // stable — all deps are refs or module-level constants
+
+  const toggleNlRaster = useCallback(() => {
+    setShowNlRasterPanel(prev => {
+      if (prev) {
+        removeRasterOverlay();
+        // Zoom back to the site's normal view (Guwahati)
+        const map = mapRef.current;
+        const site = studySites['Guwahati']; // Always Guwahati for this layer
+        if (map && site) {
+          map.fitBounds(site.bounds, {
+            padding: { top: 100, bottom: 50, left: 450, right: 50 },
+            duration: 900,
+          });
+        }
+        return false;
+      } else {
+        preloadRasterFrames();
+        return true;
+      }
+    });
+  }, [removeRasterOverlay, preloadRasterFrames]);
 
   // Init Map
   useEffect(() => {
@@ -224,8 +394,10 @@ export default function Maps() {
         .setLngLat(site.center)
         .addTo(map);
 
+      marker.siteName = name;
+
       // Declutter overlapping European sites at low zoom
-      if (name === 'Dordrecht' || name === 'Tilburg & Breda') {
+      if (name === 'Dordrecht' || name === 'Geertruidenberg') {
         const updatePosition = () => {
           const z = map.getZoom();
           if (z < 6) {
@@ -233,7 +405,7 @@ export default function Maps() {
             if (name === 'Dordrecht') {
               marker.setLngLat([site.center[0] - 0.5, site.center[1] + 0.3]);
             }
-            if (name === 'Tilburg & Breda') {
+            if (name === 'Geertruidenberg') {
               marker.setLngLat([site.center[0] + 0.5, site.center[1] - 0.3]);
             }
           } else {
@@ -304,96 +476,75 @@ export default function Maps() {
     return () => map.off('style.load', handler);
   }, [activeOverlay, mapStyle, activeSite]);
 
-  // ==== Sensors (Improved marker styling) ====
+  // ==== Sensors (Real API Integration) ====
   const loadSensors = async () => {
-    if (!cachedSensors.current) {
-      const res = await fetch(KML_URL);
-      const text = await res.text();
-      const xml = new DOMParser().parseFromString(text, 'text/xml');
-      const geojson = kmlToGeoJSON(xml);
-
-      // Inject "firstName" by parsing the full name of each sensor
-      geojson.features.forEach(f => {
-        const fullName = f.properties.Name || f.properties.name || 'Sensor';
-        f.properties.firstName = fullName.split(' ')[0];
-      });
-      cachedSensors.current = geojson;
-    }
-    const gj = cachedSensors.current;
     const map = mapRef.current;
+    if (!map) return;
 
-    if (!map.getSource('guw-sensors')) {
-      map.addSource('guw-sensors', { type: 'geojson', data: gj });
+    const sensorsToRender = [];
 
-      // Neon cyan, calm tone + glow
-      map.addLayer({
-        id: 'guw-sensors',
-        type: 'circle',
-        source: 'guw-sensors',
-        paint: {
-          'circle-radius': 6,
-          'circle-color': '#00e5ff',
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#ffffff',
-          'circle-opacity': 0.95,
-        },
-      });
+    for (const sensor of sensorConfig) {
+      if (!sensor.visible) continue;
 
-      map.addLayer({
-        id: 'guw-sensors-glow',
-        type: 'circle',
-        source: 'guw-sensors',
-        paint: {
-          'circle-radius': 12,
-          'circle-color': '#00e5ff',
-          'circle-opacity': 0.15,
-        },
-      });
+      const result = await testSensor(sensor.uid);
+      const isOnline = result.online;
+      
+      let lat = sensor.lat;
+      let lon = sensor.lon;
 
-      // Show sensor first name just above the pin
-      map.addLayer({
-        id: 'guw-sensors-label',
-        type: 'symbol',
-        source: 'guw-sensors',
-        layout: {
-          'text-field': ['get', 'firstName'],
-          'text-size': 12,
-          'text-offset': [0, -1.5],
-          'text-anchor': 'bottom'
-        },
-        paint: {
-          'text-color': '#ffffff',
-          'text-halo-color': '#000000',
-          'text-halo-width': 1.5
-        }
-      });
+      if (result.location) {
+        lat = result.location.lat;
+        lon = result.location.lon;
+      }
+
+      if (lat && lon) {
+        sensorsToRender.push({
+          ...sensor,
+          lat,
+          lon,
+          online: isOnline,
+          latestData: result.data
+        });
+      }
     }
 
-    map.on('click', 'guw-sensors', (e) => {
-      const f = e.features[0];
-      const name = f.properties.Name || f.properties.name || 'Sensor';
-      const desc = f.properties.description || '';
-      const cleanDesc = desc.replace(/[\{\}@type"value":]|html|Sl\. No\.:/g, '').replace(/\n/g, '<br/>');
-      if (popupRef.current) popupRef.current.remove();
-      popupRef.current = new maplibregl.Popup({ offset: 15, closeButton: true, closeOnMove: true })
-        .setLngLat(f.geometry.coordinates)
-        .setHTML(`
-          <div style="font-family:sans-serif;font-size:13px;max-width:240px">
-            <div style="font-weight:600;color:#111;margin-bottom:4px">${name}</div>
-            <div style="line-height:1.3;color:#444;">${cleanDesc}</div>
-          </div>
-        `)
-        .addTo(map);
-    });
+    setRealSensors(sensorsToRender);
 
-    // Fit bounds
-    const pts = gj.features.filter(f => f.geometry?.type === 'Point').map(f => f.geometry.coordinates);
-    if (pts.length) {
-      const lons = pts.map(c => c[0]);
-      const lats = pts.map(c => c[1]);
-      const sw = [Math.min(...lons), Math.min(...lats)];
-      const ne = [Math.max(...lons), Math.max(...lats)];
-      map.fitBounds([sw, ne], { padding: 50 });
+    // Create markers for sensors with coordinates
+    sensorsToRender.forEach(sensor => {
+      const el = document.createElement('div');
+      el.className = `sensor-marker ${sensor.online ? 'sensor-marker-static-green' : 'sensor-marker-static-red'}`;
+      el.title = `${sensor.name} (${sensor.uid})`;
+
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([sensor.lon, sensor.lat])
+        .addTo(map);
+
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleSensorClick(sensor);
+      });
+
+      sensorMarkersRef.current.push(marker); // Keep separate from default markers
+
+    });
+  };
+
+  const handleSensorClick = async (sensor) => {
+    setSelectedSensor(sensor);
+    setPanelOpen(true);
+    setActiveTab('sensor');
+    setSensorDataLoading(true);
+
+    try {
+      const endTime = Math.floor(Date.now() / 1000);
+      const startTime = endTime - 86400;
+      const data = await fetchSensorData(sensor.uid, startTime, endTime);
+      setSensorData(data);
+    } catch (err) {
+      console.error('Failed to fetch sensor data', err);
+    } finally {
+      setSensorDataLoading(false);
     }
   };
 
@@ -401,10 +552,11 @@ export default function Maps() {
     const map = mapRef.current;
     if (!map) return;
     if (popupRef.current) popupRef.current.remove();
-    if (map.getLayer('guw-sensors-label')) map.removeLayer('guw-sensors-label');
-    if (map.getLayer('guw-sensors-glow')) map.removeLayer('guw-sensors-glow');
-    if (map.getLayer('guw-sensors')) map.removeLayer('guw-sensors');
-    if (map.getSource('guw-sensors')) map.removeSource('guw-sensors');
+    // Clean up sensor markers
+    if (sensorMarkersRef.current) {
+      sensorMarkersRef.current.forEach(m => m.remove());
+      sensorMarkersRef.current = [];
+    }
   };
 
   const toggleSensors = async () => {
@@ -448,12 +600,14 @@ export default function Maps() {
       setLulcCollapsed(false);
       if (markerRef.current) markerRef.current.remove();
       removeSensors();
+      removeRasterOverlay();
+      setShowNlRasterPanel(false);
       if (map.getLayer('site-boundary-label-layer')) map.removeLayer('site-boundary-label-layer');
       if (map.getLayer('site-boundary-layer')) map.removeLayer('site-boundary-layer');
       if (map.getSource('site-boundary')) map.removeSource('site-boundary');
       if (map.getSource('site-boundary-label')) map.removeSource('site-boundary-label');
 
-      // Restore default markers
+      // Restore ALL markers to default state
       defaultMarkersRef.current.forEach(m => m.addTo(map));
       map.flyTo({ center: [78.96, 20.59], zoom: 4 });
       return;
@@ -462,11 +616,17 @@ export default function Maps() {
     const site = studySites[siteName];
     setActiveSite(siteName);
     setPanelOpen(true);
-    setActiveTab('alerts');
+    setActiveTab('forecast');
 
     if (!isRefresh) {
-      // Hide default markers when zooming in
-      defaultMarkersRef.current.forEach(m => m.remove());
+      // Hide ONLY the selected site's marker (bounding box takes over), keep others visible
+      defaultMarkersRef.current.forEach(m => {
+        if (m.siteName === siteName) {
+          m.remove();
+        } else {
+          m.addTo(map);
+        }
+      });
 
       // Use fitBounds to ensure the entire site boundary is visible, accounting for the left side panel
       const isMobile = window.innerWidth <= 768;
@@ -545,6 +705,34 @@ export default function Maps() {
   };
 
   const currentSiteData = activeSite ? siteData[activeSite] : null;
+  // True when sensors are toggled on but every sensor came back offline
+  const allSensorsOffline = sensorsOn && realSensors.length > 0 && realSensors.every(s => !s.online);
+
+  // ==== Fetch Weather Data Effect ====
+  useEffect(() => {
+    if (activeSite) {
+      const fetchWeather = async () => {
+        setWeatherLoading(true);
+        setWeatherError(null);
+        try {
+          const site = studySites[activeSite];
+          // Lng is center[0], Lat is center[1]
+          const data = await fetchWeatherData(activeSite, site.center[1], site.center[0]);
+          setWeatherData(data);
+        } catch (err) {
+          setWeatherError('Failed to load weather data.');
+        } finally {
+          setWeatherLoading(false);
+        }
+      };
+      fetchWeather();
+    } else {
+      setWeatherData(null);
+    }
+  }, [activeSite]);
+
+  // Keep activeSiteRef in sync so stable useCallback functions can read current site
+  useEffect(() => { activeSiteRef.current = activeSite; }, [activeSite]);
 
   return (
     <div className="map-page-wrapper">
@@ -627,25 +815,99 @@ export default function Maps() {
         {activeSite === 'Guwahati' && (
           <>
             <h4>Data Layers</h4>
-            <div className="control-group">
+            <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button className={`map-control-btn ${sensorsOn ? 'active' : ''}`} onClick={toggleSensors}>Guwahati Water Sensors</button>
+              {allSensorsOffline && (
+                <div style={{
+                  fontSize: '11px',
+                  color: '#ff3366',
+                  backgroundColor: 'rgba(255,51,102,0.08)',
+                  border: '1px solid rgba(255,51,102,0.25)',
+                  borderRadius: '6px',
+                  padding: '6px 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontWeight: 600,
+                }}>
+                  ⚠️ All sensors offline
+                </div>
+              )}
+              <button
+                className={`map-control-btn ${showNlRasterPanel ? 'active' : ''}`}
+                onClick={toggleNlRaster}
+                style={showNlRasterPanel ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : {}}
+              >
+                {showNlRasterPanel ? 'Disable Satellite Overlay' : 'Enable Satellite Overlay'}
+              </button>
             </div>
           </>
         )}
+
+        {['Dordrecht', 'Geertruidenberg'].includes(activeSite) && (
+          <>
+            <h4>Data Layers</h4>
+            <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>            </div>
+          </>
+        )}
       </div>
+
+      {/* === Open Panel Handle === */}
+      {activeSite && !panelOpen && (
+        <button className="panel-open-handle" onClick={() => setPanelOpen(true)}>
+          <FaAngleDoubleRight />
+        </button>
+      )}
 
       {/* === Right Panel === */}
       <div className={`side-panel ${panelOpen ? 'open' : ''}`}>
         {currentSiteData ? (
           <>
-            <button className="panel-close-btn" onClick={() => setPanelOpen(false)}><FaTimes /></button>
+            <button className="panel-retract-btn" onClick={() => setPanelOpen(false)} title="Retract Panel"><FaAngleDoubleLeft /></button>
             <div className="panel-header"><FaMapMarkerAlt /> <h2>{activeSite}</h2></div>
             <p className="panel-sub-header">Focus: {studySites[activeSite].hazard}</p>
 
+            {/* SENSOR QUICK-VIEW (Placed above tabs/forecast) */}
+            {activeSite === 'Guwahati' && sensorsOn && allSensorsOffline && (
+              <div style={{ padding: '0.75rem 1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,51,102,0.04)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff3366', fontWeight: 700, fontSize: '0.85rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>📡</span>
+                  All Water Sensors Offline
+                </div>
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                  The Guwahati sensor network is not reporting data right now. Sensors typically go offline at night or during connectivity issues. Check back during daytime hours.
+                </p>
+              </div>
+            )}
+            {activeSite === 'Guwahati' && sensorsOn && !allSensorsOffline && selectedSensor && (
+               <div style={{ padding: '0 1.5rem 1rem 1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(0,255,204,0.03)' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0 0.5rem 0' }}>
+                   <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold' }}>📡 {selectedSensor.name}</h3>
+                   <span className={selectedSensor.online ? 'sensor-badge-online' : 'sensor-badge-offline'}>
+                     {selectedSensor.online ? 'LIVE' : 'OFFLINE'}
+                   </span>
+                 </div>
+                 {sensorData && sensorData.length > 0 ? (
+                   <div style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+                     {selectedSensor.type === 'rain_gauge' ? 'Precipitation: ' : 'Water Level: '}
+                     {selectedSensor.type === 'rain_gauge' 
+                       ? `${sensorData[sensorData.length - 1].daily_rain_mm ?? 0} mm`
+                       : `${sensorData[sensorData.length - 1].water_level ?? 0} m`
+                     }
+                     <span style={{ marginLeft: '8px', fontSize: '0.75rem', opacity: 0.6, fontWeight: 'normal' }}>
+                       ({new Date(sensorData[sensorData.length - 1].date_time).toLocaleTimeString()})
+                     </span>
+                   </div>
+                 ) : <div style={{ fontSize: '0.85rem', opacity: 0.6 }}>Waiting for data...</div>}
+               </div>
+            )}
+
             <div className="panel-tabs">
-              <button className={activeTab === 'alerts' ? 'active' : ''} onClick={() => setActiveTab('alerts')}>Alerts</button>
               <button className={activeTab === 'forecast' ? 'active' : ''} onClick={() => setActiveTab('forecast')}>Forecast</button>
+              <button className={activeTab === 'alerts' ? 'active' : ''} onClick={() => setActiveTab('alerts')}>Alerts</button>
               <button className={activeTab === 'reports' ? 'active' : ''} onClick={() => setActiveTab('reports')}>Reports</button>
+              {selectedSensor && <button className={activeTab === 'sensor' ? 'active' : ''} onClick={() => setActiveTab('sensor')}>Sensor</button>}
             </div>
 
             <div className="panel-content">
@@ -661,20 +923,62 @@ export default function Maps() {
 
               {activeTab === 'forecast' && (
                 <div className="panel-section">
-                  <h4 className="chart-title">7-Day Forecast</h4>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <LineChart data={currentSiteData.forecast}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="day" />
-                      <YAxis yAxisId="left" stroke="#8884d8" />
-                      <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
-                      <Tooltip />
-                      <Legend />
-                      <Line yAxisId="left" type="monotone" dataKey="rainfall" stroke="#3B82F6" strokeWidth={2} />
-                      <Line yAxisId="left" type="monotone" dataKey="temp" stroke="#EF4444" strokeWidth={2} />
-                      <Line yAxisId="right" type="monotone" dataKey="humidity" stroke="#82ca9d" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  {weatherLoading && <div style={{textAlign: 'center', padding: '20px', opacity: 0.7}}>Loading weather data...</div>}
+                  {weatherError && <div style={{color: '#EF4444', padding: '10px'}}>{weatherError}</div>}
+                  {!weatherLoading && !weatherError && weatherData && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                        <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Today's Details</h4>
+                        <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600', backgroundColor: '#e2e8f0', padding: '2px 8px', borderRadius: '12px' }}>
+                          {formatShortDate(weatherData.today.day || new Date().toISOString().split('T')[0])}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                        <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Temperature</div>
+                          <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.temp}°C</div>
+                        </div>
+                        <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Precipitation</div>
+                          <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.precipitation} mm</div>
+                        </div>
+                        <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Humidity</div>
+                          <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.humidity}%</div>
+                        </div>
+                      </div>
+
+                      <h4 className="chart-title">Past 6 days (historical data)</h4>
+                      <ResponsiveContainer width="100%" height={200} style={{ marginBottom: '20px' }}>
+                        <LineChart data={weatherData.past7Days}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="day" tick={{fontSize: 10}} tickMargin={5} tickFormatter={formatShortDate} />
+                          <YAxis yAxisId="left" stroke="#8884d8" width={30} tick={{fontSize: 10}} />
+                          <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" width={30} tick={{fontSize: 10}} />
+                          <Tooltip contentStyle={{fontSize: '12px'}} />
+                          <Legend wrapperStyle={{fontSize: "11px", paddingTop: "5px"}} />
+                          <Line yAxisId="left" type="monotone" name="Temp (°C)" dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name="Precip (mm)" dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="right" type="monotone" name="Humidity (%)" dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
+                        </LineChart>
+                      </ResponsiveContainer>
+
+                      <h4 className="chart-title">Next 6 days (forecast)</h4>
+                      <ResponsiveContainer width="100%" height={200}>
+                        <LineChart data={weatherData.future7Days}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="day" tick={{fontSize: 10}} tickMargin={5} tickFormatter={formatShortDate} />
+                          <YAxis yAxisId="left" stroke="#8884d8" width={30} tick={{fontSize: 10}} />
+                          <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" width={30} tick={{fontSize: 10}} />
+                          <Tooltip contentStyle={{fontSize: '12px'}} />
+                          <Legend wrapperStyle={{fontSize: "11px", paddingTop: "5px"}} />
+                          <Line yAxisId="left" type="monotone" name="Temp (°C)" dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name="Precip (mm)" dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="right" type="monotone" name="Humidity (%)" dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -691,10 +995,69 @@ export default function Maps() {
                   <button className="cta-button panel-cta">Submit a Report</button>
                 </div>
               )}
+
+              {activeTab === 'sensor' && selectedSensor && (
+                <div className="panel-section">
+                  <div style={{ padding: '10px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b' }}>{selectedSensor.name}</h3>
+                      <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '10px', backgroundColor: selectedSensor.online ? '#dcfce7' : '#fee2e2', color: selectedSensor.online ? '#166534' : '#991b1b' }}>
+                        {selectedSensor.online ? 'ONLINE' : 'OFFLINE'}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>UID: {selectedSensor.uid}</div>
+                    <div style={{ fontSize: '12px', color: '#64748b' }}>Type: {selectedSensor.type === 'rain_gauge' ? 'Rain Gauge' : 'Level Meter'}</div>
+                  </div>
+
+                  {sensorDataLoading && <div style={{ textAlign: 'center', padding: '40px', opacity: 0.7 }}>Fetching latest sensor readings...</div>}
+                  
+                  {!sensorDataLoading && sensorData && sensorData.length > 0 ? (
+                    <div className="sensor-readings">
+                      <div style={{ marginBottom: '15px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '10px' }}>Latest Reading</div>
+                        <div style={{ padding: '15px', backgroundColor: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe' }}>
+                          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1d4ed8' }}>
+                            {selectedSensor.type === 'rain_gauge' 
+                              ? `${sensorData[sensorData.length - 1].daily_rain_mm ?? sensorData[sensorData.length - 1].value ?? 0} mm`
+                              : `${sensorData[sensorData.length - 1].water_level ?? sensorData[sensorData.length - 1].value ?? 0} m`
+                            }
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#60a5fa', marginTop: '4px' }}>
+                            Measured at: {new Date(sensorData[sensorData.length - 1].date_time || sensorData[sensorData.length - 1].timestamp || Date.now()).toLocaleString()}
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                          <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
+                            Battery: {sensorData[sensorData.length - 1].battery_voltage}V
+                          </div>
+                          <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
+                            Solar: {sensorData[sensorData.length - 1].solar_voltage}V
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : !sensorDataLoading && (
+                    <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#f1f5f9', borderRadius: '12px', color: '#64748b' }}>
+                      <p>No recent data available for this sensor.</p>
+                      <small>Checked last 24 hours.</small>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </>
         ) : <div className="panel-placeholder"><p>Select a study site to view details.</p></div>}
       </div>
+      {showNlRasterPanel && activeSite === 'Guwahati' && (
+        <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, width: '100%', display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
+          <div style={{ width: '640px', pointerEvents: 'auto' }}>
+            <NetherlandsTimeSlider onDateChange={handleRasterDateChange} isLoading={rasterLoading} />
+          </div>
+        </div>
+      )}
+
+      <NetherlandsVisualsModal isOpen={showNlModal} onClose={() => setShowNlModal(false)} />
+
     </div>
   );
 }
