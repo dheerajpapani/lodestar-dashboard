@@ -839,26 +839,23 @@ export default function Maps() {
           </>
         )}
 
-        {/* Satellite Overlay: Now for both Guwahati and Geertruidenberg */}
-        {['Guwahati', 'Geertruidenberg'].includes(activeSite) && (
-          <>
-            {!['Guwahati'].includes(activeSite) && <h4>Data Layers</h4>}
-            <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: activeSite === 'Guwahati' ? '-8px' : '0' }}>
-              <button
-                className={`map-control-btn ${showNlRasterPanel ? 'active' : ''}`}
-                onClick={toggleNlRaster}
-                style={showNlRasterPanel ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : {}}
-              >
-                {showNlRasterPanel ? 'Disable Satellite Overlay' : 'Enable Satellite Overlay'}
-              </button>
-            </div>
-          </>
+        {/* Satellite Overlay: Exclusive to Guwahati */}
+        {activeSite === 'Guwahati' && (
+          <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '-8px' }}>
+            <button
+              className={`map-control-btn ${showNlRasterPanel ? 'active' : ''}`}
+              onClick={toggleNlRaster}
+              style={showNlRasterPanel ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : {}}
+            >
+              {showNlRasterPanel ? 'Disable Satellite Overlay' : 'Enable Satellite Overlay'}
+            </button>
+          </div>
         )}
 
         {/* Netherlands Specific Visuals */}
         {['Dordrecht', 'Geertruidenberg'].includes(activeSite) && (
           <>
-            {!['Geertruidenberg'].includes(activeSite) && <h4>Data Layers</h4>}
+            <h4>Data Layers</h4>
             <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>
             </div>
