@@ -326,9 +326,10 @@ export default function Maps() {
     setShowNlRasterPanel(prev => {
       if (prev) {
         removeRasterOverlay();
-        // Zoom back to the site's normal view (Guwahati)
+        // Zoom back to the current site's normal view
         const map = mapRef.current;
-        const site = studySites['Guwahati']; // Always Guwahati for this layer
+        const currentSite = activeSiteRef.current;
+        const site = currentSite ? studySites[currentSite] : null;
         if (map && site) {
           map.fitBounds(site.bounds, {
             padding: { top: 100, bottom: 50, left: 450, right: 50 },
@@ -812,6 +813,7 @@ export default function Maps() {
           )) : <small style={{ opacity: 0.7 }}>Add <code>VITE_OPENWEATHERMAP_KEY</code> in <code>.env</code></small>}
         </div>
 
+        {/* Guwahati Specific: Water Sensors */}
         {activeSite === 'Guwahati' && (
           <>
             <h4>Data Layers</h4>
@@ -833,6 +835,15 @@ export default function Maps() {
                   ⚠️ All sensors offline
                 </div>
               )}
+            </div>
+          </>
+        )}
+
+        {/* Satellite Overlay: Now for both Guwahati and Geertruidenberg */}
+        {['Guwahati', 'Geertruidenberg'].includes(activeSite) && (
+          <>
+            {!['Guwahati'].includes(activeSite) && <h4>Data Layers</h4>}
+            <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: activeSite === 'Guwahati' ? '-8px' : '0' }}>
               <button
                 className={`map-control-btn ${showNlRasterPanel ? 'active' : ''}`}
                 onClick={toggleNlRaster}
@@ -844,9 +855,10 @@ export default function Maps() {
           </>
         )}
 
-        {['Dordrecht'].includes(activeSite) && (
+        {/* Netherlands Specific Visuals */}
+        {['Dordrecht', 'Geertruidenberg'].includes(activeSite) && (
           <>
-            <h4>Data Layers</h4>
+            {!['Geertruidenberg'].includes(activeSite) && <h4>Data Layers</h4>}
             <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>
             </div>
