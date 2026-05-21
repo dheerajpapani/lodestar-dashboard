@@ -2173,7 +2173,7 @@ main {
   background: var(--primary);
   color: white;
   margin-top: 5rem;
-  margin-bottom: -3rem;
+  margin-bottom: 0;
   padding-bottom: 3rem;
   /* Ensure enough padding at bottom */
 }

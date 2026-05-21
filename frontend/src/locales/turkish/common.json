@@ -1,0 +1,423 @@
+{
+  "nav": {
+    "home": "LODESTAR",
+    "about": "Hakkımızda",
+    "maps": "Harita",
+    "alerts": "Uyarılar",
+    "livingLabs": "Yaşayan Laboratuvarlar",
+    "seriousGames": "Eğitici Oyunlar",
+    "research": "Araştırma",
+    "team": "Konsorsiyum",
+    "internalAccess": "Ortak Klasör"
+  },
+  "footer": {
+    "project": "LODESTAR Projesi",
+    "description": "Risk altındaki topluluklar için düşük maliyetli, çoklu tehlike erken uyarı sistemi inşa etmek amacıyla yürütülen ortak bir Hindistan-Hollanda girişimidir.",
+    "copyright": "© 2025 LODESTAR Proje Konsorsiyumu | DST (Hindistan) & NWO (Hollanda) tarafından finanse edilmektedir.",
+    "credits": "Dashboard IIT Tirupati tarafından tasarlanmıştır."
+  },
+  "notfound": {
+    "title": "404",
+    "subtitle": "Sinyal Kayboldu",
+    "text": "Tahmin haritamızın dışındaki bir veri noktasına yönlendirildiniz. Aranan sayfa bulunamadı. Sizi bilinen bölgelere geri götürelim.",
+    "button": "Gösterge Paneline Dön"
+  },
+  "home": {
+    "hero": {
+      "subtitle": "Dayanıklılık • Zeka • Topluluk",
+      "description": "Gelişmiş öngörülü analitik ile topluluk liderliğindeki eylem arasındaki boşluğu kapatan yeni nesil bir çoklu tehlike erken uyarı sistemidir."
+    },
+    "concepts": {
+      "title": "Temel Mimari",
+      "ews": {
+        "title": "Erken Uyarı Sistemi",
+        "text": "Hem tekil hem de birleşik afet olayları için çoklu tehlike EWS geliştirilmesi."
+      },
+      "labs": {
+        "title": "Yaşayan Laboratuvarlar",
+        "text": "Vatandaşlar ve uzmanlarla ortak atölyeler aracılığıyla çözümler üretilmesi."
+      },
+      "science": {
+        "title": "Vatandaş Bilimi",
+        "text": "Yerel bilginin ve kullanıcılar tarafından iletilen gerçek zamanlı verilerin bilimsel modellere entegre edilmesi."
+      },
+      "disaster": {
+        "title": "Afet Yönetimi",
+        "text": "Risk altındaki toplulukların aşırı iklim olaylarına karşı dayanıklılığının artırılması."
+      }
+    },
+    "cta": {
+      "title": "Canlı Geo-Dashboard",
+      "description": "3D etkileşimli harita arayüzümüzde gerçek zamanlı aktif uyarılara, sel tahminlerine ve topluluk raporlarına erişin.",
+      "button": "Paneli Başlat"
+    },
+    "sites": {
+      "title": "Uygulama Alanları",
+      "focus": "Odak",
+      "country": {
+        "india": "Hindistan",
+        "netherlands": "Hollanda"
+      },
+      "siteList": {
+        "bengaluru": "Bengaluru, Hindistan",
+        "guwahati": "Guwahati, Hindistan",
+        "anantapur": "Anantapur, Hindistan",
+        "dordrecht": "Dordrecht, NL",
+        "geertruidenberg": "Geertruidenberg, NL"
+      },
+      "hazardList": {
+        "bengaluru": "Kentsel Seller",
+        "guwahati": "Birleşik Pluvial ve Fluvial Seller",
+        "anantapur": "Birleşik Sel ve Kuraklık Olayları",
+        "dordrecht": "Kentsel Seller ve Tahliye Planlaması",
+        "geertruidenberg": "Kuraklıklar ve Kentsel Gelişim"
+      }
+    }
+  },
+  "about": {
+    "title": "LODESTAR Projesi Hakkında",
+    "subtitle": "Afet dayanıklılığı oluşturmaya yönelik ortak çabamızın arkasındaki vizyon, hedefler ve metodolojiyi anlama.",
+    "challenge_vision": "Zorluk & Vizyonumuz",
+    "challenge": {
+      "title": "Zorluk",
+      "text": "Mevcut Erken Uyarı Sistemleri genellikle yeterli hazırlık süresinden yoksundur ve kritik topluluk bilgilerini entegre edemez. Bu durum, uyarıların etkili yerel eylemlere dönüşmediği bir 'bilgi-eylem boşluğu' yaratır."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "text": "LODESTAR'ın vizyonu, 'yaşayan laboratuvarlar' yaklaşımını kullanarak düşük maliyetli, çoklu tehlike erken uyarı sistemi ortaklaşa oluşturmaktır. Bu, sistemi daha kapsamlı, katılımcı ve duyarlı hale getirerek herkes için afet hazırlığını artırır."
+    },
+    "core_objectives": "Temel Hedeflerimiz",
+    "objectives": {
+      "objective1": {
+        "title": "Hedef 1",
+        "text": "Hindistan ve Hollanda'daki aşırı birleşik afet olaylarının zorluklarını ele almak için sosyo-teknik afet ve acil durum MH-EWS gösterge panelleri geliştirmek."
+      },
+      "objective2": {
+        "title": "Hedef 2",
+        "text": "Entegre bir MH-EWS elde etmek amacıyla yenilikçi teknolojilere odaklanarak sel ve kuraklık modellemesini ve kullanıcı arayüzünü iyileştirmek."
+      },
+      "objective3": {
+        "title": "Hedef 3",
+        "text": "Yeni teknolojilerin uygulanması ve benimsenmesinin hızlandırılması için gerekli olan sosyo-kültürel ve yönetimsel yenilikleri yaşayan laboratuvarlar aracılığıyla geliştirmek ve uzun vadeli sürdürülebilirliği sağlamak."
+      }
+    },
+    "approach": "Yaklaşımımız",
+    "workStreams": {
+      "ws1": {
+        "title": "WS 1: Afet Bağlamı ve Bilgi Boşlukları",
+        "text": "Mevcut sistemleri inceleyerek sel ve kuraklık yönetimindeki sosyo-teknik bilgi boşluklarını tanımlar ve projenin temelini oluşturur."
+      },
+      "ws2": {
+        "title": "WS 2: Gerçek Zamanlı Veri Entegrasyonu",
+        "text": "Düşük maliyetli sensörler ve vatandaş bilimi aracılığıyla, bilgisayarla görü algoritmalarını ve hava durumu tahminlerini kullanarak gerçek zamanlı hidrometeorolojik veri entegrasyonu gerçekleştirir."
+      },
+      "ws3": {
+        "title": "WS 3: Vatandaş Bilimi & Yaşayan Laboratuvarlar",
+        "text": "Vatandaşlar, akademisyenler ve profesyoneller arasında yaşayan laboratuvarlar ve eğitici oyunlar kullanarak bilgi alışverişini kolaylaştırır ve sistemin kullanıcı ihtiyaçlarını karşılamasını sağlar."
+      },
+      "ws4": {
+        "title": "WS 4: Entegre Panel & Tahmin",
+        "text": "Web ve mobil için kullanıcı odaklı, entegre bir MH-EWS paneli oluşturmak amacıyla model topluluklarını (yapay zeka/makine öğrenimi, süreç tabanlı) kullanan çoklu tehlike tahmin çerçevesi geliştirir."
+      },
+      "ws5": {
+        "title": "WS 5: Kapasite Geliştirme & Uluslararasılaşma",
+        "text": "Eğitimler, atölyeler, yaz akademileri ve uluslararası etkinlikler aracılığıyla Hindistan ve Hollanda'daki tüm ortakların afet yönetimi kapasitesini artırır."
+      }
+    }
+  },
+  "alerts": {
+    "title": "LODESTAR Uyarı Merkezi",
+    "subtitle": "Hindistan ve Hollanda'daki araştırma alanlarımız için gerçek zamanlı, çoklu tehlike erken uyarılarının merkezi hub'ı.",
+    "filter_site": "Alandan Filtrele:",
+    "filter_hazard": "Tehlikeden Filtrele:",
+    "all": "Tümü",
+    "total_alerts_one": "{{count}} Toplam Aktif Uyarı",
+    "total_alerts_other": "{{count}} Toplam Aktif Uyarı",
+    "high_alerts_one": "{{count}} Yüksek Öncelikli Uyarı",
+    "high_alerts_other": "{{count}} Yüksek Öncelikli Uyarı",
+    "actions": "Önerilen Eylemler:",
+    "no_alerts": "Filtre ayarlarınızla eşleşen aktif uyarı bulunmamaktadır.",
+    "hazard": "Tehlike",
+    "siteNames": {
+      "guwahati": "Guwahati",
+      "anantapur": "Anantapur",
+      "bengaluru": "Bengaluru",
+      "dordrecht": "Dordrecht",
+      "geertruidenberg": "Geertruidenberg"
+    },
+    "hazardNames": {
+      "flood": "Sel",
+      "drought": "Kuraklık",
+      "compound": "Birleşik"
+    },
+    "severities": {
+      "minor": "Hafif",
+      "moderate": "Orta",
+      "severe": "Ciddi",
+      "extreme": "Kritik"
+    },
+    "list": {
+      "g1": "Brahmaputra nehri, yoğun yağış nedeniyle uyarı seviyesini aşmıştır.",
+      "g1_a": "Nehir kıyısındaki alçak bölgeleri tahliye edin. Değerli eşyaları yüksek katlara taşıyın. ASDMA talimatlarına uyun.",
+      "a1": "Muson yağışları ortalamanın altında kalmaya devam ediyor. Toprak nemi kritik düzeyde düşük.",
+      "a1_a": "Su tasarrufu önlemlerini uygulayın. Çiftçilere kuraklığa dayanıklı mahsulleri değerlendirmeleri önerilir.",
+      "b1": "Kısa süreli şiddetli yağış bekleniyor, kentsel su baskını riski yüksektir.",
+      "b1_a": "Alçak bölgelerde ve alt geçitlerde seyahat etmekten kaçının. Yağmur suyu drenaj kanallarının temiz olduğundan emin olun.",
+      "d1": "Kuzey Denizi gelgit dalgası nedeniyle nehir seviyeleri yüksek ancak sel eşiğinin altında kalması bekleniyor.",
+      "d1_a": "Su seviyelerini izleyin ve hafif kıyı su baskınları olasılığına karşı dikkatli olun.",
+      "g2": "Birleşik Olay: Nehirden gelen taşkın, kentsel drenajı aşan aşırı yağışla (pluvial) birleşti.",
+      "g2_a": "Bu durum yüksek risk barındırıyor. Derhal yüksek katlara veya belirlenen tahliye merkezlerine sığının."
+    }
+  },
+  "livingLabs": {
+    "title": "Yaşayan Laboratuvarlar & Vatandaş Bilimi",
+    "subtitle": "Topluluk bilgisinin bilimsel yenilikle buluştuğu yer. Bu, LODESTAR'ın afet dayanıklılığı oluşturmaya yönelik aşağıdan yukarıya yaklaşımının merkezidir.",
+    "whatIs": {
+      "title": "Yaşayan Laboratuvar Nedir?",
+      "text": "Yaşayan Laboratuvar (Living Lab), çözümleri gerçek yaşam koşullarında ortaklaşa geliştirdiğimiz açık bir inovasyon ortamıdır. Çoklu Tehlike Erken Uyarı Sistemimizin (MH-EWS) son kullanıcıların gerçek ihtiyaçlarına, kültürlerine ve yaratıcı potansiyellerine uymasını sağlamak için tüm paydaşları bir araya getirdiğimiz bir alandır. Bu yaklaşım, geleneksel yukarıdan aşağıya sistemlerin ötesine geçerek kritik 'bilgi-eylem' boşluğunu kapatır."
+    },
+    "methods": {
+      "title": "Ortak Yaratım Yöntemlerimiz",
+      "mapping": {
+        "title": "Katılımcı Sosyal Haritalama",
+        "text": "Afet riski sosyal peyzajını haritalandırarak başlıyoruz. İşbirlikçi egzersizler yoluyla, araçlarımızın doğru insanlar için doğru sorunları çözmesini sağlamak amacıyla 'Kimin ne bildiğini' ve 'Kimin neyi bilmesi gerektiğini' belirliyoruz."
+      },
+      "gaming": {
+        "title": "Ciddi Oyunlar & Senaryolar",
+        "text": "Gerçekçi afet senaryoları üzerine inşa edilmiş etkileşimli ve sürükleyici oyunlar; örtük bilgiyi ortaya çıkarmak, müdahale stratejilerini test etmek ve çeşitli paydaşlar arasında yaratıcı problem çözmeyi teşvik etmek için kullanılır."
+      },
+      "learning": {
+        "title": "Yatay Öğrenme",
+        "text": "Vatandaşları, uzmanları ve yetkilileri birbirine bağlayarak akranlar arası bilgi alışverişi ortamını teşvik ediyoruz. Bu, hiyerarşileri yıkar ve her türlü bilginin eşit derecede değer görmesini sağlar."
+      }
+    },
+    "cta": {
+      "title": "Vatandaş Bilimci Olun",
+      "subtitle": "Topluluğunuzu daha güvenli hale getirmede doğrudan bir rol oynayabilirsiniz. İşte nasıl yapılacağı:",
+      "data": {
+        "title": "Gerçek Zamanlı Veri Katkısında Bulunun",
+        "text": "Su seviyeleri gibi hayati önem taşıyan saha bilgilerini paylaşmak için yakında çıkacak mobil araçlarımızı kullanın."
+      },
+      "workshop": {
+        "title": "Bir Atölyeye Katılın",
+        "text": "Deneyimlerinizi paylaşmak ve yeni araçları test etmek için yerel Yaşayan Laboratuvarlarımıza katılın."
+      },
+      "knowledge": {
+        "title": "Yerel Bilgiyi Paylaşın",
+        "text": "Geçmiş olaylara dair bilginiz, daha doğru modeller oluşturmak için paha biçilemez bir değerdir."
+      }
+    }
+  },
+  "seriousGames": {
+    "title": "Eğitici Oyunlar Portalı",
+    "subtitle": "Afet riski, dayanıklılık ve stratejik müdahaleyi keşfeden oynanabilir ciddi oyunlara doğrudan dalın.",
+    "sectionTitle": "Bu Gerçek Dünya Afet Riski Oyunlarını Oynayın",
+    "statusTag": "Çevrimiçi Oynanabilir",
+    "focusLabel": "Odak:",
+    "playTitle": "Oyunu yeni sekmede aç",
+    "playButton": "Oyna",
+    "games": {
+      "stopDisasters": {
+        "title": "Stop Disasters! (UNDRR)",
+        "blurb": "UNDRR tarafından geliştirilen çoklu tehlike simülasyonu: şehirleri tsunami, deprem, sel, orman yangını ve kasırgadan koruyun. Çevrimiçi oynayın ve risk yönetimi stratejinizi test edin."
+      },
+      "disasterMaster": {
+        "title": "Disaster Master (Ready.gov)",
+        "blurb": "Gençlik dostu oyun: çeşitli afetlerle yüzleşin, oyun seviyeleri boyunca hazırlıklılık ve dayanıklılık oluşturun."
+      },
+      "buildKit": {
+        "title": "Build a Kit Game (Ready.gov)",
+        "blurb": "Acil durum çantanızı oluşturduğunuz ve afetler vurduğunda nasıl hareket edeceğinizi seçtiğiniz etkileşimli oyun."
+      },
+      "disasterResponse": {
+        "title": "The Disaster Response Game (ISR/NYAS)",
+        "blurb": "Dijital senaryo oyunu: orman yangınları, kasırgalar, gıda güvenliği krizleri. Baskı altında hızlı karar verme becerilerinizi geliştirin."
+      }
+    },
+    "tags": {
+      "multiHazard": "Çoklu tehlike",
+      "strategy": "Strateji",
+      "riskReduction": "Risk azaltma",
+      "preparedness": "Hazırlıklılık",
+      "youthEducation": "Gençlik eğitimi",
+      "hazardAwareness": "Tehlike farkındalığı",
+      "emergencyKit": "Acil durum çantası",
+      "decisionMaking": "Karar verme",
+      "awareness": "Farkındalık",
+      "crisisResponse": "Kriz müdahalesi"
+    }
+  },
+  "research": {
+    "title": "Araştırma & Bilgi Merkezi",
+    "subtitle": "Projenin çıktılarına, temel yayınlarına, açık veri depolarına ve kurucu belgelerine erişin.",
+    "sourceLabel": "Kaynak:",
+    "authorsLabel": "Yazarlar:",
+    "deliverables": {
+      "sectionTitle": "Proje Çıktıları & Araçları",
+      "a4eu": {
+        "title": "Pan-Avrupa Karar Destek Gösterge Paneli (A4EU)",
+        "summary": "Wageningen Üniversitesi tarafından geliştirilen ve LODESTAR'ın EWS'si için bir model görevi gören ANYWHERE projesine ait temel bir gösterge paneli.",
+        "source": "Wageningen Üniversitesi"
+      },
+      "games": {
+        "title": "Ciddi Oyunlar Kataloğu & Kolaylaştırma Kılavuzu",
+        "summary": "Paydaş atölyelerinde bu oyunları geliştirmek ve yönetmek için hazırlanan, fiziksel ve dijital ciddi oyunlar portföyü.",
+        "source": "MetaMeta Araştırma"
+      },
+      "storm": {
+        "title": "Kalibre Edilmiş Hidrolojik Model (STORM V1)",
+        "summary": "Bangalore için kalibre edilmiş, daha önce kitle kaynaklı çalışmalarda kullanılmış ve bu projenin modelleme çalışmaları için temel oluşturan bir kentsel sel modeli.",
+        "source": "Hindistan Bilim Enstitüsü"
+      }
+    },
+    "publications": {
+      "sectionTitle": "Konsorsiyumdan Temel Yayınlar",
+      "subcultures": {
+        "title": "Hollanda'da sel afeti alt kültürleri",
+        "summary": "Hollanda topluluklarındaki sel risklerine yönelik sosyal ve kültürel tepkileri inceleyerek projenin sosyo-teknik yaklaşımı için kritik bir bağlam sunar."
+      },
+      "interface": {
+        "title": "Hindistan'da su kıtlığı üzerine bilim-politika arayüzü",
+        "summary": "Hindistan'daki su kıtlığı konusunda bilimsel araştırma ile politika oluşturma arasındaki iletişim ve bilgi boşluklarını inceler."
+      },
+      "forecasts": {
+        "title": "Kuraklık tehlikesinden kuraklık etkisi tahminlerine geçiş",
+        "summary": "Kuraklık erken uyarı sistemlerini sadece tehlikeleri tahmin etmekten, bunların topluluklar üzerindeki somut, gerçek dünyadaki etkilerini tahmin etmeye taşımak üzerine temel bir makale."
+      }
+    },
+    "openScience": {
+      "title": "Veri, Modeller & Açık Bilim",
+      "text": "LODESTAR, bilimsel veri yönetimi için FAIR (Bulunabilir, Erişilebilir, Birlikte Çalışabilir, Yeniden Kullanılabilir) kılavuz ilkelerine bağlıdır. Bilgi üretimi, aktarımı ve paylaşımını şeffaf ve etkileşimli hale getirmeyi hedefliyoruz.",
+      "cards": {
+        "fourTu": "Yayınlar için kullanılan işlenmiş veriler 4TU araştırma veri merkezinde depolanacak ve kullanıma sunulacaktır.",
+        "github": "Proje sürecinde geliştirilen algoritmalar, betikler ve yazılımlar GitHub gibi platformlar aracılığıyla paylaşılacaktır.",
+        "sendai": {
+          "title": "Sendai Çerçevesi",
+          "text": "Projenin hedefleri, Afet Riskinin Azaltılması için bu temel çerçeve ile uyumludur."
+        }
+      }
+    }
+  },
+  "team": {
+    "title": "LODESTAR Konsorsiyumu",
+    "subtitle": "Projeyi yürüten kendini adamış, disiplinler arası ekibe ayrıntılı bir bakış.",
+    "labels": {
+      "role": "Projedeki Rolü:",
+      "contribution": "Birincil Katkı:",
+      "publication": "Temel Yayın Görüşü:",
+      "email": "E-posta"
+    },
+    "sections": {
+      "leadership": "Proje Liderliği",
+      "dutch": "Hollanda Konsorsiyumu",
+      "indian": "Hindistan Konsorsiyumu"
+    },
+    "members": {
+      "m1": {
+        "name": "Profesör Anamika Barua",
+        "title": "Profesör, Beşeri ve Sosyal Bilimler Bölümü",
+        "institution": "Hindistan Teknoloji Enstitüsü-Guwahati (IIT-G)",
+        "institutionContext": "Hindistan'ın en iyi üniversitelerinden biri ve mühendislik ile afet yönetimi alanında lider bir kurum olan IIT-G, projenin Hindistan'daki merkezidir.",
+        "role": "Hindistan Baş Araştırmacısı (Principal Investigator)",
+        "projectContribution": "Hindistan konsorsiyumunu yönetir, genel proje koordinasyonunu sağlar, doktora öğrencilerini denetler ve İş Paketleri 1, 3 ve 5'te doğrudan yer alır.",
+        "publication": {
+          "title": "Media reporting on conflicts and cooperation... for the Brahmaputra basin.",
+          "relevance": "Bu araştırma, toplumlar arası bir EWS'nin başarısı için elzem olan su yönetiminin sosyo-politik bağlamına dair kritik bilgiler sunmaktadır."
+        }
+      },
+      "m2": {
+        "name": "Dr. Jeroen F. Warner",
+        "title": "Doçent Doktor, Kriz ve Afet Çalışmaları",
+        "institution": "Wageningen Üniversitesi & Araştırma (WUR)",
+        "institutionContext": "Yaşam bilimleri ve sosyal bilimler alanında dünya lideri bir kurum olan WUR, su, iklim ve afet çalışmaları alanında disiplinler arası uzmanlık sunmaktadır.",
+        "role": "Hollanda Baş Araştırmacısı (Principal Investigator)",
+        "projectContribution": "Hollanda konsorsiyumunu yönetir, genel proje koordinasyonunu sağlar, doktora öğrencilerini denetler ve İş Paketleri 3 ve 5'te doğrudan yer alır.",
+        "publication": {
+          "title": "The politics of adaptive climate management: Scientific recipes and lived reality.",
+          "relevance": "Bu çalışma, bilimsel çözümler ile risk altındaki toplulukların yaşanmış deneyimlerinin kesişimini keşfederek LODESTAR'ın temel misyonunu oluşturur."
+        }
+      },
+      "m3": {
+        "name": "Dr. Sumit Vij",
+        "title": "Yardımcı Doçent",
+        "institution": "Wageningen Üniversitesi & Araştırma",
+        "role": "Ortak Araştırmacı & İş Paketi 5 Lideri"
+      },
+      "m4": {
+        "name": "Dr. Jantsje van Loon-Steensma",
+        "title": "Uygulamalı Bilimler Profesörü",
+        "institution": "VHL Üniversitesi",
+        "role": "Ortak Araştırmacı, Eco-DRR Uzmanı"
+      },
+      "m5": {
+        "name": "Dr. Spyridon Paparrizos",
+        "title": "Yardımcı Doçent",
+        "institution": "Wageningen Üniversitesi",
+        "role": "Ortak Araştırmacı & İş Paketi 4 Eş Lideri"
+      },
+      "m6": {
+        "name": "Dr. Frank van Steenbergen",
+        "title": "Genel Müdür",
+        "institution": "MetaMeta Araştırma",
+        "role": "Ortak & İş Paketi 3 Lideri"
+      },
+      "m7": {
+        "name": "Dr. Roshan Karan Srivastav",
+        "title": "Yardımcı Doçent",
+        "institution": "IIT Tirupati",
+        "role": "Ortak Araştırmacı & İş Paketi 4 Lideri"
+      },
+      "m8": {
+        "name": "Dr. Rajarshi Das Bhowmik",
+        "title": "Yardımcı Doçent",
+        "institution": "IISc Bangalore",
+        "role": "Ortak Araştırmacı & İş Paketi 2 Lideri"
+      },
+      "m9": {
+        "name": "Dr. Indu K Murthy",
+        "title": "Baş Araştırmacı",
+        "institution": "CSTEP",
+        "role": "Ortak & İş Paketi 3 Lideri"
+      },
+      "m10": {
+        "name": "Dr. Anil Kumar Gupta",
+        "title": "Bölüm Başkanı",
+        "institution": "NIDM",
+        "role": "İşbirliği Ortağı"
+      }
+    }
+  },
+  "internal": {
+    "checking_backend": "Backend kontrol ediliyor...",
+    "waking_server": "AWS sunucusu uyandırılıyor... (~60sn)",
+    "backend_working": "Backend aktif",
+    "backend_not_working": "Backend aktif değil",
+    "wake_server": "Sunucuyu Uyandır",
+    "waking_ec2": "⏳ EC2 uyandırılıyor... (~60sn)",
+    "drive_title": "Konsorsiyum Portalı",
+    "drive_subtitle": "LODESTAR modelleme verilerine ve SFTP hizmetlerine güvenli idari geçiş.",
+    "secure_login": "Güvenli Giriş",
+    "enter_credentials": "Devam etmek için dahili kimlik bilgilerinizi girin.",
+    "note_label": "Not:",
+    "note_text": "Bu portal yalnızca yetkili dahili personel içindir. Modelleme verilerine ve dahili SFTP hizmetlerine erişim konsorsiyum üyeleriyle sınırlıdır.",
+    "username_placeholder": "SFTP Kullanıcı Adı",
+    "password_placeholder": "SFTP Şifresi",
+    "connecting": "Bağlanıyor...",
+    "connect_btn": "Sunucuya Bağlan",
+    "login_issues": "Giriş yaparken sorun mu yaşıyorsunuz?",
+    "try_direct": "Doğrudan Giriş Servisini Deneyin",
+    "explorer_title": "Portal Gezgini",
+    "view_list": "Liste",
+    "view_grid": "Izgara",
+    "logout": "Çıkış Yap",
+    "no_files": "Kullanılabilir dosya bulunamadı.",
+    "type_directory": "Dizin",
+    "download": "İndir",
+    "table_name": "Ad",
+    "table_type": "Tür",
+    "table_size": "Boyut",
+    "table_action": "Eylem",
+    "type_folder": "Klasör",
+    "type_file": "Dosya"
+  }
+}

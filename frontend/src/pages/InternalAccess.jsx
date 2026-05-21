@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 
 // SVG Lock Icon component matching the user's requested style
@@ -21,6 +22,8 @@ const LockIcon = ({ size = 20, color = "currentColor", style = {} }) => (
 );
 
 const InternalAccess = () => {
+    const { t } = useTranslation();
+
     // Component State
     const [credentials, setCredentials] = useState({ username: '', password: '' });
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -255,9 +258,9 @@ const InternalAccess = () => {
                             animation: (connectionStatus === 'connecting' || connectionStatus === 'waking') ? 'pulse 1.5s infinite' : 'none'
                         }}></div>
                         <span>
-                            {connectionStatus === 'connecting' ? 'Checking backend...' :
-                                connectionStatus === 'waking' ? 'Waking up AWS server... (~60s)' :
-                                    connectionStatus === 'connected' ? 'Backend working' : 'Backend not working'}
+                            {connectionStatus === 'connecting' ? t('internal.checking_backend', 'Checking backend...') :
+                                connectionStatus === 'waking' ? t('internal.waking_server', 'Waking up AWS server... (~60s)') :
+                                    connectionStatus === 'connected' ? t('internal.backend_working', 'Backend working') : t('internal.backend_not_working', 'Backend not working')}
                         </span>
                     </div>
 
@@ -278,12 +281,12 @@ const InternalAccess = () => {
                             onMouseOver={(e) => e.target.style.background = 'rgba(255,255,255,0.3)'}
                             onMouseOut={(e) => e.target.style.background = 'rgba(255,255,255,0.2)'}
                         >
-                            Wake Server
+                            {t('internal.wake_server', 'Wake Server')}
                         </button>
                     )}
                     {wakeInProgress && (
                         <span style={{ fontSize: '0.78rem', opacity: 0.85, marginTop: '4px' }}>
-                            ⏳ Waking up EC2... (~60s)
+                            {t('internal.waking_ec2', '⏳ Waking up EC2... (~60s)')}
                         </span>
                     )}
                 </div>
@@ -341,9 +344,9 @@ const InternalAccess = () => {
                 >
                     <div className="hero-section-internal">
                         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-                            <h1 className="hero-title-about" style={{ color: 'white', marginBottom: '0.5rem' }}>Consortium Drive</h1>
+                            <h1 className="hero-title-about" style={{ color: 'white', marginBottom: '0.5rem' }}>{t('internal.drive_title', 'Consortium Drive')}</h1>
                             <p className="hero-subtitle-about" style={{ color: 'rgba(255,255,255,0.9)', margin: '0 auto' }}>
-                                Secure administrative gateway to LODESTAR's modeling data and SFTP services.
+                                {t('internal.drive_subtitle', "Secure administrative gateway to LODESTAR's modeling data and SFTP services.")}
                             </p>
                         </div>
                     </div>
@@ -369,8 +372,8 @@ const InternalAccess = () => {
                                 }}>
                                     <LockIcon size={28} color="var(--primary)" />
                                 </div>
-                                <h3 style={{ margin: 0 }}>Secure Login</h3>
-                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Enter your internal credentials to proceed.</p>
+                                <h3 style={{ margin: 0 }}>{t('internal.secure_login', 'Secure Login')}</h3>
+                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('internal.enter_credentials', 'Enter your internal credentials to proceed.')}</p>
                             </div>
 
                             <div style={{
@@ -387,7 +390,7 @@ const InternalAccess = () => {
                                 alignItems: 'center'
                             }}>
                                 <LockIcon size={14} color="var(--primary)" />
-                                <span><strong>Note:</strong> This portal is intended for authorized internal personnel only. Access to modeling data and internal SFTP services is restricted to consortium members.</span>
+                                <span><strong>{t('internal.note_label', 'Note:')}</strong> {t('internal.note_text', 'This portal is intended for authorized internal personnel only. Access to modeling data and internal SFTP services is restricted to consortium members.')}</span>
                             </div>
 
                             {error && <div className="login-error" style={{ marginBottom: '1rem' }}>{error}</div>}
@@ -396,7 +399,7 @@ const InternalAccess = () => {
                                 <input
                                     type="text"
                                     name="username"
-                                    placeholder="SFTP Username"
+                                    placeholder={t('internal.username_placeholder', 'SFTP Username')}
                                     value={credentials.username}
                                     onChange={handleChange}
                                     autoComplete="username"
@@ -405,7 +408,7 @@ const InternalAccess = () => {
                                 <input
                                     type="password"
                                     name="password"
-                                    placeholder="SFTP Password"
+                                    placeholder={t('internal.password_placeholder', 'SFTP Password')}
                                     value={credentials.password}
                                     onChange={handleChange}
                                     autoComplete="current-password"
@@ -425,16 +428,16 @@ const InternalAccess = () => {
                                         fontSize: '1rem',
                                         transition: 'background 0.3s ease'
                                     }}>
-                                    {loading ? 'Connecting...' : 'Connect to Server'}
+                                    {loading ? t('internal.connecting', 'Connecting...') : t('internal.connect_btn', 'Connect to Server')}
                                 </button>
                             </form>
 
                             {/* Login Help Link */}
                             {loginAttempts >= 3 && (
                                 <div style={{ marginTop: '1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-                                    Facing issues logging in? <br />
+                                    {t('internal.login_issues', 'Facing issues logging in?')} <br />
                                     <a href="http://172.17.1.141:8080/web/client/login" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', fontWeight: '600', textDecoration: 'underline' }}>
-                                        Try Direct Login Service
+                                        {t('internal.try_direct', 'Try Direct Login Service')}
                                     </a>
                                 </div>
                             )}
@@ -451,7 +454,7 @@ const InternalAccess = () => {
                 >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <h3 style={{ fontSize: '1.5rem', color: 'var(--text-main)', margin: 0 }}>Portal Explorer</h3>
+                            <h3 style={{ fontSize: '1.5rem', color: 'var(--text-main)', margin: 0 }}>{t('internal.explorer_title', 'Portal Explorer')}</h3>
                             <div style={{ display: 'flex', background: 'var(--bg-dark)', borderRadius: '8px', padding: '4px' }}>
                                 <button
                                     onClick={() => setViewMode('list')}
@@ -463,7 +466,7 @@ const InternalAccess = () => {
                                         borderRadius: '6px',
                                         cursor: 'pointer',
                                         fontSize: '0.85rem'
-                                    }}>List</button>
+                                    }}>{t('internal.view_list', 'List')}</button>
                                 <button
                                     onClick={() => setViewMode('grid')}
                                     style={{
@@ -474,14 +477,14 @@ const InternalAccess = () => {
                                         borderRadius: '6px',
                                         cursor: 'pointer',
                                         fontSize: '0.85rem'
-                                    }}>Grid</button>
-                            </div>
+                                    }}>{t('internal.view_grid', 'Grid')}</button>
+                             </div>
                         </div>
-                        <button onClick={handleLogout} className="nav-links" style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>Logout</button>
+                        <button onClick={handleLogout} className="nav-links" style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>{t('internal.logout', 'Logout')}</button>
                     </div>
 
                     {files.length === 0 ? (
-                        <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No files available.</p>
+                        <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>{t('internal.no_files', 'No files available.')}</p>
                     ) : viewMode === 'grid' ? (
                         <div className="admin-controls">
                             {files.map((file, index) => (
@@ -496,7 +499,7 @@ const InternalAccess = () => {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>{file.type === 'd' ? '📁' : '📄'}</div>
                                         <h4 style={{ wordBreak: 'break-word', fontSize: '1.1rem' }}>{file.name}</h4>
-                                        <p style={{ fontSize: '0.85rem' }}>{file.type === 'd' ? 'Directory' : `${(file.size / 1024).toFixed(1)} KB`}</p>
+                                        <p style={{ fontSize: '0.85rem' }}>{file.type === 'd' ? t('internal.type_directory', 'Directory') : `${(file.size / 1024).toFixed(1)} KB`}</p>
                                     </div>
                                     {file.type !== 'd' && (
                                         <button
@@ -509,7 +512,7 @@ const InternalAccess = () => {
                                                 border: 'none',
                                                 borderRadius: '6px',
                                                 cursor: 'pointer'
-                                            }}>Download</button>
+                                            }}>{t('internal.download', 'Download')}</button>
                                     )}
                                 </motion.div>
                             ))}
@@ -519,24 +522,24 @@ const InternalAccess = () => {
                             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                 <thead style={{ background: 'var(--bg-dark)', color: 'var(--text-main)' }}>
                                     <tr>
-                                        <th style={{ padding: '1rem' }}>Name</th>
-                                        <th style={{ padding: '1rem' }}>Type</th>
-                                        <th style={{ padding: '1rem' }}>Size</th>
-                                        <th style={{ padding: '1rem', textAlign: 'right' }}>Action</th>
+                                        <th style={{ padding: '1rem' }}>{t('internal.table_name', 'Name')}</th>
+                                        <th style={{ padding: '1rem' }}>{t('internal.table_type', 'Type')}</th>
+                                        <th style={{ padding: '1rem' }}>{t('internal.table_size', 'Size')}</th>
+                                        <th style={{ padding: '1rem', textAlign: 'right' }}>{t('internal.table_action', 'Action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {files.map((file, index) => (
                                         <tr key={index} style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-main)' }}>
                                             <td style={{ padding: '1rem' }}>{file.type === 'd' ? '📁' : '📄'} {file.name}</td>
-                                            <td style={{ padding: '1rem' }}>{file.type === 'd' ? 'Folder' : 'File'}</td>
+                                            <td style={{ padding: '1rem' }}>{file.type === 'd' ? t('internal.type_folder', 'Folder') : t('internal.type_file', 'File')}</td>
                                             <td style={{ padding: '1rem' }}>{file.type === 'd' ? '-' : `${(file.size / 1024).toFixed(1)} KB`}</td>
                                             <td style={{ padding: '1rem', textAlign: 'right' }}>
                                                 {file.type !== 'd' && (
                                                     <button
                                                         onClick={() => handleDownload(file.name)}
                                                         style={{ color: 'var(--primary)', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '600' }}>
-                                                        Download
+                                                        {t('internal.download', 'Download')}
                                                     </button>
                                                 )}
                                             </td>

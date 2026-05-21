@@ -2,22 +2,26 @@
 // src/pages/About.jsx
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 
-const objectives = [
-  { id: 'RO1', text: 'To develop socio-technical disaster and emergency (early warning) services (MH-EWS dashboards) to address the challenges of extreme compound disaster events in India and the Netherlands.' },
-  { id: 'RO2', text: 'To improve flood and drought modelling and user interface by focusing on innovative technologies, to arrive at an integrated MH-EWS for floods and/or droughts.' },
-  { id: 'RO3', text: 'To develop socio-cultural and management innovations via living labs, necessary for implementing new technologies and accelerating uptake, while ensuring long-term sustainability.' },
-];
-const workStreams = [
-  { title: "WS 1: Disaster Context & Knowledge Gaps", description: "Sets the disaster context by taking stock of existing systems and identifying socio-technical knowledge gaps in flood and drought management to build a foundation for the project." },
-  { title: "WS 2: Real-time Data Assimilation", description: "Conducts real-time hydrometeorological data assimilation using computer vision-based algorithms and extended weather forecasts, leveraging low-cost sensors and citizen science." },
-  { title: "WS 3: Citizen Science & Living Labs", description: "Creates synergy between citizens, academics, and professionals using 'living labs' and 'serious games' to facilitate knowledge exchange, co-create solutions, and ensure the EWS meets user needs." },
-  { title: "WS 4: Integrated Dashboard & Forecasting", description: "Develops a multi-hazard forecast framework using an ensemble of models (AI/ML, process-based) to co-create a user-centric, integrated MH-EWS dashboard for mobile and web." },
-  { title: "WS 5: Capacity Building & Internationalization", description: "Builds the disaster management capacity of all partners and external stakeholders in India and the Netherlands through training, workshops, summer academies, and international outreach." }
-];
-
 export default function About() {
+  const { t } = useTranslation();
+
+  const objectives = [
+    { id: 'RO1', text: t('about.objectives.objective1.text') },
+    { id: 'RO2', text: t('about.objectives.objective2.text') },
+    { id: 'RO3', text: t('about.objectives.objective3.text') },
+  ];
+
+  const workStreams = [
+    { title: t('about.workStreams.ws1.title'), description: t('about.workStreams.ws1.text') },
+    { title: t('about.workStreams.ws2.title'), description: t('about.workStreams.ws2.text') },
+    { title: t('about.workStreams.ws3.title'), description: t('about.workStreams.ws3.text') },
+    { title: t('about.workStreams.ws4.title'), description: t('about.workStreams.ws4.text') },
+    { title: t('about.workStreams.ws5.title'), description: t('about.workStreams.ws5.text') }
+  ];
+
   return (
     <div>
       <motion.section
@@ -27,9 +31,9 @@ export default function About() {
         transition={{ duration: 0.7 }}
       >
         <div className="container">
-          <h1 className="hero-title-about">About The LODESTAR Project</h1>
+          <h1 className="hero-title-about">{t('about.title')}</h1>
           <p className="hero-subtitle-about">
-            Understanding the vision, objectives, and methodology behind our collaborative effort to build disaster resilience.
+            {t('about.subtitle')}
           </p>
         </div>
       </motion.section>
@@ -46,7 +50,7 @@ export default function About() {
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.6 }}
             >
-              <h2>The Challenge & Our Vision</h2>
+              <h2>{t('about.challenge_vision')}</h2>
             </motion.div>
             <div className="feature-split">
               <motion.div
@@ -56,8 +60,8 @@ export default function About() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5 }}
               >
-                <h4>The Challenge</h4>
-                <p>Existing Early Warning Systems often lack sufficient lead times and fail to integrate crucial community knowledge. This creates a "know-do gap," where warnings don't translate into effective local actions.</p>
+                <h4>{t('about.challenge.title')}</h4>
+                <p>{t('about.challenge.text')}</p>
               </motion.div>
               <motion.div
                 className="feature-block"
@@ -66,8 +70,8 @@ export default function About() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <h4>Our Vision</h4>
-                <p>LODESTAR's vision is to co-create a low-cost, multi-hazard EWS using a "living labs" approach. This makes the system more comprehensive, participatory, and responsive, improving disaster preparedness for all.</p>
+                <h4>{t('about.vision.title')}</h4>
+                <p>{t('about.vision.text')}</p>
               </motion.div>
             </div>
 
@@ -80,7 +84,7 @@ export default function About() {
               transition={{ duration: 0.6 }}
               style={{ marginTop: '3rem' }}
             >
-              <h2>Our Core Objectives</h2>
+              <h2>{t('about.core_objectives')}</h2>
             </motion.div>
             <div className="bento-grid">
               {objectives.map((obj, index) => (
@@ -93,7 +97,7 @@ export default function About() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   <div className="bento-id">{obj.id}</div>
-                  <h4>Objective {index + 1}</h4>
+                  <h4>{t('about.objectives.objective' + (index + 1) + '.title', `Objective ${index + 1}`)}</h4>
                   <p>{obj.text}</p>
                 </motion.div>
               ))}
@@ -108,7 +112,7 @@ export default function About() {
               transition={{ duration: 0.6 }}
               style={{ marginTop: '3rem' }}
             >
-              <h2>Our Approach</h2>
+              <h2>{t('about.approach')}</h2>
             </motion.div>
             <div className="stepper-container">
               {workStreams.map((ws, index) => (

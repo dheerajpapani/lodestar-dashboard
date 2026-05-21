@@ -1,19 +1,21 @@
 /* eslint-disable no-unused-vars */
 // src/pages/LivingLabs.jsx
-import { useState } from 'react'; // Import useState
+import { useState, useMemo } from 'react';
 import { FaMapSigns, FaGamepad, FaExchangeAlt, FaHandsHelping, FaUserPlus, FaCommentDots, FaCamera } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import ComingSoonBox from '../components/ComingSoonBox'; // Import the modal component
 import '../App.css';
 
-const methods = [
-  { icon: <FaMapSigns />, title: 'Participatory Social Mapping', text: "We begin by mapping the social landscape of disaster risk. Through collaborative exercises, we identify 'Who knows what?' and 'Who needs to know what?' to ensure our tools address the right problems for the right people." },
-  { icon: <FaGamepad />, title: 'Serious Gaming & Scenarios', text: "Interactive and immersive games built on realistic disaster scenarios are used to elicit tacit knowledge, test response strategies, and encourage creative problem-solving among diverse stakeholders." },
-  { icon: <FaExchangeAlt />, title: 'Horizontal Learning', text: "We foster an environment of peer-to-peer knowledge exchange, connecting citizens, experts, and officials. This breaks down hierarchies and ensures that all forms of knowledge are valued equally." }
-];
-
 export default function LivingLabs() {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const methods = useMemo(() => [
+    { icon: <FaMapSigns />, title: t('livingLabs.methods.mapping.title', 'Participatory Social Mapping'), text: t('livingLabs.methods.mapping.text', "We begin by mapping the social landscape of disaster risk. Through collaborative exercises, we identify 'Who knows what?' and 'Who needs to know what?' to ensure our tools address the right problems for the right people.") },
+    { icon: <FaGamepad />, title: t('livingLabs.methods.gaming.title', 'Serious Gaming & Scenarios'), text: t('livingLabs.methods.gaming.text', "Interactive and immersive games built on realistic disaster scenarios are used to elicit tacit knowledge, test response strategies, and encourage creative problem-solving among diverse stakeholders.") },
+    { icon: <FaExchangeAlt />, title: t('livingLabs.methods.learning.title', 'Horizontal Learning'), text: t('livingLabs.methods.learning.text', "We foster an environment of peer-to-peer knowledge exchange, connecting citizens, experts, and officials. This breaks down hierarchies and ensures that all forms of knowledge are valued equally.") }
+  ], [t]);
 
   return (
     <>
@@ -28,7 +30,7 @@ export default function LivingLabs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Living Labs & Citizen Science
+              {t('livingLabs.title', 'Living Labs & Citizen Science')}
             </motion.h1>
             <motion.p
               className="hero-subtitle-about"
@@ -36,14 +38,14 @@ export default function LivingLabs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Where community knowledge meets scientific innovation. This is the heart of LODESTAR's bottom-up approach to building disaster resilience.
+              {t('livingLabs.subtitle', "Where community knowledge meets scientific innovation. This is the heart of LODESTAR's bottom-up approach to building disaster resilience.")}
             </motion.p>
           </div>
         </section>
 
         <section className="page-section">
           <div className="container" style={{ paddingBottom: '50px' }}>
-            <h2 className="section-title">What is a Living Lab?</h2>
+            <h2 className="section-title">{t('livingLabs.whatIs.title', 'What is a Living Lab?')}</h2>
             <motion.div
               className="text-block"
               initial={{ opacity: 0, y: 50 }}
@@ -51,14 +53,14 @@ export default function LivingLabs() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6 }}
             >
-              <p>A Living Lab is an open innovation environment where we co-create solutions in real-life contexts. It's a space where we bring together all stakeholders to ensure our Multi-Hazard Early Warning System (MH-EWS) matches the actual needs, cultures, and creative potentials of the end-users. This approach moves beyond traditional top-down systems to bridge the critical 'know-do' gap.</p>
+              <p>{t('livingLabs.whatIs.text', "A Living Lab is an open innovation environment where we co-create solutions in real-life contexts. It's a space where we bring together all stakeholders to ensure our Multi-Hazard Early Warning System (MH-EWS) matches the actual needs, cultures, and creative potentials of the end-users. This approach moves beyond traditional top-down systems to bridge the critical 'know-do' gap.")}</p>
             </motion.div>
           </div>
         </section>
 
         <section className="page-section">
           <div className="container">
-            <h2 className="section-title">Our Methods for Co-Creation</h2>
+            <h2 className="section-title">{t('livingLabs.methods.title', 'Our Methods for Co-Creation')}</h2>
             <div className="methods-grid">
               {methods.map((method, index) => (
                 <motion.div
@@ -80,8 +82,8 @@ export default function LivingLabs() {
 
         <section className="page-section cta-section">
           <div className="container">
-            <h2 className="section-title cta-title">Become a Citizen Scientist</h2>
-            <p className="cta-subtitle">You can play a direct role in making your community safer. Here’s how:</p>
+            <h2 className="section-title cta-title">{t('livingLabs.cta.title', 'Become a Citizen Scientist')}</h2>
+            <p className="cta-subtitle">{t('livingLabs.cta.subtitle', "You can play a direct role in making your community safer. Here’s how:")}</p>
             <div className="participation-grid">
               <motion.div
                 className="participation-card"
@@ -93,8 +95,8 @@ export default function LivingLabs() {
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
                 <FaCamera className="participation-icon" />
-                <h4>Contribute Real-time Data</h4>
-                <p>Use our upcoming mobile tools to share vital on-the-ground information like water levels.</p>
+                <h4>{t('livingLabs.cta.data.title', 'Contribute Real-time Data')}</h4>
+                <p>{t('livingLabs.cta.data.text', 'Use our upcoming mobile tools to share vital on-the-ground information like water levels.')}</p>
               </motion.div>
               <motion.div
                 className="participation-card"
@@ -106,8 +108,8 @@ export default function LivingLabs() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <FaUserPlus className="participation-icon" />
-                <h4>Join a Workshop</h4>
-                <p>Participate in our local Living Labs to share your experiences and test new tools.</p>
+                <h4>{t('livingLabs.cta.workshop.title', 'Join a Workshop')}</h4>
+                <p>{t('livingLabs.cta.workshop.text', 'Participate in our local Living Labs to share your experiences and test new tools.')}</p>
               </motion.div>
               <motion.div
                 className="participation-card"
@@ -119,8 +121,8 @@ export default function LivingLabs() {
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
                 <FaCommentDots className="participation-icon" />
-                <h4>Share Local Knowledge</h4>
-                <p>Your knowledge of past events is invaluable for building more accurate models.</p>
+                <h4>{t('livingLabs.cta.knowledge.title', 'Share Local Knowledge')}</h4>
+                <p>{t('livingLabs.cta.knowledge.text', 'Your knowledge of past events is invaluable for building more accurate models.')}</p>
               </motion.div>
             </div>
           </div>

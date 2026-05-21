@@ -3,15 +3,9 @@
 import { useState, useMemo } from 'react';
 import { FaExclamationCircle, FaFilter, FaInfoCircle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 
-const allAlerts = [
-  { id: 1, site: 'Guwahati', hazard: 'Flood', severity: 'Severe', issued: '2025-07-31 01:00 IST', summary: 'Brahmaputra river has crossed the warning level due to heavy upstream rainfall.', actions: 'Evacuate low-lying areas near the riverbank. Move valuables to higher ground. Follow instructions from ASDMA.' },
-  { id: 2, site: 'Anantapur', hazard: 'Drought', severity: 'Moderate', issued: '2025-07-30 10:00 IST', summary: 'Below-average monsoon rainfall continues. Soil moisture is critically low.', actions: 'Implement water conservation measures. Farmers are advised to consider drought-resistant crops.' },
-  { id: 3, site: 'Bengaluru', hazard: 'Flood', severity: 'Moderate', issued: '2025-07-31 00:30 IST', summary: 'Intense short-duration rainfall expected, leading to high risk of urban waterlogging.', actions: 'Avoid travel in low-lying areas and underpasses. Ensure storm drains are clear of debris.' },
-  { id: 4, site: 'Dordrecht', hazard: 'Flood', severity: 'Minor', issued: '2025-07-30 11:00 CET', summary: 'River levels are elevated due to North Sea tidal surge but are expected to remain below flood stage.', actions: 'Monitor water levels and be aware of potential for minor coastal flooding.' },
-  { id: 5, site: 'Guwahati', hazard: 'Compound', severity: 'Extreme', issued: '2025-07-31 02:00 IST', summary: 'Compound Event: Fluvial flooding from the river is now combined with pluvial (rainfall) flooding, overwhelming city drainage.', actions: 'This is a high-risk situation. Seek shelter on higher floors or designated evacuation centers immediately.' },
-];
 const severityOrder = { 'Minor': 1, 'Moderate': 2, 'Severe': 3, 'Extreme': 4 };
 
 // Animation variants
@@ -30,15 +24,24 @@ const itemVariants = {
 };
 
 export default function Alerts() {
+  const { t } = useTranslation();
   const [filterSite, setFilterSite] = useState('All');
   const [filterHazard, setFilterHazard] = useState('All');
+
+  const allAlerts = useMemo(() => [
+    { id: 1, site: 'Guwahati', hazard: 'Flood', severity: 'Severe', issued: '2025-07-31 01:00 IST', summary: t('alerts.list.g1'), actions: t('alerts.list.g1_a') },
+    { id: 2, site: 'Anantapur', hazard: 'Drought', severity: 'Moderate', issued: '2025-07-30 10:00 IST', summary: t('alerts.list.a1'), actions: t('alerts.list.a1_a') },
+    { id: 3, site: 'Bengaluru', hazard: 'Flood', severity: 'Moderate', issued: '2025-07-31 00:30 IST', summary: t('alerts.list.b1'), actions: t('alerts.list.b1_a') },
+    { id: 4, site: 'Dordrecht', hazard: 'Flood', severity: 'Minor', issued: '2025-07-30 11:00 CET', summary: t('alerts.list.d1'), actions: t('alerts.list.d1_a') },
+    { id: 5, site: 'Guwahati', hazard: 'Compound', severity: 'Extreme', issued: '2025-07-31 02:00 IST', summary: t('alerts.list.g2'), actions: t('alerts.list.g2_a') },
+  ], [t]);
 
   const filteredAlerts = useMemo(() => {
     return allAlerts
       .filter(alert => filterSite === 'All' || alert.site === filterSite)
       .filter(alert => filterHazard === 'All' || alert.hazard === filterHazard)
       .sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity]);
-  }, [filterSite, filterHazard]);
+  }, [allAlerts, filterSite, filterHazard]);
 
   const highSeverityCount = useMemo(() => {
     return filteredAlerts.filter(a => a.severity === 'Severe' || a.severity === 'Extreme').length;
@@ -48,8 +51,8 @@ export default function Alerts() {
     <div>
       <section className="hero-section-about">
         <div className="container">
-          <h1 className="hero-title-about">LODESTAR Alert Center</h1>
-          <p className="hero-subtitle-about">A centralized hub for real-time, multi-hazard early warnings for our study sites in India and the Netherlands.</p>
+          <h1 className="hero-title-about">{t('alerts.title')}</h1>
+          <p className="hero-subtitle-about">{t('alerts.subtitle')}</p>
         </div>
       </section>
 
@@ -60,23 +63,29 @@ export default function Alerts() {
             <div className="alert-controls">
               <div className="filter-group">
                 <FaFilter />
-                <label>Filter by Site:</label>
+                <label>{t('alerts.filter_site')}</label>
                 <select value={filterSite} onChange={(e) => setFilterSite(e.target.value)}>
-                  <option>All</option> <option>Bengaluru</option> <option>Guwahati</option>
-                  <option>Anantapur</option> <option>Dordrecht</option> <option>Geertruidenberg</option>
+                  <option value="All">{t('alerts.all')}</option>
+                  <option value="Bengaluru">{t('alerts.siteNames.bengaluru')}</option>
+                  <option value="Guwahati">{t('alerts.siteNames.guwahati')}</option>
+                  <option value="Anantapur">{t('alerts.siteNames.anantapur')}</option>
+                  <option value="Dordrecht">{t('alerts.siteNames.dordrecht')}</option>
+                  <option value="Geertruidenberg">{t('alerts.siteNames.geertruidenberg')}</option>
                 </select>
               </div>
               <div className="filter-group">
-                <label>Filter by Hazard:</label>
+                <label>{t('alerts.filter_hazard')}</label>
                 <select value={filterHazard} onChange={(e) => setFilterHazard(e.target.value)}>
-                  <option>All</option> <option>Flood</option>
-                  <option>Drought</option> <option>Compound</option>
+                  <option value="All">{t('alerts.all')}</option>
+                  <option value="Flood">{t('alerts.hazardNames.flood')}</option>
+                  <option value="Drought">{t('alerts.hazardNames.drought')}</option>
+                  <option value="Compound">{t('alerts.hazardNames.compound')}</option>
                 </select>
               </div>
             </div>
             <div className="alert-summary">
-              <div><span>{filteredAlerts.length}</span> Total Active Alerts</div>
-              <div className="summary-high-sev"><span>{highSeverityCount}</span> High-Severity Alerts</div>
+              <div><span>{filteredAlerts.length}</span> {t('alerts.total_alerts', { count: filteredAlerts.length })}</div>
+              <div className="summary-high-sev"><span>{highSeverityCount}</span> {t('alerts.high_alerts', { count: highSeverityCount })}</div>
             </div>
           </div>
 
@@ -92,13 +101,17 @@ export default function Alerts() {
                 filteredAlerts.map(alert => (
                   <motion.div key={alert.id} variants={itemVariants} layout className={`alert-card-detailed sev-${alert.severity.toLowerCase()}`}>
                     <div className="alert-card-header">
-                      <div className="alert-card-severity"><FaExclamationCircle /> {alert.severity}</div>
-                      <div className="alert-card-location">{alert.site} - {alert.hazard} Hazard</div>
+                      <div className="alert-card-severity">
+                        <FaExclamationCircle /> {t('alerts.severities.' + alert.severity.toLowerCase(), alert.severity)}
+                      </div>
+                      <div className="alert-card-location">
+                        {t('alerts.siteNames.' + alert.site.toLowerCase(), alert.site)} - {t('alerts.hazardNames.' + alert.hazard.toLowerCase(), alert.hazard)} {t('alerts.hazard')}
+                      </div>
                     </div>
                     <div className="alert-card-body">
                       <p className="alert-summary-text">{alert.summary}</p>
                       <div className="alert-actions">
-                        <h4>Recommended Actions:</h4>
+                        <h4>{t('alerts.actions')}</h4>
                         <p>{alert.actions}</p>
                       </div>
                     </div>
@@ -112,7 +125,7 @@ export default function Alerts() {
                   animate={{ opacity: 1 }}
                 >
                   <FaInfoCircle />
-                  <p>No active alerts match your current filter settings.</p>
+                  <p>{t('alerts.no_alerts')}</p>
                 </motion.div>
               )}
             </AnimatePresence>

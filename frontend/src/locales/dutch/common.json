@@ -1,0 +1,424 @@
+{
+  "nav": {
+    "home": "LODESTAR",
+    "about": "Over",
+    "maps": "Kaart",
+    "alerts": "Waarschuwingen",
+    "livingLabs": "Living Labs",
+    "seriousGames": "Serious Games",
+    "research": "Onderzoek",
+    "team": "Consortium",
+    "internalAccess": "Interne Toegang"
+  },
+  "footer": {
+    "project": "LODESTAR Project",
+    "description": "Een gezamenlijk India-Nederlands initiatief om een goedkoop, multi-hazard vroegtijdig waarschuwingssysteem te bouwen voor risicogemeenschappen.",
+    "copyright": "© 2025 LODESTAR Projectconsortium | Gefinancierd door DST (India) & NWO (Nederland)",
+    "credits": "Dashboard door IIT Tirupati"
+  },
+  "notfound": {
+    "title": "404",
+    "subtitle": "Verloren Signaal",
+    "text": "U bent naar een gegevenspunt genavigeerd dat buiten onze prognosekaart valt. De opgevraagde pagina kon niet worden gevonden. Laten we u terugbrengen naar bekend terrein.",
+    "button": "Terug naar het Dashboard"
+  },
+  "home": {
+    "hero": {
+      "subtitle": "Veerkracht • Intelligentie • Gemeenschap",
+      "description": "Een geavanceerd vroegtijdig waarschuwingssysteem voor meerdere gevaren dat de kloof overbrugt tussen geavanceerde voorspellende analyses en door de gemeenschap geleide actie."
+    },
+    "concepts": {
+      "title": "Kernarchitectuur",
+      "ews": {
+        "title": "Vroegtijdig Waarschuwingssysteem",
+        "text": "Ontwikkeling van een MH-EWS voor zowel enkelvoudige als samengestelde calamiteiten."
+      },
+      "labs": {
+        "title": "Living Labs",
+        "text": "Co-creëren van oplossingen door middel van participatieve workshops met burgers en experts."
+      },
+      "science": {
+        "title": "Citizen Science",
+        "text": "Integratie van lokale kennis en real-time, door gebruikers ingediende gegevens in wetenschappelijke modellen."
+      },
+      "disaster": {
+        "title": "Rampenbeheersing",
+        "text": "Vergroten van de veerkracht van risicogemeenschappen tegen extreme klimaatgebeurtenissen."
+      }
+    },
+    "cta": {
+      "title": "Live Geo-Dashboard",
+      "description": "Krijg toegang tot real-time actieve waarschuwingen, overstromingsvoorspellingen en gemeenschapsrapporten in onze interactieve 3D-kaartinterface.",
+      "button": "Dashboard Starten"
+    },
+    "sites": {
+      "title": "Locaties van Inzet",
+      "focus": "Focus",
+      "country": {
+        "india": "India",
+        "netherlands": "Nederland"
+      },
+      "siteList": {
+        "bengaluru": "Bengaluru, India",
+        "guwahati": "Guwahati, India",
+        "anantapur": "Anantapur, India",
+        "dordrecht": "Dordrecht, NL",
+        "geertruidenberg": "Geertruidenberg, NL"
+      },
+      "hazardList": {
+        "bengaluru": "Stedelijke Overstromingen",
+        "guwahati": "Samengestelde Pluviale & Fluviale Overstromingen",
+        "anantapur": "Samengestelde Overstromings- & Droogte-events",
+        "dordrecht": "Stedelijke Overstromingen & Evacuatieplanning",
+        "geertruidenberg": "Droogte & Stedelijke Ontwikkeling"
+      }
+    }
+  },
+  "about": {
+    "title": "Over Het LODESTAR Project",
+    "subtitle": "Inzicht in de visie, doelstellingen en methodologie achter onze gezamenlijke inspanning om rampenbestendigheid op te bouwen.",
+    "challenge_vision": "De Uitdaging & Onze Visie",
+    "challenge": {
+      "title": "De Uitdaging",
+      "text": "Bestaande vroegtijdige waarschuwingssystemen missen vaak voldoende doorlooptijd en slagen er niet in om cruciale gemeenschapskennis te integreren. Dit creëert een 'know-do-kloof', waarbij waarschuwingen zich niet vertalen in effectieve lokale acties."
+    },
+    "vision": {
+      "title": "Onze Visie",
+      "text": "De visie van LODESTAR is om een goedkoop, multi-hazard EWS te co-creëren met behulp van een 'living labs'-benadering. Dit maakt het systeem completer, participatiever en responsiever, waardoor de voorbereiding op rampen voor iedereen verbetert."
+    },
+    "core_objectives": "Onze Kerndoelstellingen",
+    "objectives": {
+      "objective1": {
+        "title": "Doelstelling 1",
+        "text": "Het ontwikkelen van sociaal-technische rampen- en noodhulpdiensten (vroegtijdige waarschuwingen) (MH-EWS dashboards) om de uitdagingen van extreme samengestelde rampen in India en Nederland aan te pakken."
+      },
+      "objective2": {
+        "title": "Doelstelling 2",
+        "text": "Het verbeteren van overstromings- en droogtemodellering en de gebruikersinterface door te focussen op innovatieve technologieën, om te komen tot een geïntegreerd MH-EWS voor overstromingen en/of droogtes."
+      },
+      "objective3": {
+        "title": "Doelstelling 3",
+        "text": "Het ontwikkelen van sociaal-culturele en beheersmatige innovaties via living labs, noodzakelijk voor het implementeren van nieuwe technologieën en het versnellen van de acceptatie, terwijl de duurzaamheid op lange termijn wordt gewaarborgd."
+      }
+    },
+    "approach": "Onze Aanpak",
+    "workStreams": {
+      "ws1": {
+        "title": "WS 1: Rampencontext & Kennisleemten",
+        "text": "Brengt de rampencontext in kaart door bestaande systemen te inventariseren en sociaal-technische kennisleemten in overstromings- en droogtebeheer te identificeren als basis voor het project."
+      },
+      "ws2": {
+        "title": "WS 2: Real-time Data-assimilatie",
+        "text": "Voert real-time hydrometeorologische data-assimilatie uit met behulp van op computervisie gebaseerde algoritmen en uitgebreide weersvoorspellingen, gebruikmakend van goedkope sensoren en burgerwetenschap."
+      },
+      "ws3": {
+        "title": "WS 3: Citizen Science & Living Labs",
+        "text": "Creëert synergie tussen burgers, academici en professionals met behulp van 'living labs' en 'serious games' om kennisuitwisseling te vergemakkelijken, oplossingen te co-creëren en ervoor te zorgen dat het EWS aan de behoeften van de gebruiker voldoet."
+      },
+      "ws4": {
+        "title": "WS 4: Geïntegreerd Dashboard & Voorspelling",
+        "text": "Ontwikkelt een voorspellingskader voor meerdere gevaren met behulp van een ensemble van modellen (AI/ML, procesgebaseerd) om een gebruiksvriendelijk, geïntegreerd MH-EWS-dashboard voor mobiel en web te co-creëren."
+      },
+      "ws5": {
+        "title": "WS 5: Capaciteitsopbouw & Internationalisering",
+        "text": "Bouwt de capaciteit voor rampenbeheersing van alle partners en externe belanghebbenden in India en Nederland op door middel van trainingen, workshops, zomeracademies en internationale outreach."
+      }
+    }
+  },
+  "alerts": {
+    "title": "LODESTAR Alert Center",
+    "subtitle": "Een centraal knooppunt voor real-time, vroegtijdige waarschuwingen voor meerdere gevaren voor onze onderzoekslocaties in India en Nederland.",
+    "filter_site": "Filter op Locatie:",
+    "filter_hazard": "Filter op Gevaar:",
+    "all": "Alle",
+    "total_alerts_one": "{{count}} Actieve Waarschuwing",
+    "total_alerts_other": "{{count}} Actieve Waarschuwingen",
+    "high_alerts_one": "{{count}} Hoge Prioriteit Waarschuwing",
+    "high_alerts_other": "{{count}} Hoge Prioriteit Waarschuwingen",
+    "actions": "Aanbevolen Acties:",
+    "no_alerts": "Er zijn geen actieve waarschuwingen die overeenkomen met uw huidige filterinstellingen.",
+    "hazard": "Gevaar",
+    "siteNames": {
+      "guwahati": "Guwahati",
+      "anantapur": "Anantapur",
+      "bengaluru": "Bengaluru",
+      "dordrecht": "Dordrecht",
+      "geertruidenberg": "Geertruidenberg"
+    },
+    "hazardNames": {
+      "flood": "Overstroming",
+      "drought": "Droogte",
+      "compound": "Samengesteld"
+    },
+    "severities": {
+      "minor": "Gering",
+      "moderate": "Matig",
+      "severe": "Ernstig",
+      "extreme": "Extreem"
+    },
+    "list": {
+      "g1": "De Brahmaputra-rivier heeft het waarschuwingsniveau overschreden als gevolg van zware regenval stroomopwaarts.",
+      "g1_a": "Evacueer laaggelegen gebieden in de buurt van de rivieroever. Verplaats waardevolle spullen naar een hogere verdieping. Volg de instructies van ASDMA.",
+      "a1": "De ondergemiddelde moessonregen houdt aan. Het bodemvocht is kritiek laag.",
+      "a1_a": "Voer waterbesparende maatregelen in. Boeren wordt geadviseerd om droogteresistentere gewassen te overwegen.",
+      "b1": "Intense, kortdurende regenval verwacht, leidend tot een hoog risico op stedelijke wateroverlast.",
+      "b1_a": "Vermijd reizen door laaggelegen gebieden en tunnels. Zorg dat stormafvoeren vrij zijn van vuil.",
+      "d1": "De rivierstanden zijn verhoogd door een stormvloed op de Noordzee, maar zullen naar verwachting onder het overstromingsniveau blijven.",
+      "d1_a": "Houd de waterstanden in de gaten en wees alert op mogelijke lichte kustoverstromingen.",
+      "g2": "Samengesteld Event: Fluviale overstroming vanuit de rivier wordt nu gecombineerd met pluviale overstroming (regenval), waardoor de stedelijke drainage overbelast raakt.",
+      "g2_a": "Dit is een zeer risicovolle situatie. Zoek onmiddellijk onderdak op hogere verdiepingen of in aangewezen evacuatiecentra."
+    }
+  },
+  "livingLabs": {
+    "title": "Living Labs & Burgerwetenschap",
+    "subtitle": "Waar gemeenschapskennis en wetenschappelijke innovatie elkaar ontmoeten. Dit is de kern van LODESTAR's bottom-up benadering van rampenbestendigheid.",
+    "whatIs": {
+      "title": "Wat is een Living Lab?",
+      "text": "Een Living Lab is een open innovatie-omgeving waarin we co-creëren in real-world contexten. Het is een ruimte waar we alle belanghebbenden samenbrengen om ervoor te zorgen dat ons Multi-Hazard Vroegtijdig Waarschuwingssysteem (MH-EWS) aansluit bij de werkelijke behoeften, culturen en creatieve vermogens van eindgebruikers. Deze aanpak overbrugt de kritieke kloof tussen kennis en handelen."
+    },
+    "methods": {
+      "title": "Onze methoden voor co-creatie",
+      "mapping": {
+        "title": "Participatieve Sociale In kaart brenging",
+        "text": "We beginnen met het in kaart brengen van het sociale landschap van rampenrisico's. Via gezamenlijke oefeningen identificeren we 'Wie weet wat?' en 'Wie moet wat weten?' om ervoor te zorgen dat onze tools de juiste problemen voor de juiste mensen aanpakken."
+      },
+      "gaming": {
+        "title": "Serious Gaming & Scenario's",
+        "text": "Interactieve en meeslepende spellen gebaseerd op realistische rampscenario's worden gebruikt om impliciete kennis te ontsluiten, responsstrategieën te testen en creatieve probleemoplossing te stimuleren onder diverse belanghebbenden."
+      },
+      "learning": {
+        "title": "Horizontaal Leren",
+        "text": "We stimuleren een omgeving van peer-to-peer kennisuitwisseling, waarbij burgers, experts en ambtenaren met elkaar in contact worden gebracht. Dit doorbreekt hiërarchieën en zorgt ervoor dat alle vormen van kennis gelijkwaardig worden gewaardeerd."
+      }
+    },
+    "cta": {
+      "title": "Word een Burgerwetenschapper",
+      "subtitle": "U kunt een directe rol spelen in het veiliger maken van uw gemeenschap. Dit is hoe:",
+      "data": {
+        "title": "Real-time data bijdragen",
+        "text": "Gebruik onze aankomende mobiele tools om vitale informatie ter plaatse te delen, zoals waterstanden."
+      },
+      "workshop": {
+        "title": "Deelnemen aan een workshop",
+        "text": "Neem deel aan onze lokale Living Labs om uw ervaringen te delen en nieuwe tools te testen."
+      },
+      "knowledge": {
+        "title": "Lokale Kennis Delen",
+        "text": "Uw kennis van eerdere gebeurtenissen is van onschatbare waarde voor het bouwen van nauwkeurigere modellen."
+      }
+    }
+  },
+  "seriousGames": {
+    "title": "Serious Games Hub",
+    "subtitle": "Duik direct in speelbare spellen die rampenrisico's, veerkracht en strategische respons verkennen.",
+    "sectionTitle": "Speel deze real-world rampenrisicospellen",
+    "statusTag": "Online Speelbaar",
+    "focusLabel": "Focus:",
+    "playTitle": "Open spel in een nieuw tabblad",
+    "playButton": "Spelen",
+    "games": {
+      "stopDisasters": {
+        "title": "Stop Disasters! (UNDRR)",
+        "blurb": "Een simulatie van meerdere gevaren door UNDRR: bescherm steden tegen tsunami's, aardbevingen, overstromingen, natuurbranden en cyclonen. Speel online en test uw risicobeheersingsstrategie."
+      },
+      "disasterMaster": {
+        "title": "Disaster Master (Ready.gov)",
+        "blurb": "Jeugdvriendelijk spel: ga de strijd aan met verschillende rampen, bouw paraatheid en veerkracht op door verschillende spelniveaus."
+      },
+      "buildKit": {
+        "title": "Build a Kit Game (Ready.gov)",
+        "blurb": "Interactief spel waarin je je eigen noodpakket samenstelt en kiest hoe je moet handelen als er rampen toeslaan."
+      },
+      "disasterResponse": {
+        "title": "The Disaster Response Game (ISR/NYAS)",
+        "blurb": "Digitaal scenariospel: bosbranden, orkanen, voedselzekerheidscrisis. Train snelle besluitvormingsvaardigheden onder druk."
+      }
+    },
+    "tags": {
+      "multiHazard": "Meerdere gevaren",
+      "strategy": "Strategie",
+      "riskReduction": "Risicovermindering",
+      "preparedness": "Paraatheid",
+      "youthEducation": "Jeugdeducatie",
+      "focusLabel": "Focus:",
+      "hazardAwareness": "Gevarenbewustzijn",
+      "emergencyKit": "Noodpakket",
+      "decisionMaking": "Besluitvorming",
+      "awareness": "Bewustzijn",
+      "crisisResponse": "Crisisrespons"
+    }
+  },
+  "research": {
+    "title": "Onderzoeks- & Kenniscentrum",
+    "subtitle": "Krijg toegang tot de deliverables, belangrijke publicaties, open data-repositories en basisdocumenten van het project.",
+    "sourceLabel": "Bron:",
+    "authorsLabel": "Auteurs:",
+    "deliverables": {
+      "sectionTitle": "Project Deliverables & Tools",
+      "a4eu": {
+        "title": "Pan-Europees Beslissingsondersteunend Dashboard (A4EU)",
+        "summary": "Een belangrijk dashboard van het ANYWHERE-project ontwikkeld door de Wageningen Universiteit, dat dient als model voor LODESTAR's EWS.",
+        "source": "Wageningen Universiteit"
+      },
+      "games": {
+        "title": "Serious Games Catalogus & Facilitatiehandleiding",
+        "summary": "Een portfolio van fysieke en digitale serious games met een handleiding voor het ontwikkelen en faciliteren ervan in workshops voor belanghebbenden.",
+        "source": "MetaMeta Research"
+      },
+      "storm": {
+        "title": "Gekalibreerd Hydrologisch Model (STORM V1)",
+        "summary": "Een gekalibreerd stedelijk overstromingsmodel voor Bangalore, voorheen gebruikt voor crowdsourcingstudies en fundamenteel voor het modelleringswerk van dit project.",
+        "source": "Indian Institute of Sciences"
+      }
+    },
+    "publications": {
+      "sectionTitle": "Belangrijke Publicaties van het Consortium",
+      "subcultures": {
+        "title": "Overstromingssubculturen in Nederland",
+        "summary": "Onderzoekt de sociale en culturele reacties op overstromingsrisico's in Nederlandse gemeenschappen en biedt een cruciale context voor de sosyo-technische benadering."
+      },
+      "interface": {
+        "title": "Wetenschap-beleidsinterface over waterschaarschte in India",
+        "summary": "Onderzoekt de communicatie- en kennislacunes tussen wetenschappelijk onderzoek en beleidsvorming over waterschaarschte in India."
+      },
+      "forecasts": {
+        "title": "Van droogtegevaar naar droogte-impactvoorspellingen",
+        "summary": "Een fundamenteel artikel over de overgang van droogte-EWS van het voorspellen van gevaren naar het voorspellen van tastbare maatschappelijke impacts."
+      }
+    },
+    "openScience": {
+      "title": "Data, Modellen & Open Science",
+      "text": "LODESTAR verbindt zich aan de FAIR-principes (Vindbaar, Toegankelijk, Interoperabel, Herbruikbaar) voor wetenschappelijk databeheer. We streven ernaar om kenniscreatie en -uitwisseling transparant en interactief te maken.",
+      "cards": {
+        "fourTu": "Verwerkte data voor publicaties zal worden opgeslagen en beschikbaar gesteld via het 4TU research data centre.",
+        "github": "Algoritmen, scripts en software ontwikkeld tijdens het project zullen worden gedeeld via platforms zoals GitHub.",
+        "sendai": {
+          "title": "Sendai-raamwerk",
+          "text": "De doelen van het project sluiten aan bij dit belangrijke raamwerk voor rampenrisicovermindering."
+        }
+      }
+    }
+  },
+  "team": {
+    "title": "Het LODESTAR Consortium",
+    "subtitle": "Een gedetailleerd overzicht van het toegewijde, transdisciplinaire team dat het project leidt.",
+    "labels": {
+      "role": "Rol in project:",
+      "contribution": "Primaire bijdrage:",
+      "publication": "Belangrijkste publicatie-inzicht:",
+      "email": "E-mail"
+    },
+    "sections": {
+      "leadership": "Projectleiding",
+      "dutch": "Nederlands Consortium",
+      "indian": "Indisch Consortium"
+    },
+    "members": {
+      "m1": {
+        "name": "Professor Anamika Barua",
+        "title": "Professor, Vakgroep Geesteswetenschappen en Sociale Wetenschappen",
+        "institution": "Indian Institute of Technology-Guwahati (IIT-G)",
+        "institutionContext": "Als een van de topuniversiteiten van India en een toonaangevend instituut op het gebied van engineering en rampenbeheersing, vormt IIT-G het anker van het project in India.",
+        "role": "Indische Hoofdaanvrager (Hoofdonderzoeker)",
+        "projectContribution": "Leidt het Indische consortium, verzorgt de algemene projectcoördinatie, begeleidt promovendi en is direct betrokken bij werkstromen 1, 3 & 5.",
+        "publication": {
+          "title": "Media reporting on conflicts and cooperation... for the Brahmaputra basin.",
+          "relevance": "Dit onderzoek biedt cruciaal inzicht in de sociaal-politieke context van waterbeheer, essentieel voor het welslagen van een EWS voor de gehele gemeenschap."
+        }
+      },
+      "m2": {
+        "name": "Dr. Jeroen F. Warner",
+        "title": "Universitair Hoofddocent, Crisis- en Rampenstudies",
+        "institution": "Wageningen University & Research (WUR)",
+        "institutionContext": "WUR is een wereldwijd toonaangevende instelling in levenswetenschappen en sociale wetenschappen en brengt interdisciplinaire expertise in op het gebied van water-, klimaat- en rampenstudies.",
+        "role": "Nederlandse Hoofdaanvrager (Hoofdonderzoeker)",
+        "projectContribution": "Leidt het Nederlandse consortium, verzorgt de algemene projectcoördinatie, begeleidt promovendi en is direct betrokken bij werkstromen 3 & 5.",
+        "publication": {
+          "title": "The politics of adaptive climate management: Scientific recipes and lived reality.",
+          "relevance": "Dit werk is fundamenteel voor de kernmissie van LODESTAR en verkent het cruciale kruispunt van wetenschappelijke oplossingen en de geleefde realiteit van kwetsbare gemeenschappen."
+        }
+      },
+      "m3": {
+        "name": "Dr. Sumit Vij",
+        "title": "Universitair Docent",
+        "institution": "Wageningen University & Research",
+        "role": "Mede-aanvrager & WS5 Leider"
+      },
+      "m4": {
+        "name": "Dr. Jantsje van Loon-Steensma",
+        "title": "Lector Toegepaste Wetenschappen",
+        "institution": "Hogeschool VHL",
+        "role": "Mede-aanvrager, Eco-DRR Expert"
+      },
+      "m5": {
+        "name": "Dr. Spyridon Paparrizos",
+        "title": "Universitair Docent",
+        "institution": "Wageningen University",
+        "role": "Mede-aanvrager & WS4 Medeleider"
+      },
+      "m6": {
+        "name": "Dr. Frank van Steenbergen",
+        "title": "Algemeen Directeur",
+        "institution": "MetaMeta Research",
+        "role": "Partner & WS3 Leider"
+      },
+      "m7": {
+        "name": "Dr. Roshan Karan Srivastav",
+        "title": "Universitair Docent",
+        "institution": "IIT Tirupati",
+        "role": "Mede-aanvrager & WS4 Leider"
+      },
+      "m8": {
+        "name": "Dr. Rajarshi Das Bhowmik",
+        "title": "Universitair Docent",
+        "institution": "IISc Bangalore",
+        "role": "Mede-aanvrager & WS2 Leider"
+      },
+      "m9": {
+        "name": "Dr. Indu K Murthy",
+        "title": "Hoofdonderzoeker",
+        "institution": "CSTEP",
+        "role": "Partner & WS3 Leider"
+      },
+      "m10": {
+        "name": "Dr. Anil Kumar Gupta",
+        "title": "Afdelingshoofd",
+        "institution": "NIDM",
+        "role": "Samenwerkingspartner"
+      }
+    }
+  },
+  "internal": {
+    "checking_backend": "Backend controleren...",
+    "waking_server": "AWS-server wekken... (~60s)",
+    "backend_working": "Backend functioneert",
+    "backend_not_working": "Backend functioneert niet",
+    "wake_server": "Server Wekken",
+    "waking_ec2": "⏳ EC2 wekken... (~60s)",
+    "drive_title": "Consortium Drive",
+    "drive_subtitle": "Beveiligde administratieve toegang tot LODESTAR's modelleringsgegevens en SFTP-diensten.",
+    "secure_login": "Veilig Inloggen",
+    "enter_credentials": "Voer uw interne inloggegevens in om door te gaan.",
+    "note_label": "Notitie:",
+    "note_text": "Dit portaal is uitsluitend bedoeld voor geautoriseerd intern personeel. Toegang tot modelgegevens en interne SFTP-diensten is beperkt tot consortiumleden.",
+    "username_placeholder": "SFTP Gebruikersnaam",
+    "password_placeholder": "SFTP Wachtwoord",
+    "connecting": "Verbinden...",
+    "connect_btn": "Verbinden met Server",
+    "login_issues": "Problemen met inloggen?",
+    "try_direct": "Probeer Directe Inlogservice",
+    "explorer_title": "Portaal Explorer",
+    "view_list": "Lijst",
+    "view_grid": "Raster",
+    "logout": "Uitloggen",
+    "no_files": "Geen bestanden beschikbaar.",
+    "type_directory": "Map",
+    "download": "Downloaden",
+    "table_name": "Naam",
+    "table_type": "Type",
+    "table_size": "Grootte",
+    "table_action": "Actie",
+    "type_folder": "Map",
+    "type_file": "Bestand"
+  }
+}

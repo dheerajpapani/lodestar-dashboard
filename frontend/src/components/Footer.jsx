@@ -1,18 +1,21 @@
 // src/components/Footer.jsx
 import { FaGlobe } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 import CreatorEasterEgg from './CreatorEasterEgg';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="footer">
       <div className="footer-content container">
         <div className="footer-logo-group">
           <FaGlobe />
-          <h3>LODESTAR Project</h3>
+          <h3>{t('footer.project')}</h3>
         </div>
         <p className="footer-description">
-          A collaborative India-Netherlands initiative to build a low-cost, multi-hazard early warning system for communities at risk.
+          {t('footer.description')}
         </p>
         <div className="footer-links">
           <a href="https://www.iittp.ac.in/" target="_blank" rel="noopener noreferrer">IIT Tirupati</a>
@@ -29,12 +32,12 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom-bar">
-        <p>© 2025 LODESTAR Project Consortium | Funded by DST (India) & NWO (Netherlands)</p>
+        <p>{t('footer.copyright')}</p>
 
 
         <div className="footer-credits">
           <CreatorEasterEgg>
-            <span>Dashboard by IIT Tirupati</span>
+            <span>{t('footer.credits')}</span>
           </CreatorEasterEgg>
         </div>
       </div>

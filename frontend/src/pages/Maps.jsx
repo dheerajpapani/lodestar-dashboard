@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import { FaMapMarkerAlt, FaCloudSunRain, FaTimes, FaLayerGroup, FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
 import { kml as kmlToGeoJSON } from '@tmcw/togeojson';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 import { fetchWeatherData } from '../services/weatherService';
 import sensorConfig from '../data/sensors.config.json';
@@ -172,6 +173,7 @@ const weatherLayers = hasOWM ? {
 const KML_URL = 'https://www.google.com/maps/d/kml?forcekml=1&mid=1GRr_qSOqCC8AdtNGTZG0nr6NlW9B3iY';
 
 export default function Maps() {
+  const { t } = useTranslation();
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
@@ -515,7 +517,7 @@ export default function Maps() {
     sensorsToRender.forEach(sensor => {
       const el = document.createElement('div');
       el.className = `sensor-marker ${sensor.online ? 'sensor-marker-static-green' : 'sensor-marker-static-red'}`;
-      el.title = `${sensor.name} (${sensor.uid})`;
+      el.title = sensor.name;
 
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat([sensor.lon, sensor.lat])
@@ -738,9 +740,9 @@ export default function Maps() {
   return (
     <div className="map-page-wrapper">
       <div className="map-top-bar">
-        <div className="map-logo">LODESTAR Geo-Dashboard</div>
+        <div className="map-logo">{t('maps.title', 'LODESTAR Geo-Dashboard')}</div>
         <select className="site-selector" onChange={(e) => handleSiteSelect(e.target.value)} value={activeSite || ""}>
-          <option value="">-- Select a Study Site --</option>
+          <option value="">{t('maps.select_site', '-- Select a Study Site --')}</option>
           {Object.keys(studySites).map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
@@ -756,12 +758,12 @@ export default function Maps() {
           <>
             <h4>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style={{ marginRight: 5, verticalAlign: 'middle' }}><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h10v2H3zm0 4h10v2H3zm12 0h6v6h-6z" /></svg>
-              LULC Statistics
+              {t('maps.lulc_stats', 'LULC Statistics')}
             </h4>
             <div className="control-group">
               {lulcLoading && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, opacity: 0.75, padding: '4px 0' }}>
-                  <span className="lulc-spinner" />Loading LULC data…
+                  <span className="lulc-spinner" />{t('maps.loading_lulc', 'Loading LULC data…')}
                 </div>
               )}
               {!lulcLoading && lulcData && (
@@ -782,7 +784,10 @@ export default function Maps() {
                   {!lulcCollapsed && (
                     <table className="lulc-table">
                       <thead>
-                        <tr><th>Land Cover Class</th><th>Area (km²)</th></tr>
+                        <tr>
+                          <th>{t('maps.land_cover_class', 'Land Cover Class')}</th>
+                          <th>{t('maps.area_km2', 'Area (km²)')}</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {lulcData.rows.slice(0, 8).map((row, i) => (
@@ -799,14 +804,14 @@ export default function Maps() {
             </div>
           </>
         )}
-        <h4><FaLayerGroup /> Map Layers</h4>
+        <h4><FaLayerGroup /> {t('maps.map_layers', 'Map Layers')}</h4>
         <div className="control-group">
           {Object.keys(baseStyles).map((n) => (
             <button key={n} className={`map-control-btn ${mapStyle === baseStyles[n] ? 'active' : ''}`} onClick={() => setMapStyle(baseStyles[n])}>{n}</button>
           ))}
         </div>
 
-        <h4><FaCloudSunRain /> Weather Overlays</h4>
+        <h4><FaCloudSunRain /> {t('maps.weather_overlays', 'Weather Overlays')}</h4>
         <div className="control-group">
           {hasOWM ? Object.keys(weatherLayers).map((n) => (
             <button key={n} className={`map-control-btn ${activeOverlay === n ? 'active' : ''}`} onClick={() => setActiveOverlay(p => p === n ? null : n)}>{n}</button>
@@ -816,9 +821,9 @@ export default function Maps() {
         {/* Guwahati Specific: Water Sensors */}
         {activeSite === 'Guwahati' && (
           <>
-            <h4>Data Layers</h4>
+            <h4>{t('maps.data_layers', 'Data Layers')}</h4>
             <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button className={`map-control-btn ${sensorsOn ? 'active' : ''}`} onClick={toggleSensors}>Guwahati Water Sensors</button>
+              <button className={`map-control-btn ${sensorsOn ? 'active' : ''}`} onClick={toggleSensors}>{t('maps.guwahati_sensors', 'Guwahati Water Sensors')}</button>
               {allSensorsOffline && (
                 <div style={{
                   fontSize: '11px',
@@ -832,7 +837,7 @@ export default function Maps() {
                   gap: '5px',
                   fontWeight: 600,
                 }}>
-                  ⚠️ All sensors offline
+                  ⚠️ {t('maps.all_sensors_offline', 'All Water Sensors Offline')}
                 </div>
               )}
             </div>
@@ -847,7 +852,7 @@ export default function Maps() {
               onClick={toggleNlRaster}
               style={showNlRasterPanel ? { backgroundColor: '#10b981', color: '#fff', borderColor: '#059669' } : {}}
             >
-              {showNlRasterPanel ? 'Disable Satellite Overlay' : 'Enable Satellite Overlay'}
+              {showNlRasterPanel ? t('maps.disable_satellite', 'Disable Satellite Overlay') : t('maps.enable_satellite', 'Enable Satellite Overlay')}
             </button>
           </div>
         )}
@@ -855,9 +860,9 @@ export default function Maps() {
         {/* Netherlands Specific Visuals */}
         {['Dordrecht', 'Geertruidenberg'].includes(activeSite) && (
           <>
-            <h4>Data Layers</h4>
+            <h4>{t('maps.data_layers', 'Data Layers')}</h4>
             <div className="control-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>Netherlands Study Visuals</button>
+              <button className={`map-control-btn ${showNlModal ? 'active' : ''}`} onClick={() => setShowNlModal(true)}>{t('maps.nl_visuals', 'Netherlands Study Visuals')}</button>
             </div>
           </>
         )}
@@ -874,19 +879,19 @@ export default function Maps() {
       <div className={`side-panel ${panelOpen ? 'open' : ''}`}>
         {currentSiteData ? (
           <>
-            <button className="panel-retract-btn" onClick={() => setPanelOpen(false)} title="Retract Panel"><FaAngleDoubleLeft /></button>
+            <button className="panel-retract-btn" onClick={() => setPanelOpen(false)} title={t('maps.retract_panel', 'Retract Panel')}><FaAngleDoubleLeft /></button>
             <div className="panel-header"><FaMapMarkerAlt /> <h2>{activeSite}</h2></div>
-            <p className="panel-sub-header">Focus: {studySites[activeSite].hazard}</p>
+            <p className="panel-sub-header">{t('maps.focus', 'Focus:')} {studySites[activeSite].hazard}</p>
 
             {/* SENSOR QUICK-VIEW (Placed above tabs/forecast) */}
             {activeSite === 'Guwahati' && sensorsOn && allSensorsOffline && (
               <div style={{ padding: '0.75rem 1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,51,102,0.04)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ff3366', fontWeight: 700, fontSize: '0.85rem' }}>
                   <span style={{ fontSize: '1.1rem' }}>📡</span>
-                  All Water Sensors Offline
+                  {t('maps.all_sensors_offline', 'All Water Sensors Offline')}
                 </div>
                 <p style={{ margin: '4px 0 0 0', fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                  The Guwahati sensor network is not reporting data right now. Sensors typically go offline at night or during connectivity issues. Check back during daytime hours.
+                  {t('maps.sensor_offline_msg', 'The Guwahati sensor network is currently undergoing scheduled maintenance. Please check back later.')}
                 </p>
               </div>
             )}
@@ -895,12 +900,12 @@ export default function Maps() {
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '1rem 0 0.5rem 0' }}>
                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold' }}>📡 {selectedSensor.name}</h3>
                    <span className={selectedSensor.online ? 'sensor-badge-online' : 'sensor-badge-offline'}>
-                     {selectedSensor.online ? 'LIVE' : 'OFFLINE'}
+                     {selectedSensor.online ? t('maps.live', 'LIVE') : t('maps.offline', 'OFFLINE')}
                    </span>
                  </div>
                  {sensorData && sensorData.length > 0 ? (
                    <div style={{ fontSize: '0.9rem', color: 'var(--primary)', fontWeight: 'bold' }}>
-                     {selectedSensor.type === 'rain_gauge' ? 'Precipitation: ' : 'Water Level: '}
+                     {selectedSensor.type === 'rain_gauge' ? t('maps.precipitation_label', 'Precipitation: ') : t('maps.water_level_label', 'Water Level: ')}
                      {selectedSensor.type === 'rain_gauge' 
                        ? `${sensorData[sensorData.length - 1].daily_rain_mm ?? 0} mm`
                        : `${sensorData[sensorData.length - 1].water_level ?? 0} m`
@@ -909,15 +914,15 @@ export default function Maps() {
                        ({new Date(sensorData[sensorData.length - 1].date_time).toLocaleTimeString()})
                      </span>
                    </div>
-                 ) : <div style={{ fontSize: '0.85rem', opacity: 0.6 }}>Waiting for data...</div>}
+                 ) : <div style={{ fontSize: '0.85rem', opacity: 0.6 }}>{t('maps.waiting_data', 'Waiting for data...')}</div>}
                </div>
             )}
 
             <div className="panel-tabs">
-              <button className={activeTab === 'forecast' ? 'active' : ''} onClick={() => setActiveTab('forecast')}>Forecast</button>
-              <button className={activeTab === 'alerts' ? 'active' : ''} onClick={() => setActiveTab('alerts')}>Alerts</button>
-              <button className={activeTab === 'reports' ? 'active' : ''} onClick={() => setActiveTab('reports')}>Reports</button>
-              {selectedSensor && <button className={activeTab === 'sensor' ? 'active' : ''} onClick={() => setActiveTab('sensor')}>Sensor</button>}
+              <button className={activeTab === 'forecast' ? 'active' : ''} onClick={() => setActiveTab('forecast')}>{t('maps.tab_forecast', 'Forecast')}</button>
+              <button className={activeTab === 'alerts' ? 'active' : ''} onClick={() => setActiveTab('alerts')}>{t('maps.tab_alerts', 'Alerts')}</button>
+              <button className={activeTab === 'reports' ? 'active' : ''} onClick={() => setActiveTab('reports')}>{t('maps.tab_reports', 'Reports')}</button>
+              {selectedSensor && <button className={activeTab === 'sensor' ? 'active' : ''} onClick={() => setActiveTab('sensor')}>{t('maps.tab_sensor', 'Sensor')}</button>}
             </div>
 
             <div className="panel-content">
@@ -933,32 +938,32 @@ export default function Maps() {
 
               {activeTab === 'forecast' && (
                 <div className="panel-section">
-                  {weatherLoading && <div style={{textAlign: 'center', padding: '20px', opacity: 0.7}}>Loading weather data...</div>}
+                  {weatherLoading && <div style={{textAlign: 'center', padding: '20px', opacity: 0.7}}>{t('maps.loading_weather', 'Loading weather data...')}</div>}
                   {weatherError && <div style={{color: '#EF4444', padding: '10px'}}>{weatherError}</div>}
                   {!weatherLoading && !weatherError && weatherData && (
                     <>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                        <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Today's Details</h4>
+                        <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>{t('maps.todays_details', "Today's Details")}</h4>
                         <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600', backgroundColor: '#e2e8f0', padding: '2px 8px', borderRadius: '12px' }}>
-                          {formatShortDate(weatherData.today.day || new Date().toISOString().split('T')[0])}
+                           {formatShortDate(weatherData.today.day || new Date().toISOString().split('T')[0])}
                         </span>
                       </div>
                       <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                         <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Temperature</div>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>{t('maps.temperature', 'Temperature')}</div>
                           <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.temp}°C</div>
                         </div>
                         <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Precipitation</div>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>{t('maps.precipitation', 'Precipitation')}</div>
                           <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.precipitation} mm</div>
                         </div>
                         <div style={{ flex: 1, backgroundColor: '#f1f5f9', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>Humidity</div>
+                          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold' }}>{t('maps.humidity', 'Humidity')}</div>
                           <div style={{ fontSize: '18px', color: '#0f172a', fontWeight: '800' }}>{weatherData.today.humidity}%</div>
                         </div>
                       </div>
 
-                      <h4 className="chart-title">Past 6 days (historical data)</h4>
+                      <h4 className="chart-title">{t('maps.past_6_days', 'Past 6 days (historical data)')}</h4>
                       <ResponsiveContainer width="100%" height={200} style={{ marginBottom: '20px' }}>
                         <LineChart data={weatherData.past7Days}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -967,13 +972,13 @@ export default function Maps() {
                           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" width={30} tick={{fontSize: 10}} />
                           <Tooltip contentStyle={{fontSize: '12px'}} />
                           <Legend wrapperStyle={{fontSize: "11px", paddingTop: "5px"}} />
-                          <Line yAxisId="left" type="monotone" name="Temp (°C)" dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
-                          <Line yAxisId="left" type="monotone" name="Precip (mm)" dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
-                          <Line yAxisId="right" type="monotone" name="Humidity (%)" dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name={t('maps.temp_c', 'Temp (°C)')} dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name={t('maps.precip_mm', 'Precip (mm)')} dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="right" type="monotone" name={t('maps.humidity_pct', 'Humidity (%)')} dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
                         </LineChart>
                       </ResponsiveContainer>
 
-                      <h4 className="chart-title">Next 6 days (forecast)</h4>
+                      <h4 className="chart-title">{t('maps.next_6_days', 'Next 6 days (forecast)')}</h4>
                       <ResponsiveContainer width="100%" height={200}>
                         <LineChart data={weatherData.future7Days}>
                           <CartesianGrid strokeDasharray="3 3" />
@@ -982,9 +987,9 @@ export default function Maps() {
                           <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" width={30} tick={{fontSize: 10}} />
                           <Tooltip contentStyle={{fontSize: '12px'}} />
                           <Legend wrapperStyle={{fontSize: "11px", paddingTop: "5px"}} />
-                          <Line yAxisId="left" type="monotone" name="Temp (°C)" dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
-                          <Line yAxisId="left" type="monotone" name="Precip (mm)" dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
-                          <Line yAxisId="right" type="monotone" name="Humidity (%)" dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name={t('maps.temp_c', 'Temp (°C)')} dataKey="temp" stroke="#EF4444" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="left" type="monotone" name={t('maps.precip_mm', 'Precip (mm)')} dataKey="precipitation" stroke="#3B82F6" strokeWidth={2} dot={{r: 2}} />
+                          <Line yAxisId="right" type="monotone" name={t('maps.humidity_pct', 'Humidity (%)')} dataKey="humidity" stroke="#10B981" strokeWidth={2} dot={{r: 2}} />
                         </LineChart>
                       </ResponsiveContainer>
                     </>
@@ -1002,7 +1007,7 @@ export default function Maps() {
                       </div>
                     ))}
                   </div>
-                  <button className="cta-button panel-cta">Submit a Report</button>
+                  <button className="cta-button panel-cta">{t('maps.submit_report', 'Submit a Report')}</button>
                 </div>
               )}
 
@@ -1012,19 +1017,18 @@ export default function Maps() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b' }}>{selectedSensor.name}</h3>
                       <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '10px', backgroundColor: selectedSensor.online ? '#dcfce7' : '#fee2e2', color: selectedSensor.online ? '#166534' : '#991b1b' }}>
-                        {selectedSensor.online ? 'ONLINE' : 'OFFLINE'}
+                        {selectedSensor.online ? t('maps.live', 'ONLINE') : t('maps.offline', 'OFFLINE')}
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '4px' }}>UID: {selectedSensor.uid}</div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>Type: {selectedSensor.type === 'rain_gauge' ? 'Rain Gauge' : 'Level Meter'}</div>
+                    <div style={{ fontSize: '12px', color: '#64748b' }}>{t('maps.type', 'Type:')} {selectedSensor.type === 'rain_gauge' ? t('maps.rain_gauge', 'Rain Gauge') : t('maps.level_meter', 'Level Meter')}</div>
                   </div>
 
-                  {sensorDataLoading && <div style={{ textAlign: 'center', padding: '40px', opacity: 0.7 }}>Fetching latest sensor readings...</div>}
+                  {sensorDataLoading && <div style={{ textAlign: 'center', padding: '40px', opacity: 0.7 }}>{t('maps.fetching_readings', 'Fetching latest sensor readings...')}</div>}
                   
                   {!sensorDataLoading && sensorData && sensorData.length > 0 ? (
                     <div className="sensor-readings">
                       <div style={{ marginBottom: '15px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '10px' }}>Latest Reading</div>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '10px' }}>{t('maps.latest_reading', 'Latest Reading')}</div>
                         <div style={{ padding: '15px', backgroundColor: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe' }}>
                           <div style={{ fontSize: '24px', fontWeight: '800', color: '#1d4ed8' }}>
                             {selectedSensor.type === 'rain_gauge' 
@@ -1033,30 +1037,30 @@ export default function Maps() {
                             }
                           </div>
                           <div style={{ fontSize: '11px', color: '#60a5fa', marginTop: '4px' }}>
-                            Measured at: {new Date(sensorData[sensorData.length - 1].date_time || sensorData[sensorData.length - 1].timestamp || Date.now()).toLocaleString()}
+                            {t('maps.measured_at', 'Measured at:')} {new Date(sensorData[sensorData.length - 1].date_time || sensorData[sensorData.length - 1].timestamp || Date.now()).toLocaleString()}
                           </div>
                         </div>
                         <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
                           <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
-                            Battery: {sensorData[sensorData.length - 1].battery_voltage}V
+                            {t('maps.battery', 'Battery:')} {sensorData[sensorData.length - 1].battery_voltage}V
                           </div>
                           <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
-                            Solar: {sensorData[sensorData.length - 1].solar_voltage}V
+                            {t('maps.solar', 'Solar:')} {sensorData[sensorData.length - 1].solar_voltage}V
                           </div>
                         </div>
                       </div>
                     </div>
                   ) : !sensorDataLoading && (
                     <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#f1f5f9', borderRadius: '12px', color: '#64748b' }}>
-                      <p>No recent data available for this sensor.</p>
-                      <small>Checked last 24 hours.</small>
+                      <p>{t('maps.no_sensor_data', 'No recent data available for this sensor.')}</p>
+                      <small>{t('maps.checked_24h', 'Checked last 24 hours.')}</small>
                     </div>
                   )}
                 </div>
               )}
             </div>
           </>
-        ) : <div className="panel-placeholder"><p>Select a study site to view details.</p></div>}
+        ) : <div className="panel-placeholder"><p>{t('maps.select_site_prompt', 'Select a study site to view details.')}</p></div>}
       </div>
       {showNlRasterPanel && activeSite === 'Guwahati' && (
         <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, width: '100%', display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>

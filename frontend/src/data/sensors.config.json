@@ -1,12 +1,21 @@
 [
   {
-    "uid": "690992AE",
-    "name": "Lalmati",
-    "type": "rain_gauge",
+    "uid": "6839A6EB",
+    "name": "Anil Nagar",
+    "type": "level_meter",
     "site": "Guwahati",
     "visible": true,
-    "lat": 26.11214000,
-    "lon": 91.78774300
+    "lat": 26.168202,
+    "lon": 91.770277
+  },
+  {
+    "uid": "6839A70E",
+    "name": "Hatigaon",
+    "type": "level_meter",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.13022,
+    "lon": 91.77951
   },
   {
     "uid": "6839A6B2",
@@ -14,8 +23,35 @@
     "type": "level_meter",
     "site": "Guwahati",
     "visible": true,
-    "lat": 26.13536000,
-    "lon": 91.79855600
+    "lat": 26.13536,
+    "lon": 91.798556
+  },
+  {
+    "uid": "6839A6CF",
+    "name": "Lakhmi Path",
+    "type": "level_meter",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.166218,
+    "lon": 91.778234
+  },
+  {
+    "uid": "6909927F",
+    "name": "Balaji Temple",
+    "type": "rain_gauge",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.11687,
+    "lon": 91.72457
+  },
+  {
+    "uid": "690992AE",
+    "name": "Lalmati",
+    "type": "rain_gauge",
+    "site": "Guwahati",
+    "visible": true,
+    "lat": 26.11214,
+    "lon": 91.787743
   },
   {
     "uid": "6822FA4C",
@@ -23,8 +59,8 @@
     "type": "rain_gauge",
     "site": "Guwahati",
     "visible": true,
-    "lat": 26.20171000,
-    "lon": 91.69823100
+    "lat": 26.172516,
+    "lon": 91.777024
   },
   {
     "uid": "6822F88D",
@@ -32,7 +68,7 @@
     "type": "rain_gauge",
     "site": "Guwahati",
     "visible": true,
-    "lat": 26.09294000,
-    "lon": 91.78139900
+    "lat": 26.09294,
+    "lon": 91.781399
   }
 ]

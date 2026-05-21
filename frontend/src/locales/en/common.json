@@ -1,0 +1,423 @@
+{
+  "nav": {
+    "home": "LODESTAR",
+    "about": "About",
+    "maps": "Map",
+    "alerts": "Alerts",
+    "livingLabs": "Living Labs",
+    "seriousGames": "Serious Games",
+    "research": "Research",
+    "team": "Team",
+    "internalAccess": "Consortium Drive"
+  },
+  "footer": {
+    "project": "LODESTAR Project",
+    "description": "A collaborative India-Netherlands initiative to build a low-cost, multi-hazard early warning system for communities at risk.",
+    "copyright": "© 2025 LODESTAR Project Consortium | Funded by DST (India) & NWO (Netherlands)",
+    "credits": "Dashboard by IIT Tirupati"
+  },
+  "notfound": {
+    "title": "404",
+    "subtitle": "Lost Signal",
+    "text": "You've navigated to a data point that is off our forecast map. The requested page could not be found. Let's get you back to charted territory.",
+    "button": "Return to Dashboard"
+  },
+  "home": {
+    "hero": {
+      "subtitle": "Resilience • Intelligence • Community",
+      "description": "A next-generation multi-hazard early warning system bridging the gap between advanced predictive analytics and community-led action."
+    },
+    "concepts": {
+      "title": "Core Architecture",
+      "ews": {
+        "title": "Early Warning System",
+        "text": "Developing a multi-hazard EWS for both single and compound events."
+      },
+      "labs": {
+        "title": "Living Labs",
+        "text": "Co-creating solutions through participatory workshops with citizens and experts."
+      },
+      "science": {
+        "title": "Citizen Science",
+        "text": "Integrating local knowledge and real-time, user-submitted data into scientific models."
+      },
+      "disaster": {
+        "title": "Disaster Management",
+        "text": "Enhancing the resilience of at-risk communities against extreme climate events."
+      }
+    },
+    "cta": {
+      "title": "Live Geo-Dashboard",
+      "description": "Access real-time active alerts, flood forecasts, and community reports in our 3D interactive map interface.",
+      "button": "Launch Dashboard"
+    },
+    "sites": {
+      "title": "Deployment Sites",
+      "focus": "Focus",
+      "country": {
+        "india": "India",
+        "netherlands": "Netherlands"
+      },
+      "siteList": {
+        "bengaluru": "Bengaluru, India",
+        "guwahati": "Guwahati, India",
+        "anantapur": "Anantapur, India",
+        "dordrecht": "Dordrecht, NL",
+        "geertruidenberg": "Geertruidenberg, NL"
+      },
+      "hazardList": {
+        "bengaluru": "Urban Floods",
+        "guwahati": "Compound Pluvial & Fluvial Floods",
+        "anantapur": "Compound Flood & Drought Events",
+        "dordrecht": "Urban Floods & Evacuation Planning",
+        "geertruidenberg": "Droughts & Urban Development"
+      }
+    }
+  },
+  "about": {
+    "title": "About The LODESTAR Project",
+    "subtitle": "Understanding the vision, objectives, and methodology behind our collaborative effort to build disaster resilience.",
+    "challenge_vision": "The Challenge & Our Vision",
+    "challenge": {
+      "title": "The Challenge",
+      "text": "Existing Early Warning Systems often lack sufficient lead times and fail to integrate crucial community knowledge. This creates a \"know-do gap,\" where warnings don't translate into effective local actions."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "text": "LODESTAR's vision is to co-create a low-cost, multi-hazard EWS using a \"living labs\" approach. This makes the system more comprehensive, participatory, and responsive, improving disaster preparedness for all."
+    },
+    "core_objectives": "Our Core Objectives",
+    "objectives": {
+      "objective1": {
+        "title": "Objective 1",
+        "text": "To develop socio-technical disaster and emergency (early warning) services (MH-EWS dashboards) to address the challenges of extreme compound disaster events in India and the Netherlands."
+      },
+      "objective2": {
+        "title": "Objective 2",
+        "text": "To improve flood and drought modelling and user interface by focusing on innovative technologies, to arrive at an integrated MH-EWS for floods and/or droughts."
+      },
+      "objective3": {
+        "title": "Objective 3",
+        "text": "To develop socio-cultural and management innovations via living labs, necessary for implementing new technologies and accelerating uptake, while ensuring long-term sustainability."
+      }
+    },
+    "approach": "Our Approach",
+    "workStreams": {
+      "ws1": {
+        "title": "WS 1: Disaster Context & Knowledge Gaps",
+        "text": "Sets the disaster context by taking stock of existing systems and identifying socio-technical knowledge gaps in flood and drought management to build a foundation for the project."
+      },
+      "ws2": {
+        "title": "WS 2: Real-time Data Assimilation",
+        "text": "Conducts real-time hydrometeorological data assimilation using computer vision-based algorithms and extended weather forecasts, leveraging low-cost sensors and citizen science."
+      },
+      "ws3": {
+        "title": "WS 3: Citizen Science & Living Labs",
+        "text": "Creates synergy between citizens, academics, and professionals using 'living labs' and 'serious games' to facilitate knowledge exchange, co-create solutions, and ensure the EWS meets user needs."
+      },
+      "ws4": {
+        "title": "WS 4: Integrated Dashboard & Forecasting",
+        "text": "Develops a multi-hazard forecast framework using an ensemble of models (AI/ML, process-based) to co-create a user-centric, integrated MH-EWS dashboard for mobile and web."
+      },
+      "ws5": {
+        "title": "WS 5: Capacity Building & Internationalization",
+        "text": "Builds the disaster management capacity of all partners and external stakeholders in India and the Netherlands through training, workshops, summer academies, and international outreach."
+      }
+    }
+  },
+  "alerts": {
+    "title": "LODESTAR Alert Center",
+    "subtitle": "A centralized hub for real-time, multi-hazard early warnings for our study sites in India and the Netherlands.",
+    "filter_site": "Filter by Site:",
+    "filter_hazard": "Filter by Hazard:",
+    "all": "All",
+    "total_alerts_one": "{{count}} Total Active Alert",
+    "total_alerts_other": "{{count}} Total Active Alerts",
+    "high_alerts_one": "{{count}} High-Severity Alert",
+    "high_alerts_other": "{{count}} High-Severity Alerts",
+    "actions": "Recommended Actions:",
+    "no_alerts": "No active alerts match your current filter settings.",
+    "hazard": "Hazard",
+    "siteNames": {
+      "guwahati": "Guwahati",
+      "anantapur": "Anantapur",
+      "bengaluru": "Bengaluru",
+      "dordrecht": "Dordrecht",
+      "geertruidenberg": "Geertruidenberg"
+    },
+    "hazardNames": {
+      "flood": "Flood",
+      "drought": "Drought",
+      "compound": "Compound"
+    },
+    "severities": {
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "severe": "Severe",
+      "extreme": "Extreme"
+    },
+    "list": {
+      "g1": "Brahmaputra river has crossed the warning level due to heavy upstream rainfall.",
+      "g1_a": "Evacuate low-lying areas near the riverbank. Move valuables to higher ground. Follow instructions from ASDMA.",
+      "a1": "Below-average monsoon rainfall continues. Soil moisture is critically low.",
+      "a1_a": "Implement water conservation measures. Farmers are advised to consider drought-resistant crops.",
+      "b1": "Intense short-duration rainfall expected, leading to high risk of urban waterlogging.",
+      "b1_a": "Avoid travel in low-lying areas and underpasses. Ensure storm drains are clear of debris.",
+      "d1": "River levels are elevated due to North Sea tidal surge but are expected to remain below flood stage.",
+      "d1_a": "Monitor water levels and be aware of potential for minor coastal flooding.",
+      "g2": "Compound Event: Fluvial flooding from the river is now combined with pluvial (rainfall) flooding, overwhelming city drainage.",
+      "g2_a": "This is a high-risk situation. Seek shelter on higher floors or designated evacuation centers immediately."
+    }
+  },
+  "livingLabs": {
+    "title": "Living Labs & Citizen Science",
+    "subtitle": "Where community knowledge meets scientific innovation. This is the heart of LODESTAR's bottom-up approach to building disaster resilience.",
+    "whatIs": {
+      "title": "What is a Living Lab?",
+      "text": "A Living Lab is an open innovation environment where we co-create solutions in real-life contexts. It's a space where we bring together all stakeholders to ensure our Multi-Hazard Early Warning System (MH-EWS) matches the actual needs, cultures, and creative potentials of the end-users. This approach moves beyond traditional top-down systems to bridge the critical 'know-do' gap."
+    },
+    "methods": {
+      "title": "Our Methods for Co-Creation",
+      "mapping": {
+        "title": "Participatory Social Mapping",
+        "text": "We begin by mapping the social landscape of disaster risk. Through collaborative exercises, we identify 'Who knows what?' and 'Who needs to know what?' to ensure our tools address the right problems for the right people."
+      },
+      "gaming": {
+        "title": "Serious Gaming & Scenarios",
+        "text": "Interactive and immersive games built on realistic disaster scenarios are used to elicit tacit knowledge, test response strategies, and encourage creative problem-solving among diverse stakeholders."
+      },
+      "learning": {
+        "title": "Horizontal Learning",
+        "text": "We foster an environment of peer-to-peer knowledge exchange, connecting citizens, experts, and officials. This breaks down hierarchies and ensures that all forms of knowledge are valued equally."
+      }
+    },
+    "cta": {
+      "title": "Become a Citizen Scientist",
+      "subtitle": "You can play a direct role in making your community safer. Here’s how:",
+      "data": {
+        "title": "Contribute Real-time Data",
+        "text": "Use our upcoming mobile tools to share vital on-the-ground information like water levels."
+      },
+      "workshop": {
+        "title": "Join a Workshop",
+        "text": "Participate in our local Living Labs to share your experiences and test new tools."
+      },
+      "knowledge": {
+        "title": "Share Local Knowledge",
+        "text": "Your knowledge of past events is invaluable for building more accurate models."
+      }
+    }
+  },
+  "seriousGames": {
+    "title": "Serious Games Hub",
+    "subtitle": "Dive straight into playable games that explore disaster risk, resilience and strategic response.",
+    "sectionTitle": "Play These Real-World Disaster Risk Games",
+    "statusTag": "Playable Online",
+    "focusLabel": "Focus:",
+    "playTitle": "Open game in new tab",
+    "playButton": "Play",
+    "games": {
+      "stopDisasters": {
+        "title": "Stop Disasters! (UNDRR)",
+        "blurb": "A multi-hazard simulation by UNDRR: protect cities from tsunami, earthquake, flood, wildfire and cyclone. Play online and test your risk-management strategy."
+      },
+      "disasterMaster": {
+        "title": "Disaster Master (Ready.gov)",
+        "blurb": "Youth-friendly game: face various disasters, build readiness and resilience through levels of play."
+      },
+      "buildKit": {
+        "title": "Build a Kit Game (Ready.gov)",
+        "blurb": "Interactive game where you build your emergency kit and choose how to act when disasters strike."
+      },
+      "disasterResponse": {
+        "title": "The Disaster Response Game (ISR/NYAS)",
+        "blurb": "Digital scenario game: wildfires, hurricanes, food-security crises. Hone rapid decision-making skills under pressure."
+      }
+    },
+    "tags": {
+      "multiHazard": "Multi-hazard",
+      "strategy": "Strategy",
+      "riskReduction": "Risk reduction",
+      "preparedness": "Preparedness",
+      "youthEducation": "Youth education",
+      "hazardAwareness": "Hazard awareness",
+      "emergencyKit": "Emergency kit",
+      "decisionMaking": "Decision making",
+      "awareness": "Awareness",
+      "crisisResponse": "Crisis response"
+    }
+  },
+  "research": {
+    "title": "Research & Knowledge Hub",
+    "subtitle": "Access the project's deliverables, key publications, open data repositories, and foundational documents.",
+    "sourceLabel": "Source:",
+    "authorsLabel": "Authors:",
+    "deliverables": {
+      "sectionTitle": "Project Deliverables & Tools",
+      "a4eu": {
+        "title": "Pan-European Decision-Support Dashboard (A4EU)",
+        "summary": "A key dashboard from the ANYWHERE project developed by Wageningen University, serving as a model for LODESTAR's EWS.",
+        "source": "Wageningen University"
+      },
+      "games": {
+        "title": "Serious Games Catalogue & Facilitation Manual",
+        "summary": "A portfolio of physical and digital serious games with a manual for developing and facilitating them in stakeholder workshops.",
+        "source": "MetaMeta Research"
+      },
+      "storm": {
+        "title": "Calibrated Hydrological Model (STORM V1)",
+        "summary": "A calibrated urban flood model for Bangalore, previously used for crowdsourcing studies and foundational to this project's modelling work.",
+        "source": "Indian Institute of Sciences"
+      }
+    },
+    "publications": {
+      "sectionTitle": "Key Publications from the Consortium",
+      "subcultures": {
+        "title": "Flood disaster subcultures in The Netherlands",
+        "summary": "Examines the social and cultural responses to flood risks in Dutch communities, providing crucial context for the project's socio-technical approach."
+      },
+      "interface": {
+        "title": "Science-policy interface on water scarcity in India",
+        "summary": "Investigates the communication and knowledge gaps between scientific research and policy-making regarding water scarcity in India."
+      },
+      "forecasts": {
+        "title": "Moving from drought hazard to drought impact forecasts",
+        "summary": "A foundational paper on advancing drought EWS from simply predicting hazards to forecasting their tangible, real-world impacts on communities."
+      }
+    },
+    "openScience": {
+      "title": "Data, Models & Open Science",
+      "text": "LODESTAR is committed to the FAIR (Findable, Accessible, Interoperable, Reusable) guiding principles for scientific data management. We aim to make knowledge creation, transfer, and exchange transparent and interactive.",
+      "cards": {
+        "fourTu": "Processed data used for publications will be stored and made available via the 4TU research data centre.",
+        "github": "Algorithms, scripts, and software developed during the project will be shared through platforms like GitHub.",
+        "sendai": {
+          "title": "Sendai Framework",
+          "text": "The project's goals align with this key framework for Disaster Risk Reduction."
+        }
+      }
+    }
+  },
+  "team": {
+    "title": "The LODESTAR Consortium",
+    "subtitle": "A detailed overview of the dedicated, transdisciplinary team driving the project.",
+    "labels": {
+      "role": "Role in Project:",
+      "contribution": "Primary Contribution:",
+      "publication": "Key Publication Insight:",
+      "email": "Email"
+    },
+    "sections": {
+      "leadership": "Project Leadership",
+      "dutch": "Dutch Consortium",
+      "indian": "Indian Consortium"
+    },
+    "members": {
+      "m1": {
+        "name": "Professor Anamika Barua",
+        "title": "Professor, Dept. of Humanities and Social Sciences",
+        "institution": "Indian Institute of Technology-Guwahati (IIT-G)",
+        "institutionContext": "As one of India's top universities and a leading institute in engineering and disaster management, IIT-G provides the project's anchor in India.",
+        "role": "Indian Main Applicant (Principal Investigator)",
+        "projectContribution": "Leads the Indian consortium, provides overall project co-ordination, supervises PhD students, and is directly involved in Work Streams 1, 3 & 5.",
+        "publication": {
+          "title": "Media reporting on conflicts and cooperation... for the Brahmaputra basin.",
+          "relevance": "This research provides critical insight into the socio-political context of water management, essential for the success of a cross-community EWS."
+        }
+      },
+      "m2": {
+        "name": "Dr. Jeroen F. Warner",
+        "title": "Associate Professor, Crisis and Disaster Studies",
+        "institution": "Wageningen University & Research (WUR)",
+        "institutionContext": "A world-leading institution in life sciences and social sciences, WUR brings interdisciplinary expertise in water, climate, and disaster studies.",
+        "role": "Dutch Main Applicant (Principal Investigator)",
+        "projectContribution": "Leads the Dutch consortium, provides overall project co-ordination, supervises PhDs and is directly involved in Work Streams 3 & 5.",
+        "publication": {
+          "title": "The politics of adaptive climate management: Scientific recipes and lived reality.",
+          "relevance": "This work is foundational to LODESTAR’s core mission, exploring the crucial intersection of scientific solutions and the lived experiences of at-risk communities."
+        }
+      },
+      "m3": {
+        "name": "Dr. Sumit Vij",
+        "title": "Assistant Professor",
+        "institution": "Wageningen University & Research",
+        "role": "Co-applicant & WS5 Lead"
+      },
+      "m4": {
+        "name": "Dr. Jantsje van Loon-Steensma",
+        "title": "Professor of Applied Sciences",
+        "institution": "VHL University",
+        "role": "Co-applicant, Eco-DRR Expert"
+      },
+      "m5": {
+        "name": "Dr. Spyridon Paparrizos",
+        "title": "Assistant Professor",
+        "institution": "Wageningen University",
+        "role": "Co-applicant & WS4 Co-lead"
+      },
+      "m6": {
+        "name": "Dr. Frank van Steenbergen",
+        "title": "Managing Director",
+        "institution": "MetaMeta Research",
+        "role": "Partner & WS3 Lead"
+      },
+      "m7": {
+        "name": "Dr. Roshan Karan Srivastav",
+        "title": "Assistant Professor",
+        "institution": "IIT Tirupati",
+        "role": "Co-applicant & WS4 Lead"
+      },
+      "m8": {
+        "name": "Dr. Rajarshi Das Bhowmik",
+        "title": "Assistant Professor",
+        "institution": "IISc Bangalore",
+        "role": "Co-applicant & WS2 Lead"
+      },
+      "m9": {
+        "name": "Dr. Indu K Murthy",
+        "title": "Principal Research Scientist",
+        "institution": "CSTEP",
+        "role": "Partner & WS3 Lead"
+      },
+      "m10": {
+        "name": "Dr. Anil Kumar Gupta",
+        "title": "Head of Division",
+        "institution": "NIDM",
+        "role": "Collaboration Partner"
+      }
+    }
+  },
+  "internal": {
+    "checking_backend": "Checking backend...",
+    "waking_server": "Waking up AWS server... (~60s)",
+    "backend_working": "Backend working",
+    "backend_not_working": "Backend not working",
+    "wake_server": "Wake Server",
+    "waking_ec2": "⏳ Waking up EC2... (~60s)",
+    "drive_title": "Consortium Drive",
+    "drive_subtitle": "Secure administrative gateway to LODESTAR's modeling data and SFTP services.",
+    "secure_login": "Secure Login",
+    "enter_credentials": "Enter your internal credentials to proceed.",
+    "note_label": "Note:",
+    "note_text": "This portal is intended for authorized internal personnel only. Access to modeling data and internal SFTP services is restricted to consortium members.",
+    "username_placeholder": "SFTP Username",
+    "password_placeholder": "SFTP Password",
+    "connecting": "Connecting...",
+    "connect_btn": "Connect to Server",
+    "login_issues": "Facing issues logging in?",
+    "try_direct": "Try Direct Login Service",
+    "explorer_title": "Portal Explorer",
+    "view_list": "List",
+    "view_grid": "Grid",
+    "logout": "Logout",
+    "no_files": "No files available.",
+    "type_directory": "Directory",
+    "download": "Download",
+    "table_name": "Name",
+    "table_type": "Type",
+    "table_size": "Size",
+    "table_action": "Action",
+    "type_folder": "Folder",
+    "type_file": "File"
+  }
+}

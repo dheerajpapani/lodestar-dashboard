@@ -3,9 +3,12 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCompass } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 import '../App.css';
 
 export default function NotFound() {
+  const { t } = useTranslation();
+
   return (
     <div className="notfound-wrapper-themed">
       <motion.div
@@ -18,13 +21,13 @@ export default function NotFound() {
           <FaCompass className="radar-icon" />
           <div className="radar-sweep"></div>
         </div>
-        <h1 className="notfound-title-themed">404</h1>
-        <h2 className="notfound-subtitle-themed">Lost Signal</h2>
+        <h1 className="notfound-title-themed">{t('notfound.title')}</h1>
+        <h2 className="notfound-subtitle-themed">{t('notfound.subtitle')}</h2>
         <p className="notfound-text-themed">
-          You've navigated to a data point that is off our forecast map. The requested page could not be found. Let's get you back to charted territory.
+          {t('notfound.text')}
         </p>
         <Link to="/" className="cta-button">
-          Return to Dashboard
+          {t('notfound.button')}
         </Link>
       </motion.div>
     </div>
