@@ -98,9 +98,21 @@ export async function parseGeoTiff(url) {
 
       let r, g, b;
       if (isRGB) {
-        // True-color uint8 — use as-is
-        r = rasters[0]; g = rasters[1]; b = rasters[2];
-        console.log('[tiffParser] RGB uint8 mode');
+        if (rasters[0] instanceof Uint16Array) {
+          r = new Uint8Array(rasters[0].length);
+          g = new Uint8Array(rasters[1].length);
+          b = new Uint8Array(rasters[2].length);
+          for (let i = 0; i < rasters[0].length; i++) {
+            r[i] = rasters[0][i] >> 8;
+            g[i] = rasters[1][i] >> 8;
+            b[i] = rasters[2][i] >> 8;
+          }
+          console.log('[tiffParser] RGB uint16 mode scaled to uint8');
+        } else {
+          // True-color uint8 — use as-is
+          r = rasters[0]; g = rasters[1]; b = rasters[2];
+          console.log('[tiffParser] RGB uint8 mode');
+        }
       } else if (rasters.length >= 2) {
         // Two-band SAR (VV + VH): convert each band to dark grayscale, then average
         const vv   = sarToGrayscale(rasters[0], nodataValue);
@@ -126,11 +138,13 @@ export async function parseGeoTiff(url) {
       for (let i = 0; i < width * height; i++) {
         const idx = i * 4;
         const rv = r[i];
+        const gv = g[i];
+        const bv = b[i];
         imageData.data[idx]     = rv;
-        imageData.data[idx + 1] = g[i];
-        imageData.data[idx + 2] = b[i];
-        // Render all pixels as 85% opaque to preserve the original solid black styling
-        imageData.data[idx + 3] = 220;
+        imageData.data[idx + 1] = gv;
+        imageData.data[idx + 2] = bv;
+        // All-zero pixels → transparent (nodata); otherwise 85% opaque
+        imageData.data[idx + 3] = (rv === 0 && gv === 0 && bv === 0) ? 0 : 220;
       }
 
       ctx.putImageData(imageData, 0, 0);
