@@ -129,8 +129,8 @@ export async function parseGeoTiff(url) {
         imageData.data[idx]     = rv;
         imageData.data[idx + 1] = g[i];
         imageData.data[idx + 2] = b[i];
-        // All-zero pixels → transparent (nodata); otherwise 85% opaque
-        imageData.data[idx + 3] = (rv === 0 && g[i] === 0 && b[i] === 0) ? 0 : 220;
+        // Render all pixels as 85% opaque to preserve the original solid black styling
+        imageData.data[idx + 3] = 220;
       }
 
       ctx.putImageData(imageData, 0, 0);
