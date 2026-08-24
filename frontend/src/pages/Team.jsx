@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // src/pages/Team.jsx
 import { useMemo } from 'react';
-import { FaUniversity, FaBriefcase, FaTasks, FaBook, FaEnvelope, FaPhone } from 'react-icons/fa';
+import { FaUniversity, FaBriefcase, FaTasks, FaBook, FaEnvelope, FaPhone, FaCommentDots } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import '../App.css';
@@ -146,6 +146,28 @@ export default function Team() {
               </div>
             </div>
           </div>
+
+          {/* --- Feedback & Consortium Inquiries Section --- */}
+          <motion.div
+            className="feedback-cta-card"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            style={{ marginTop: '3.5rem' }}
+          >
+            <div className="feedback-cta-content">
+              <h3>{t('team.feedback.title', 'User Feedback & Stakeholder Inquiries')}</h3>
+              <p>{t('team.feedback.description', 'We welcome feedback, research collaboration inquiries, and user insights from policy makers, scientists, and local communities.')}</p>
+            </div>
+            <button
+              className="feedback-cta-btn"
+              onClick={() => window.dispatchEvent(new Event('open-feedback-modal'))}
+            >
+              <FaCommentDots size={15} />
+              <span>{t('team.feedback.button', 'Provide Feedback')}</span>
+            </button>
+          </motion.div>
         </div>
       </section>
     </div>

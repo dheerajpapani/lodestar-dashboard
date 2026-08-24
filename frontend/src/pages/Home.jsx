@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // src/pages/Home.jsx
 import { Link } from 'react-router-dom';
-import { FaShieldAlt, FaUsers, FaBrain, FaBroadcastTower, FaArrowRight } from 'react-icons/fa';
+import { FaShieldAlt, FaUsers, FaBrain, FaBroadcastTower, FaArrowRight, FaCommentDots } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import '../App.css';
@@ -122,6 +122,28 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+
+          {/* SECTION 5: FEEDBACK CTA */}
+          <motion.div
+            className="feedback-cta-card"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            style={{ marginTop: '4rem' }}
+          >
+            <div className="feedback-cta-content">
+              <h3>{t('home.feedback.title', 'Have Feedback or Research Suggestions?')}</h3>
+              <p>{t('home.feedback.description', 'Help us continuously refine and improve the Lodestar Dashboard by sharing your experience, questions, or ideas with our research team.')}</p>
+            </div>
+            <button
+              className="feedback-cta-btn"
+              onClick={() => window.dispatchEvent(new Event('open-feedback-modal'))}
+            >
+              <FaCommentDots size={15} />
+              <span>{t('home.feedback.button', 'Share Your Feedback')}</span>
+            </button>
+          </motion.div>
         </div>
       </section>
     </div>

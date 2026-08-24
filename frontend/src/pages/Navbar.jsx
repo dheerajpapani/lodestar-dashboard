@@ -208,13 +208,11 @@ export default function Navbar() {
           <NavLink to="/about" className="nav-links">{t('nav.about')}</NavLink>
           <NavLink to="/maps" className="nav-links">{t('nav.maps')}</NavLink>
           <NavLink to="/alerts" className="nav-links">{t('nav.alerts')}</NavLink>
+          <NavLink to="/emergency-contacts" className="nav-links">{t('nav.emergencyContacts', 'Emergency Contacts')}</NavLink>
           <NavLink to="/living-labs" className="nav-links">{t('nav.livingLabs')}</NavLink>
           <NavLink to="/serious-games" className="nav-links">{t('nav.seriousGames')}</NavLink>
           <NavLink to="/research" className="nav-links">{t('nav.research')}</NavLink>
           <NavLink to="/team" className="nav-links">{t('nav.team')}</NavLink>
-          <NavLink to="/internal-access" className="nav-links" style={{ opacity: 0.7, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <LockIcon size={14} /> {t('nav.internalAccess')}
-          </NavLink>
         </nav>
 
         {/* Group 3: Action Item (Right) */}

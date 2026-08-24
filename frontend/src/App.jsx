@@ -11,6 +11,7 @@ import Research from './pages/Research';
 import Team from './pages/Team';
 import Admin from './pages/Admin';
 import InternalAccess from './pages/InternalAccess';
+import EmergencyContactsPage from './pages/EmergencyContactsPage';
 import NotFound from './pages/NotFound';
 import ScrollToTop from './components/ScrollToTop';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/maps" element={<Maps />} />
           <Route path="/alerts" element={<Alerts />} />
+          <Route path="/emergency-contacts" element={<EmergencyContactsPage />} />
           <Route path="/living-labs" element={<LivingLabs />} />
           <Route path="/serious-games" element={<SeriousGames />} />
           <Route path="/research" element={<Research />} />

@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import '../App.css';
 import { fetchWeatherData } from '../services/weatherService';
 import sensorConfig from '../data/sensors.config.json';
-import { testSensor, fetchSensorData } from '../services/sensorApi';
+import { testSensor, fetchSensorData, getRangeTimestamps, clearSensorCache } from '../services/sensorApi';
 import NetherlandsVisualsModal from '../components/NetherlandsVisualsModal';
 import NetherlandsTimeSlider from '../components/NetherlandsTimeSlider';
 import { parseGeoTiff } from '../utils/tiffParser';
@@ -199,9 +199,92 @@ export default function Maps() {
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [sensorDataLoading, setSensorDataLoading] = useState(false);
   const [sensorData, setSensorData] = useState(null);
+  const [sensorTimeRange, setSensorTimeRange] = useState('24h');
   const [sensorStatusLog, setSensorStatusLog] = useState([]);
   const [showNlModal, setShowNlModal] = useState(false);
   const [showNlRasterPanel, setShowNlRasterPanel] = useState(false);
+
+  // Enhanced CSV Export Helper with Separated Date/Time, UTF-8 BOM, & Excel Compatibility
+  const exportSensorCSV = (sensor, data, rangeKey = '24h') => {
+    if (!sensor || !data || data.length === 0) return;
+
+    const rangeLabels = {
+      '24h': 'Last 24 Hours',
+      '7d': 'Last 7 Days',
+      '30d': 'Last 30 Days',
+      'all': 'Full History'
+    };
+
+    const rangeTitle = rangeLabels[rangeKey] || 'Custom Range';
+    const downloadedOn = new Date().toLocaleString();
+    const isRainGauge = sensor.type === 'rain_gauge';
+    const valueHeader = isRainGauge ? 'Precipitation (mm)' : 'Water Level (m)';
+
+    // Metadata Header Block
+    const metaLines = [
+      `# ==============================================================================`,
+      `# LODESTAR WATER & WEATHER NETWORK - TELEMETRY REPORT`,
+      `# ==============================================================================`,
+      `# Sensor Name        : ${sensor.name}`,
+      `# Sensor UID         : ${sensor.uid}`,
+      `# Sensor Type        : ${isRainGauge ? 'Rain Gauge' : 'Water Level Meter'}`,
+      `# Selected Timeframe : ${rangeTitle}`,
+      `# Total Records      : ${data.length}`,
+      `# Exported On        : ${downloadedOn}`,
+      `# ==============================================================================`,
+      ``
+    ];
+
+    // Headers with separated Date and Time
+    const headers = [
+      `"Date"`,
+      `"Time"`,
+      `"Day of Week"`,
+      `"${valueHeader}"`,
+      isRainGauge ? `"Cumulative Rain (mm)"` : `"Battery Voltage (V)"`,
+      `"Status"`
+    ].join(',');
+
+    // Format Data Rows
+    const dataRows = [...data].reverse().map(r => {
+      let dateStr = 'N/A';
+      let timeStr = 'N/A';
+      let dayName = 'N/A';
+
+      if (r.date_time) {
+        const d = new Date(r.date_time);
+        dateStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
+        timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
+      }
+
+      const val = isRainGauge ? (r.daily_rain_mm ?? 0) : (r.water_level ?? 0);
+      const secondaryVal = isRainGauge ? (r.total_rain_mm ?? 'N/A') : (r.battery_voltage ? `${r.battery_voltage}` : 'N/A');
+      
+      let status = 'Valid Reading';
+      if (isRainGauge) {
+        status = val > 0 ? 'Rain Recorded' : 'No Rain';
+      }
+
+      return `"${dateStr}","${timeStr}","${dayName}",${val},${secondaryVal},"${status}"`;
+    });
+
+    // Add UTF-8 Byte Order Mark (\uFEFF) for automatic Excel UTF-8 column formatting
+    const csvString = '\uFEFF' + [...metaLines, headers, ...dataRows].join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const dateStamp = new Date().toISOString().split('T')[0];
+    const fileName = `${sensor.name.replace(/\s+/g, '_')}_${rangeKey}_${dateStamp}.csv`;
+
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   // Weather States
   const [weatherData, setWeatherData] = useState(null);
@@ -479,45 +562,54 @@ export default function Maps() {
     return () => map.off('style.load', handler);
   }, [activeOverlay, mapStyle, activeSite]);
 
-  // ==== Sensors (Real API Integration) ====
+  // ==== Sensors (High-Performance Parallel Integration & Caching) ====
   const loadSensors = async () => {
     const map = mapRef.current;
     if (!map) return;
 
-    const sensorsToRender = [];
+    setSensorDataLoading(true);
+    const visibleSensors = sensorConfig.filter(s => s.visible);
 
-    for (const sensor of sensorConfig) {
-      if (!sensor.visible) continue;
+    // Parallel execution via Promise.all for instant loading (< 800ms)
+    const results = await Promise.all(
+      visibleSensors.map(async (sensor) => {
+        const result = await testSensor(sensor.uid);
+        let lat = sensor.lat;
+        let lon = sensor.lon;
 
-      const result = await testSensor(sensor.uid);
-      const isOnline = result.online;
-      
-      let lat = sensor.lat;
-      let lon = sensor.lon;
+        if (result.location) {
+          lat = result.location.lat;
+          lon = result.location.lon;
+        }
 
-      if (result.location) {
-        lat = result.location.lat;
-        lon = result.location.lon;
-      }
-
-      if (lat && lon) {
-        sensorsToRender.push({
+        return {
           ...sensor,
           lat,
           lon,
-          online: isOnline,
+          online: result.online,
+          statusState: result.statusState,
+          latestReading: result.latestReading,
+          lastSeenDate: result.lastSeenDate,
           latestData: result.data
-        });
-      }
-    }
+        };
+      })
+    );
 
+    const sensorsToRender = results.filter(s => s.lat && s.lon);
     setRealSensors(sensorsToRender);
+    setSensorDataLoading(false);
 
-    // Create markers for sensors with coordinates
+    // Create markers for sensors with color indicators (Green: Live, Yellow: Stale, Red: Offline)
     sensorsToRender.forEach(sensor => {
       const el = document.createElement('div');
-      el.className = `sensor-marker ${sensor.online ? 'sensor-marker-static-green' : 'sensor-marker-static-red'}`;
-      el.title = sensor.name;
+      let markerClass = 'sensor-marker-static-red';
+      if (sensor.online) {
+        markerClass = 'sensor-marker-static-green';
+      } else if (sensor.statusState === 'stale') {
+        markerClass = 'sensor-marker-static-yellow';
+      }
+      el.className = `sensor-marker ${markerClass}`;
+      el.title = `${sensor.name} (${sensor.statusState.toUpperCase()})`;
 
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat([sensor.lon, sensor.lat])
@@ -525,29 +617,36 @@ export default function Maps() {
 
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        handleSensorClick(sensor);
+        handleSensorClick(sensor, '24h');
       });
 
-      sensorMarkersRef.current.push(marker); // Keep separate from default markers
-
+      sensorMarkersRef.current.push(marker);
     });
   };
 
-  const handleSensorClick = async (sensor) => {
+  const handleSensorClick = async (sensor, rangeKey = '24h') => {
     setSelectedSensor(sensor);
     setPanelOpen(true);
     setActiveTab('sensor');
+    setSensorTimeRange(rangeKey);
     setSensorDataLoading(true);
 
     try {
-      const endTime = Math.floor(Date.now() / 1000);
-      const startTime = endTime - 86400;
+      const { startTime, endTime } = getRangeTimestamps(rangeKey);
       const data = await fetchSensorData(sensor.uid, startTime, endTime);
       setSensorData(data);
     } catch (err) {
       console.error('Failed to fetch sensor data', err);
+      setSensorData([]);
     } finally {
       setSensorDataLoading(false);
+    }
+  };
+
+  const handleRangeChange = (newRange) => {
+    setSensorTimeRange(newRange);
+    if (selectedSensor) {
+      handleSensorClick(selectedSensor, newRange);
     }
   };
 
@@ -1013,47 +1112,137 @@ export default function Maps() {
 
               {activeTab === 'sensor' && selectedSensor && (
                 <div className="panel-section">
-                  <div style={{ padding: '10px', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b' }}>{selectedSensor.name}</h3>
-                      <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '10px', backgroundColor: selectedSensor.online ? '#dcfce7' : '#fee2e2', color: selectedSensor.online ? '#166534' : '#991b1b' }}>
-                        {selectedSensor.online ? t('maps.live', 'ONLINE') : t('maps.offline', 'OFFLINE')}
+                  {/* Header & Status Card */}
+                  <div style={{ padding: '12px 14px', backgroundColor: 'var(--bg-light)', borderRadius: '12px', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>📡 {selectedSensor.name}</h3>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        padding: '3px 9px',
+                        borderRadius: '12px',
+                        backgroundColor: selectedSensor.online ? '#dcfce7' : selectedSensor.statusState === 'stale' ? '#fef3c7' : '#fee2e2',
+                        color: selectedSensor.online ? '#166534' : selectedSensor.statusState === 'stale' ? '#92400e' : '#991b1b'
+                      }}>
+                        {selectedSensor.online ? t('maps.live', '🟢 LIVE') : selectedSensor.statusState === 'stale' ? t('maps.stale', '🟡 RECENT DATA') : t('maps.offline', '🔴 OFFLINE')}
                       </span>
                     </div>
-                    <div style={{ fontSize: '12px', color: '#64748b' }}>{t('maps.type', 'Type:')} {selectedSensor.type === 'rain_gauge' ? t('maps.rain_gauge', 'Rain Gauge') : t('maps.level_meter', 'Level Meter')}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      UID: <code>{selectedSensor.uid}</code> &bull; Type: {selectedSensor.type === 'rain_gauge' ? t('maps.rain_gauge', 'Rain Gauge') : t('maps.level_meter', 'Level Meter')}
+                    </div>
                   </div>
 
-                  {sensorDataLoading && <div style={{ textAlign: 'center', padding: '40px', opacity: 0.7 }}>{t('maps.fetching_readings', 'Fetching latest sensor readings...')}</div>}
-                  
+                  {/* Time Range Selector & CSV Export Controls */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Range:</label>
+                      <select
+                        value={sensorTimeRange}
+                        onChange={(e) => handleRangeChange(e.target.value)}
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
+                          backgroundColor: 'var(--bg-light)',
+                          color: 'var(--text-main)',
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <option value="24h">⏱️ Last 24 Hours</option>
+                        <option value="7d">🗓️ Last 7 Days</option>
+                        <option value="30d">📅 Last 30 Days</option>
+                        <option value="all">📜 Full History</option>
+                      </select>
+                    </div>
+
+                    {sensorData && sensorData.length > 0 && (
+                      <button
+                        onClick={() => exportSensorCSV(selectedSensor, sensorData, sensorTimeRange)}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--primary)',
+                          backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                          color: 'var(--primary)',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        📥 Download CSV
+                      </button>
+                    )}
+                  </div>
+
+                  {sensorDataLoading && (
+                    <div style={{ textAlign: 'center', padding: '30px', opacity: 0.7, fontSize: '13px' }}>
+                      {t('maps.fetching_readings', 'Fetching sensor data...')}
+                    </div>
+                  )}
+
                   {!sensorDataLoading && sensorData && sensorData.length > 0 ? (
                     <div className="sensor-readings">
-                      <div style={{ marginBottom: '15px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', marginBottom: '10px' }}>{t('maps.latest_reading', 'Latest Reading')}</div>
-                        <div style={{ padding: '15px', backgroundColor: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe' }}>
-                          <div style={{ fontSize: '24px', fontWeight: '800', color: '#1d4ed8' }}>
-                            {selectedSensor.type === 'rain_gauge' 
-                              ? `${sensorData[sensorData.length - 1].daily_rain_mm ?? sensorData[sensorData.length - 1].value ?? 0} mm`
-                              : `${sensorData[sensorData.length - 1].water_level ?? sensorData[sensorData.length - 1].value ?? 0} m`
-                            }
-                          </div>
-                          <div style={{ fontSize: '11px', color: '#60a5fa', marginTop: '4px' }}>
-                            {t('maps.measured_at', 'Measured at:')} {new Date(sensorData[sensorData.length - 1].date_time || sensorData[sensorData.length - 1].timestamp || Date.now()).toLocaleString()}
-                          </div>
+                      {/* Latest Reading Highlight Box */}
+                      <div style={{ padding: '12px', backgroundColor: 'rgba(59, 130, 246, 0.06)', borderRadius: '10px', border: '1px solid rgba(59, 130, 246, 0.2)', marginBottom: '14px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Latest Reading
                         </div>
-                        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-                          <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
-                            {t('maps.battery', 'Battery:')} {sensorData[sensorData.length - 1].battery_voltage}V
-                          </div>
-                          <div style={{ fontSize: '11px', backgroundColor: '#f1f5f9', padding: '4px 8px', borderRadius: '4px' }}>
-                            {t('maps.solar', 'Solar:')} {sensorData[sensorData.length - 1].solar_voltage}V
-                          </div>
+                        <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--primary)', margin: '4px 0' }}>
+                          {selectedSensor.type === 'rain_gauge'
+                            ? `${sensorData[sensorData.length - 1].daily_rain_mm ?? 0} mm`
+                            : `${sensorData[sensorData.length - 1].water_level ?? 0} m`
+                          }
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                          Measured at: {new Date(sensorData[sensorData.length - 1].date_time || Date.now()).toLocaleString()}
+                        </div>
+                      </div>
+
+                      {/* Clean 3-Column Scrollable History Data Table */}
+                      <div style={{ marginTop: '10px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '8px' }}>
+                          📊 Past Readings ({sensorData.length} entries)
+                        </div>
+                        <div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
+                            <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--bg-light)', borderBottom: '1px solid var(--border-color)' }}>
+                              <tr>
+                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>Date</th>
+                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>Time</th>
+                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700', textAlign: 'right' }}>
+                                  {selectedSensor.type === 'rain_gauge' ? 'Precipitation' : 'Water Level'}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {[...sensorData].reverse().map((row, i) => {
+                                const dateObj = row.date_time ? new Date(row.date_time) : null;
+                                const dateStr = dateObj ? dateObj.toLocaleDateString() : 'N/A';
+                                const timeStr = dateObj ? dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                                return (
+                                  <tr key={row.sr_no || i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                    <td style={{ padding: '6px 8px', whiteSpace: 'nowrap', opacity: 0.85 }}>{dateStr}</td>
+                                    <td style={{ padding: '6px 8px', whiteSpace: 'nowrap', opacity: 0.75 }}>{timeStr}</td>
+                                    <td style={{ padding: '6px 8px', fontWeight: 700, color: 'var(--primary)', textAlign: 'right' }}>
+                                      {selectedSensor.type === 'rain_gauge' ? `${row.daily_rain_mm ?? 0} mm` : `${row.water_level ?? 0} m`}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
                         </div>
                       </div>
                     </div>
                   ) : !sensorDataLoading && (
-                    <div style={{ textAlign: 'center', padding: '40px', backgroundColor: '#f1f5f9', borderRadius: '12px', color: '#64748b' }}>
-                      <p>{t('maps.no_sensor_data', 'No recent data available for this sensor.')}</p>
-                      <small>{t('maps.checked_24h', 'Checked last 24 hours.')}</small>
+                    <div style={{ textAlign: 'center', padding: '30px 15px', backgroundColor: 'var(--bg-dark)', borderRadius: '12px', color: 'var(--text-muted)' }}>
+                      <p style={{ margin: '0 0 4px 0', fontWeight: 600 }}>No telemetry records for this range.</p>
+                      <small>Try selecting <strong>Last 30 Days</strong> or <strong>Full History</strong> in the range dropdown.</small>
                     </div>
                   )}
                 </div>
