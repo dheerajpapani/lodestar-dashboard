@@ -1135,7 +1135,7 @@ export default function Maps() {
                   {/* Time Range Selector & CSV Export Controls */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', gap: '10px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Range:</label>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>{t('maps.range', 'Range:')}</label>
                       <select
                         value={sensorTimeRange}
                         onChange={(e) => handleRangeChange(e.target.value)}
@@ -1150,10 +1150,10 @@ export default function Maps() {
                           cursor: 'pointer'
                         }}
                       >
-                        <option value="24h">⏱️ Last 24 Hours</option>
-                        <option value="7d">🗓️ Last 7 Days</option>
-                        <option value="30d">📅 Last 30 Days</option>
-                        <option value="all">📜 Full History</option>
+                        <option value="24h">{t('maps.last_24h', '⏱️ Last 24 Hours')}</option>
+                        <option value="7d">{t('maps.last_7d', '🗓️ Last 7 Days')}</option>
+                        <option value="30d">{t('maps.last_30d', '📅 Last 30 Days')}</option>
+                        <option value="all">{t('maps.full_history', '📜 Full History')}</option>
                       </select>
                     </div>
 
@@ -1174,7 +1174,7 @@ export default function Maps() {
                           gap: '4px'
                         }}
                       >
-                        📥 Download CSV
+                        {t('maps.download_csv', '📥 Download CSV')}
                       </button>
                     )}
                   </div>
@@ -1190,7 +1190,7 @@ export default function Maps() {
                       {/* Latest Reading Highlight Box */}
                       <div style={{ padding: '12px', backgroundColor: 'rgba(59, 130, 246, 0.06)', borderRadius: '10px', border: '1px solid rgba(59, 130, 246, 0.2)', marginBottom: '14px' }}>
                         <div style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                          Latest Reading
+                          {t('maps.latest_reading', 'Latest Reading')}
                         </div>
                         <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--primary)', margin: '4px 0' }}>
                           {selectedSensor.type === 'rain_gauge'
@@ -1199,23 +1199,23 @@ export default function Maps() {
                           }
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          Measured at: {new Date(sensorData[sensorData.length - 1].date_time || Date.now()).toLocaleString()}
+                          {t('maps.measured_at', 'Measured at:')} {new Date(sensorData[sensorData.length - 1].date_time || Date.now()).toLocaleString()}
                         </div>
                       </div>
 
                       {/* Clean 3-Column Scrollable History Data Table */}
                       <div style={{ marginTop: '10px' }}>
                         <div style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '8px' }}>
-                          📊 Past Readings ({sensorData.length} entries)
+                          📊 {t('maps.past_readings', 'Past Readings')} ({sensorData.length} {t('maps.entries', 'entries')})
                         </div>
                         <div style={{ maxHeight: '250px', overflowY: 'auto', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
                             <thead style={{ position: 'sticky', top: 0, backgroundColor: 'var(--bg-light)', borderBottom: '1px solid var(--border-color)' }}>
                               <tr>
-                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>Date</th>
-                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>Time</th>
+                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>{t('maps.date', 'Date')}</th>
+                                <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700' }}>{t('maps.time', 'Time')}</th>
                                 <th style={{ padding: '6px 8px', color: 'var(--text-muted)', fontWeight: '700', textAlign: 'right' }}>
-                                  {selectedSensor.type === 'rain_gauge' ? 'Precipitation' : 'Water Level'}
+                                  {selectedSensor.type === 'rain_gauge' ? t('maps.precipitation', 'Precipitation') : t('maps.water_level', 'Water Level')}
                                 </th>
                               </tr>
                             </thead>
@@ -1241,8 +1241,8 @@ export default function Maps() {
                     </div>
                   ) : !sensorDataLoading && (
                     <div style={{ textAlign: 'center', padding: '30px 15px', backgroundColor: 'var(--bg-dark)', borderRadius: '12px', color: 'var(--text-muted)' }}>
-                      <p style={{ margin: '0 0 4px 0', fontWeight: 600 }}>No telemetry records for this range.</p>
-                      <small>Try selecting <strong>Last 30 Days</strong> or <strong>Full History</strong> in the range dropdown.</small>
+                      <p style={{ margin: '0 0 4px 0', fontWeight: 600 }}>{t('maps.no_telemetry_range', 'No telemetry records for this range.')}</p>
+                      <small>{t('maps.try_selecting_range', 'Try selecting Last 30 Days or Full History in the range dropdown.')}</small>
                     </div>
                   )}
                 </div>

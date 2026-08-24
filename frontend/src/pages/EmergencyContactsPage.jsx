@@ -11,10 +11,10 @@ export default function EmergencyContactsPage() {
       <section className="hero-section-about">
         <div className="container">
           <h1 className="hero-title-about">
-            {t('emergencyPage.title', 'Disaster Emergency Contacts')}
+            {t('emergency.title', 'Disaster Emergency Contacts')}
           </h1>
           <p className="hero-subtitle-about">
-            {t('emergencyPage.subtitle', 'Official 24/7 helplines, control rooms, and rapid response units across LODESTAR study sites.')}
+            {t('emergency.page_subtitle', 'Official 24/7 helplines, control rooms, and rapid response units across LODESTAR study sites.')}
           </p>
         </div>
       </section>
